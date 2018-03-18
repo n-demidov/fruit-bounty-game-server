@@ -1,0 +1,1 @@
+web: java -jar fruit-bounty-server/target/fruit-bounty-server-1.0.jar

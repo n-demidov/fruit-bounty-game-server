@@ -1,0 +1,51 @@
+Цель игры - захватить как можно большее количество фруктов.
+
+Игроки начинают в противоположных углах игрового поля. Ходы делаются поочередно. Таймаут на ход составляет около 20 секунд.
+
+Захватывать можно только те фрукты, которые вплотную соприкасаются с вашими.
+
+Если захватываемый фрукт соприкасается с другими фруктами такого же типа, то они тоже будут захвачены. Благодаря этому вы сможете значительно увеличить скорость покорения игрового поля.
+
+Также нельзя захватывать фрукт, если оппонент в данный момент владеет таким же типом фрукта. Используя эту особенность вы можете "подрезать" противника.
+
+Fruit's Bounty - это интеллектуальная игра с добавлением элемента случайности.
+
+В конце игры победитель определяется по наибольшему количеству захваченных фруктов.
+
+Поражение может произойти в трёх случаях:
+- Игрок пропустил 3 хода подряд.
+- Игрок сдался.
+- В конце игры игрок собрал меньшее количество фруктов, чем оппонент.
+
+Ничья может произойти в тех редких случаях, когда оба игрока захватили одинаковое количество фруктов.
+
+Система рейтингов похожа на ту, которая используется в шахматах. Подсчёт очков зависит от разницы в рейтинге обоих оппонентов: если игрок обыграет более сильного оппонента, то он получит большее количество очков. В случае же если высоко рейтинговый игрок победит более слабого, то ему (победителю) начислится незначительное количество рейтинга (или же совсем ничего, если разница (в очках) слишком велика).
+
+Рейтинг-таблица (на главном окне игры) показывает топ наиболее рейтинговых игроков. Рейтинг-таблица учитывает рейтинг только начиная от 600 очков и она обновляется раз в несколько секунд.
+
+=== Translation:
+
+The goal of the game - is to capture as many fruits as possible.
+
+Players start in opposite corners of the game board. Moves are made alternately. A timeout for a move is about 20 seconds.
+
+You can grab only those fruits that adjoin yours.
+
+If the captured fruit contacts other fruit(s) of the same kind, they also will be taken. Due to this, you can significantly increase the speed of conquest of the playing field.
+
+Also, you can't capture a fruit if an opponent currently owns the same kind of the fruit. Using this feature, you could hamper your opponent.
+
+Fruit's Bounty is an intellectual game with the addition of a randomness element.
+
+At the end of a game, the winner is determined by the largest number of captured fruits.
+
+A defeat can happen in three cases:
+- A player missed 3 turns in a row.
+- A player gave up.
+- At the end of the game, a player collected less fruits than an opponent.
+
+A draw can occur in those rare cases when both players have captured the same number of fruits.
+
+The rating system is similar to the one used in chess. The calculation of scores depends on the difference in the ranking of both opponents: if a player defeats a stronger opponent, he/she will receive more points. In case a high rated player defeats the weaker one, he/she(the winner) will get an insignificant amount of rating (or nothing at all if the difference in rating is too big).
+
+The rating table (on the main game window) shows the top rated players. The rating table takes into account the rating only starting from 600 points and it is updated every few seconds.

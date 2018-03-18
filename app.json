@@ -1,0 +1,5 @@
+{
+  "name": "Fruit's Bounty",
+  "description": "A prop Java app.",
+  "addons": [ "heroku-postgresql" ]
+}

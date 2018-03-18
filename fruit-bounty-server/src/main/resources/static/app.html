@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Fruit's Bounty</title>
+
+  <link rel="stylesheet" type="text/css" href="style/external/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="style/style.css">
+</head>
+<body>
+<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable Javascript and reload this page!</h2></noscript>
+<div id="main-container" class="container-fluid">
+  <!-- Lobby window -->
+  <div id="lobby-window" class="lobby-window">
+
+    <!-- User Info -->
+    <div class="row">
+      <div class="col-xs-6">
+        <div class="user-info">
+          <img id="userImg" class="img-rounded user-info-img" src="#">
+          <div id="user-info-data" class="user-info-data" data-toggle="tooltip" data-placement="bottom" title="">
+            <span id="userName" class="userName"></span>
+            <br>
+            <span id="userScore"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Requests & Tips -->
+    <div class="row">
+      <div class="col-xs-6">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#game-pane" class="background-colored" aria-controls="game-pane" role="tab" data-toggle="tab">Game</a></li>
+          <li role="presentation"><a href="#rules-pane" class="background-colored" aria-controls="rules-pane" role="tab" data-toggle="tab">Rules</a></li>
+          <li role="presentation"><a href="#feedback-pane" class="background-colored" aria-controls="feedback-pane" role="tab" data-toggle="tab">Feedback</a></li>
+          <li role="presentation"><a href="#authors" class="background-colored" aria-controls="authors" role="tab" data-toggle="tab">Authors</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content tab-content-lobby">
+          <div role="tabpanel" class="tab-pane pane-padding active" id="game-pane">
+            <!-- Play button -->
+            <div class="play-content">
+              <button id="play" class="btn btn-danger btn-lg play-btn" type="submit">Play</button>
+            </div>
+            <div id="tips-content" class="tips-content">
+              <p id="tips" class="no-margin-bottom"></p>
+            </div>
+          </div>
+          <div role="tabpanel" class="tab-pane pane-padding background-colored" id="rules-pane">
+            <p class="lead">
+              The rules of Fruit's Bounty game:
+            </p>
+            <p>
+              The <strong>goal</strong> of the game - is to capture as many fruits as possible.
+            </p>
+            <p>
+              <strong>Players</strong> start in opposite corners of the game board. Moves are made alternately. A timeout for a move is about 20 seconds.
+            </p>
+            <p>
+              You can grab only those fruits that <strong>adjoin</strong> yours.
+            </p>
+            <p>
+              If the captured fruit contacts other fruit(s) of the same kind, they also will be taken. Due to this, you can significantly increase the speed of conquest of the playing field.
+            </p>
+            <p>
+              Also, you can't capture a fruit if an opponent currently owns the same kind of the fruit. Using this feature, you could hamper your opponent.
+            </p>
+            <p>
+              Fruit's Bounty - is an <strong>intellectual</strong> game with the addition of a randomness element.
+            </p>
+            <p>
+              At the end of a game, the <strong>winner</strong> is determined by the largest number of captured fruits.
+            </p>
+            <p>
+              A <strong>defeat</strong> can happen in three cases:
+              <br>
+              - A player missed 3 turns in a row.
+              <br>
+              - A player gave up.
+              <br>
+              - At the end of the game, a player collected less fruits than an opponent.
+            </p>
+            <p>
+              A <strong>draw</strong> can occur in those rare cases when both players have captured the same number of fruits.
+            </p>
+            <p>
+              The <strong>rating system</strong> is similar to the one used in chess. The <strong>calculation of scores</strong> depends on the difference in the ranking of both opponents: if a player defeats a stronger opponent, he/she will receive more points. In case a high rated player defeats the weaker one, he/she(the winner) will get an insignificant amount of rating (or nothing at all if the difference in rating is too big).
+            </p>
+            <p>
+              The <strong>rating table</strong> (on the main game window) shows the top rated players. The rating table takes into account the rating only starting from 600 points and it is updated every few seconds.
+            </p>
+            <br>
+            <p class="lead">
+              Hot keys:
+            </p>
+            <p>
+              To move focus in the input <strong>chat</strong> text area - press "Enter" key or "Alt" + "C" keys or "Ctrl" + "~" keys.
+            </p>
+            <p>
+              Hold down the "Ctrl" key and press "+" to zoom in.
+              <br>
+              Holds down the "Ctrl" key and press "-" to zoom out.
+              <br>
+              Hold down the "Ctrl" key and press "0" (zero) to reset to 100%.
+            </p>
+          </div>
+          <div role="tabpanel" class="tab-pane pane-padding background-colored" id="feedback-pane">
+            <address>
+              Please, write your suggestions, feedback and bugs to the <strong>Fruit's Bounty Support:</strong><br>
+              <a href="mailto:#">FruitsBounty@gmail.com</a>
+            </address>
+          </div>
+          <div role="tabpanel" class="tab-pane pane-padding background-colored" id="authors">
+            <address>
+              <p>
+                The fruits images and the icon were taken from https://opengameart.org/content/flat-designed-fruits under "CC-BY 3.0" license (https://creativecommons.org/licenses/by/3.0/). Reference to the author of images is https://www.tumblr.com/blog/paulinefranky
+              </p>
+              <p>
+                The beach background image was taken from https://opengameart.org/content/beach-background under "CC0 1.0" license (https://creativecommons.org/publicdomain/zero/1.0/). Reference to the author of images is https://opengameart.org/users/tgfcoder
+              </p>
+            </address>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rating-Table -->
+      <div class="col-xs-6">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#rating-table-pane" aria-controls="rating-table-pane" role="tab" data-toggle="tab">Top rated players</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane active" id="rating-table-pane">
+
+            <div class="top-rated-scrolling background-colored">
+              <table id="top-rated-table" class="table table-striped table-condensed no-margin-bottom">
+                <tbody id="top-rated-players">
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game window -->
+  <div id="game-window" class="game-window">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="game-window-container">
+          <div class="side-game-info side-left">
+            <img id="left-pl-img" class="img-rounded player-img" src="#">
+            <p id="left-pl-name" class="player-name"></p>
+            <p id="left-pl-score"></p>
+            <p id="left-pl-wins"></p>
+            <p id="left-pl-defeats"></p>
+            <p id="left-pl-draws"></p>
+
+            <p id="left-pl-added-score" class="added-score"></p>
+            <p id="left-pl-winner" class="player-winner"></p>
+            <button id="left-pl-surrender" class="btn btn-default btn-sm surrender-btn" type="submit">Concede</button>
+            <p id="left-pl-timer" class="player-timer"></p>
+          </div>
+          <div>
+            <canvas id="game-canvas">This text is displayed if your browser does not support HTML5 Canvas.</canvas>
+          </div>
+          <div class="side-game-info side-right">
+            <img id="right-pl-img" class="img-rounded player-img" src="#">
+            <p id="right-pl-name" class="player-name"></p>
+            <p id="right-pl-score"></p>
+            <p id="right-pl-wins"></p>
+            <p id="right-pl-defeats"></p>
+            <p id="right-pl-draws"></p>
+
+            <p id="right-pl-added-score" class="added-score"></p>
+            <p id="right-pl-winner" class="player-winner"></p>
+            <button id="right-pl-surrender" class="btn btn-default btn-sm surrender-btn" type="submit">Concede</button>
+            <p id="right-pl-timer" class="player-timer"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat -->
+  <div class="chat-window">
+    <div class="row">
+      <div class="col-xs-12">
+        <div id="chat-output-scrolling" class="chat-output-scrolling background-colored">
+          <table id="conversation" class="table table-condensed no-margin-bottom">
+            <tbody id="greetings">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <form class="form-inline">
+          <div class="form-group">
+            <div class="input-group">
+              <input type="text" id="chat-msg-input" class="form-control chat-msg-input" placeholder="Type to chat..." maxlength="200" autocomplete="off">
+              <div id="send" class="btn btn-default input-group-addon send-chat-message">
+                &gt;
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading window -->
+<div id="loading-window">
+  <div class="loading"></div>
+</div>
+
+<!-- Disconnection window -->
+<div class="disconnection-popup" id="discnctPopup">
+  <div class="disconnection-popup-content">
+    <p>
+      Sorry, the connection is losszzzzzsst...
+    </p>
+    <button id="reconnect" class="btn btn-primary reconnect-btn" type="submit">Refresh the page</button>
+  </div>
+</div>
+
+<hr>
+<div class="docs-content">
+  <a target="_blank" href="https://springs-sunshine.herokuapp.com/docs/privacy-policy.html">Privacy Policy</a>
+  <span> </span>
+  <a target="_blank" href="https://springs-sunshine.herokuapp.com/docs/terms-of-service.html">Terms of Service</a>
+</div>
+
+<script src="js/external/sockjs-1.1.2.min.js"></script>
+<script src="js/external/stomp-2.3.4.min.js"></script>
+<script src="js/external/jquery-3.2.1.slim.min.js"></script>
+<script src="js/external/bootstrap.min.js"></script>
+
+<script src="js/game.js"></script>
+<script src="js/app.js"></script>
+<script src="js/data/tips.js"></script>
+</body>
+</html>

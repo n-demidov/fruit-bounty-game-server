@@ -1,0 +1,168 @@
+server:
+  port: ${PORT:5000}
+
+spring:
+  profiles:
+    active: prod
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASS}
+    driverClassName: org.postgresql.Driver
+    platform: POSTGRESQL
+    validationQuery: SELECT 1
+    tomcat:
+      initial-size: 16
+      max-active: 17
+      min-idle: 16
+      max-idle: 16
+      test-on-connect: true
+      test-while-idle: true
+      time-between-eviction-runs-millis: 15000
+      min-evictable-idle-time-millis: 900000
+  jpa:
+    generate-ddl: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      javax:
+        persistence:
+          sharedCache:
+            mode: ALL
+      hibernate:
+        show_sql: false
+        format_sql: true
+        ddl-auto: update
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration
+      - org.springframework.boot.autoconfigure.aop.AopAutoConfiguration
+      - org.springframework.boot.autoconfigure.jms.artemis.ArtemisAutoConfiguration
+      - org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration
+      - org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration
+      - org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.cassandra.CassandraDataAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.cassandra.CassandraRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.cloud.CloudAutoConfiguration
+      - org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration
+      - org.springframework.boot.autoconfigure.couchbase.CouchbaseAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.couchbase.CouchbaseRepositoriesAutoConfiguration
+      - org.springframework.data.couchbase.repository.CouchbaseRepository
+#          - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+      - org.springframework.boot.autoconfigure.mobile.DeviceDelegatingViewResolverAutoConfiguration
+      - org.springframework.boot.autoconfigure.mobile.DeviceResolverAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.ldap.embedded.EmbeddedLdapAutoConfiguration
+      - org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration
+      - org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration
+      - org.springframework.boot.autoconfigure.social.FacebookAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.FallbackWebSecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration
+      - org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration
+      - org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration
+      - org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration
+      - org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration
+      - org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration
+      - org.springframework.boot.autoconfigure.hazelcast.HazelcastJpaDependencyAutoConfiguration
+#          - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+#          - org.springframework.boot.autoconfigure.web.HttpEncodingAutoConfiguration
+#          - org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration
+      - org.springframework.boot.autoconfigure.hateoas.HypermediaAutoConfiguration
+      - org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration
+#          - org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
+      - org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration
+      - org.springframework.boot.autoconfigure.elasticsearch.jest.JestAutoConfiguration
+      - org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration
+      - org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration
+      - org.springframework.boot.autoconfigure.jms.JndiConnectionFactoryAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.JndiDataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration
+#          - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.transaction.jta.JtaAutoConfiguration
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+      - org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.ldap.LdapDataAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.ldap.LdapRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.social.LinkedInAutoConfiguration
+      - org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
+      - org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration
+      - org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration
+      - org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.mustache.MustacheAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.neo4j.Neo4jDataAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.oauth2.OAuth2AutoConfiguration
+      - org.springframework.boot.autoconfigure.info.ProjectInfoAutoConfiguration
+      - org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration
+      - org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
+      - org.springframework.boot.autoconfigure.reactor.ReactorAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+#          - org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration
+      - org.springframework.boot.autoconfigure.sendgrid.SendGridAutoConfiguration
+#      - org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration
+      - org.springframework.boot.autoconfigure.session.SessionAutoConfiguration
+      - org.springframework.boot.autoconfigure.mobile.SitePreferenceAutoConfiguration
+      - org.springframework.boot.autoconfigure.social.SocialWebAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.neo4j.Neo4jRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.dao.PersistenceExceptionTranslationAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.SecurityFilterAutoConfiguration
+      - org.springframework.boot.autoconfigure.solr.SolrAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.solr.SolrRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration
+      - org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration
+      - org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration
+      - org.springframework.boot.autoconfigure.social.TwitterAutoConfiguration
+      - org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
+#          - org.springframework.boot.autoconfigure.jdbc.XADataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.web.WebClientAutoConfiguration
+#          - org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration
+      - org.springframework.boot.autoconfigure.webservices.WebServicesAutoConfiguration
+
+logging:
+  level:
+    root: WARN
+    com.demidovn: TRACE
+    org.springframework: WARN
+#    org.springframework.boot.autoconfigure: DEBUG       # To debug auto-configurations
+    org.apache: WARN
+    org.hibernate: WARN
+#    org.hibernate.type: TRACE   # To see SQL queries parameters
+    org.hibernate.cache: TRACE
+
+endpoints:
+  metrics:
+    sensitive: false
+
+game-server:
+  ttl:
+    not-authed-connection: ${NOT_AUTHED_CONNECTION_TTL:8}
+    authed-inactive-connection: ${AUTHED_INACTIVE_CONNECTION_TTL:600}
+  schedule-delay:
+    valid-not-authed-connections: ${VALID_NOT_AUTHED_CONNECTIONS_SCHEDULE_DELAY:10000}
+    valid-authed-connections: ${VALID_AUTHED_CONNECTIONS_SCHEDULE_DELAY:60000}
+    process-game-requests: ${PROCESS_GAME_REQUESTS_SCHEDULE_DELAY:5000}
+    rating-table-notification: ${RATING_TABLE_NOTIFICATION_SCHEDULE_DELAY:15000}
+    metrics: ${METRICS_SCHEDULE_DELAY:30000}
+    clear-not-actual-users: ${CLEAR_NOT_ACTUAL_USERS_SCHEDULE_DELAY:1200000}
+
+---
+
+spring:
+  profiles: test
+  datasource:
+    url: ${TEST_JDBC_DATABASE_URL}
+    username: ${TEST_JDBC_DATABASE_USERNAME}
+    password: ${TEST_JDBC_DATABASE_PASS}

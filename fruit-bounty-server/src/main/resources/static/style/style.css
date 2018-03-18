@@ -1,0 +1,259 @@
+body{
+  background-image:url(/img/background/background.png);
+}
+
+.container-fluid{
+  display:none;
+}
+
+
+/* ===== Common classes ===== */
+.no-margin-bottom{
+  margin-bottom:0px;
+}
+
+.background-colored{
+  background-color:#fff;
+}
+
+
+/* ===== Lobby window ===== */
+.lobby-window{
+  margin-bottom:40px;
+  max-width:910px;
+}
+
+/* User Info */
+.user-info{
+  max-width:300px;
+  padding:5px;
+  margin-bottom:5px;
+  height:60px;
+  display:flex;
+}
+
+.user-info-data{
+  background-color:#fff;
+  padding: 4px 10px 4px 10px;
+  border-radius:6px;
+}
+
+.user-info-img{
+  margin-right:10px;
+}
+
+.userName{
+  font-weight:bold;
+}
+
+
+/* Lobby tabs */
+.tab-content-lobby{
+  max-height:342px;
+  min-height:342px;
+  overflow:auto;
+  border-radius: 0px 0px 4px 4px;
+}
+
+.pane-padding{
+  padding: 15px 10px 1px 10px;
+  border-radius: 0px 0px 4px 4px;
+}
+
+
+/* Requests */
+.play-btn{
+  margin-top:30px;
+  margin-left:10px;
+}
+
+.tips-content{
+  background-color:#fff;
+  margin-top:70px;
+  padding:10px;
+  border-radius:4px;
+  display:none;
+}
+
+
+/* Rating-Table */
+.top-rated-scrolling{
+  max-height:342px;
+  min-height:342px;
+  overflow:auto;
+  border-radius: 0px 0px 4px 4px;
+}
+
+.rating-table-player-img{
+  width:18px;
+  height:18px;
+}
+
+.cursor-default{
+  cursor:default;
+}
+
+
+/* ===== Game window ===== */
+.game-window{
+  display:none;
+}
+
+@media screen and (max-width:945px){
+  .game-window{
+    overflow-x:auto;
+  }
+}
+
+.game-window-container{
+  margin-top:6px;
+  display:flex;
+  flex-direction:row;
+  align-items:flex-start;
+}
+
+.side-game-info{
+  min-width:150px;
+  max-width:150px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+
+  background-color:#f6f7f9;
+  border:1px solid #dddfe2;
+  border-radius:6px;
+}
+
+.side-left{
+  margin-right:20px;
+}
+
+.side-right{
+  margin-left:20px;
+}
+
+.player-img{
+  margin-top:5px;
+  margin-bottom:10px;
+}
+
+.player-name{
+  font-weight:bold;
+  text-align:center;
+}
+
+.surrender-btn{
+  display:none;
+  margin-bottom:30px;
+}
+
+.player-timer{
+  font-size:24px;
+  display:none;
+  margin-bottom:25px;
+}
+
+.added-score{
+  font-size:24px;
+  display:none;
+}
+
+.player-winner{
+  font-size:24px;
+  margin-bottom:20px;
+}
+
+
+/* ===== Chat ===== */
+.chat-window{
+  margin-bottom:20px;
+}
+
+.chat-output-scrolling{
+  margin-bottom:6px;
+  max-width:910px;
+  height:155px;
+  overflow:auto;
+  border-radius:4px;
+}
+
+.chat-msg{
+  word-break:break-all;
+  display:block;
+}
+
+.chat-msg-input{
+  min-width:300px;
+}
+
+.send-chat-message{
+  font-weight:bold;
+}
+
+
+/* ===== Loading window ===== */
+.loading {
+  position:absolute;
+  left:50%;
+  top:50%;
+  z-index:1;
+  width:150px;
+  height:150px;
+  margin:-75px 0 0 -75px;
+  border:16px solid #f3f3f3;
+  border-radius:50%;
+  border-top:16px solid #3498db;
+  -webkit-animation:spin 2s linear infinite;
+  animation:spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+/* ===== Disconnection pop-up ===== */
+.disconnection-popup{
+  width:100%;
+  min-height:100%;
+  background-color:rgba(0,0,0,0.5);
+  overflow:hidden;
+  position:fixed;
+  top:0px;
+  left:0px;
+  display:none;
+  z-index:999;
+}
+
+.disconnection-popup .disconnection-popup-content{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -100%);
+  width:272px
+  height:90px;
+  padding:15px;
+  background-color:#f6f7f9;
+  border:1px solid #dddfe2;
+  border-radius:4px;
+  box-shadow:0px 0px 200px #000;
+}
+
+.reconnect-btn{
+  display:block;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+
+/* ===== Docs href ===== */
+.docs-content{
+  text-align:center;
+}
