@@ -49,24 +49,28 @@ Or you can search the game in Facebook app catalog by key-words like "Fruit's Bo
 ## How to run locally
 
 In `application.yml` set:
-1. Database environment variables: 
+1. Database environment variables*: 
 - JDBC_DATABASE_URL
 - JDBC_DATABASE_USERNAME
 - JDBC_DATABASE_PASS
 
-2. Database environment variables for Spring Boot tests: 
+2. Database environment variables* for Spring Boot tests: 
 - TEST_JDBC_DATABASE_URL
 - TEST_JDBC_DATABASE_USERNAME
 - TEST_JDBC_DATABASE_PASS
 
-For example, you can use use docker for locacl PosgreSQL:
+3. Run Spring Boot application. And open the game on http://localhost:5000/app.html
 
+You can change the port by set `PORT` environment variable or edit it in `application.yml` file.
+By default the port is '5000'.
+
+*Note: you can use docker to run local PosgreSQL instance:
 1. Pull image [https://hub.docker.com/_/postgres/](https://hub.docker.com/_/postgres/)
 2. Run docker container, e.g.: ```docker run --name h-postgres -e POSTGRES_PASSWORD=postgres -p:5432:5432 -d postgres:9.6.4```
 3. Specify environment variable, e.g.:
-   1. JDBC_DATABASE_URL = jdbc:postgresql://192.168.99.100:5432/postgres
-   2. JDBC_DATABASE_USERNAME=postgres
-   3. JDBC_DATABASE_PASS=postgres
+   1. `JDBC_DATABASE_URL` = `jdbc:postgresql://192.168.99.100:5432/postgres`
+   2. `JDBC_DATABASE_USERNAME` = `postgres`
+   3. `JDBC_DATABASE_PASS` = `postgres`
   
   Note: To use docker on Windows 7 you can setup 'Docker Toolbox' soft. Which will start on specific IP which is shown on startup in a console.
 
