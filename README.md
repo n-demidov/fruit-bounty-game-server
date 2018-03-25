@@ -28,9 +28,13 @@ The server calls only them. The game-module provides an implementation.
 
 There are both unit and integration tests.
 
-Also there is a caching strategy to quickly interact with a database.
+The integration tests cover such cases as checking disconnections if a user was inactive for a long time, etc (the TTLs are extracted to env vars and mocked to speed up such cases in tests); or chat messaging between users.
 
-Please, don't see on the client code :) It's small and just a rapid prototype with minimal functionality.
+The Unit tests are used, for example, when you do not need to raise the context, for example, when covering game rules. Each game rule is implemented by a separate class with a single public method. It is a clean function and easily covered with a tests. In general, for each task are using appropriate tools.
+
+There is also a cache between а database and the service layer. Therefore, there are no unnecessary read requests to the database. Consequently, there are no delays in processing game actions.
+
+Please, don't see the client code :) It's small and just a rapid prototype with minimal functionality.
 
 More details here (on russian): https://habrahabr.ru/post/351738/
 
