@@ -88,4 +88,3 @@ The beach background image was taken from https://opengameart.org/content/beach-
 
 ## Dates
 It was written in ~Oct 2017 ~ Jan 2018.
-
