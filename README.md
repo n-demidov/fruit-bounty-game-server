@@ -46,7 +46,7 @@ Other technologies: Spring WebSocket, Spring Boot Test, JPA, PostgreSQL; client 
 
 ## How to play online
 
-Login in Facebook go to https://apps.facebook.com/fruit-bounty/
+Login in Facebook and open https://apps.facebook.com/fruit-bounty/
 
 Or you can search the game in Facebook app catalog by key-words like "Fruit's Bounty".
 
