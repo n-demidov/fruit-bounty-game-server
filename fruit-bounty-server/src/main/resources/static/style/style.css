@@ -135,6 +135,8 @@ body{
 .player-img{
   margin-top:5px;
   margin-bottom:10px;
+  min-width:50px;
+  min-height:50px;
 }
 
 .player-name{
