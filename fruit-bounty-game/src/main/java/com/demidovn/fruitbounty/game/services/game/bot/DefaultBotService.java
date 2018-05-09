@@ -15,7 +15,7 @@ public class DefaultBotService implements BotService {
 
   private static final int BOT_ID = -2000;
   private static final int BOT_WAITING_MOVE_TIME = 1300;
-  private static final String UNKNOWN_PERSON_IMG = "https://scontent.xx.fbcdn.net/v/t1.0-1/c15.0.50.50/p50x50/10354686_10150004552801856_220367501106153455_n.jpg?oh=baf3745408876788393e9ca2b7e1dc94&oe=5AEBF02F";
+  private static final String UNKNOWN_PERSON_IMG = "https://scontent.xx.fbcdn.net/v/t1.0-1/c15.0.50.50/p50x50/10354686_10150004552801856_220367501106153455_n.jpg?oh=58094ae96718bcfcbd53cfea5151eaf5&oe=5B137D2F";
   private static final int MAX_BOT_WINS = 10;
   private static final int MIN_BOT_DEFEATS = 20;
   private static final int MAX_BOT_DEFEATS = 100;
