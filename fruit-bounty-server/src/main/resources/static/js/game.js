@@ -186,14 +186,19 @@ function paintPlayers(game) {
 }
 
 function paintPlayer(player, game, playerSide) {
-  // Player's data
-  $('#' + playerSide + '-pl-img').attr('src', player.img);
+  // Player's image
+  var playerImage = $('#' + playerSide + '-pl-img');
+  if (playerImage.attr('src') != player.img) {
+    playerImage.attr('src', player.img);
+  }
 
+  // Player's name
   var playerName = $('#' + playerSide + '-pl-name');
   if (playerName.text() != player.publicName) {
     playerName.text(player.publicName);
   }
 
+  // Other player's params
   $('#' + playerSide + '-pl-score').text("score: " + player.score);
   $('#' + playerSide + '-pl-wins').text("wins: " + player.wins);
   $('#' + playerSide + '-pl-defeats').text("defeats: " + player.defeats);
