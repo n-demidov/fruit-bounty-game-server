@@ -163,6 +163,6 @@ game-server:
 spring:
   profiles: test
   datasource:
-    url: ${TEST_JDBC_DATABASE_URL}
-    username: ${TEST_JDBC_DATABASE_USERNAME}
-    password: ${TEST_JDBC_DATABASE_PASS}
+    url: jdbc:postgresql://localhost:9999/postgres
+    username: postgres
+    password: ''

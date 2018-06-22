@@ -17,6 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <hibernate.version>5.2.12.Final</hibernate.version>
+    <pg-embedded.version>0.11.0</pg-embedded.version>
   </properties>
 
   <dependencies>
@@ -87,6 +88,12 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>2.10.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.opentable.components</groupId>
+      <artifactId>otj-pg-embedded</artifactId>
+      <version>${pg-embedded.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

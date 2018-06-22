@@ -46,24 +46,18 @@ Other technologies: Spring WebSocket, Spring Boot Test, JPA, PostgreSQL; client 
 
 ## How to play online
 
-Login in Facebook and open https://apps.facebook.com/fruit-bounty/
+Login in Facebook and open [https://apps.facebook.com/fruit-bounty/](https://apps.facebook.com/fruit-bounty/)
 
-Or you can search the game in Facebook app catalog by key-words like "Fruit's Bounty".
+Or you can search the game in Facebook app catalog by key-words like *Fruit's Bounty*.
 
 ## How to run locally
 
-In `application.yml` set:
-1. Database environment variables*: 
+1. Set database environment variables* (in `application.yml` or by using your IDE): 
 - `JDBC_DATABASE_URL`
 - `JDBC_DATABASE_USERNAME`
 - `JDBC_DATABASE_PASS`
 
-2. Database environment variables* for Spring Boot tests: 
-- `TEST_JDBC_DATABASE_URL`
-- `TEST_JDBC_DATABASE_USERNAME`
-- `TEST_JDBC_DATABASE_PASS`
-
-3. Run Spring Boot application. And open the game on http://localhost:5000/app.html/
+2. Run Spring Boot application. And open the game on [http://localhost:5000/app.html/](http://localhost:5000/app.html/)
 
 You can change the port by set `PORT` environment variable or edit it in `application.yml` file.
 By default the port is '5000'.
