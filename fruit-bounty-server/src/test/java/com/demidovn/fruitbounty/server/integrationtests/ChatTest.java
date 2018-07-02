@@ -10,7 +10,7 @@ public class ChatTest extends AbstractAuthMockedTest {
   private static final String SENT_MESSAGE = "Hello from integration test: ChatTest.";
 
   @Test
-  public void a_newChatMessageShouldBeSent2AllOnlineUsers() {
+  public void newChatMessagesShouldBeSent2AllOnlineUsers() {
     WebsocketClient secondWebsocketClient = new WebsocketClient(randomServerPort).connect();
 
     operationExecutor.auth(websocketClient, DEFAULT_USER_ID);
