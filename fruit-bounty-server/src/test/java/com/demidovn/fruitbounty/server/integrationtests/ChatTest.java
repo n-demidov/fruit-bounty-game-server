@@ -10,7 +10,7 @@ public class ChatTest extends AbstractAuthMockedTest {
   private static final String SENT_MESSAGE = "Hello from integration test: ChatTest.";
 
   @Test
-  public void onlineUsersGetPublicMessage_whenSendPublicMessage() {
+  public void a_newChatMessageShouldBeSent2AllOnlineUsers() {
     WebsocketClient secondWebsocketClient = new WebsocketClient(randomServerPort).connect();
 
     operationExecutor.auth(websocketClient, DEFAULT_USER_ID);
@@ -18,30 +18,33 @@ public class ChatTest extends AbstractAuthMockedTest {
 
     waitForNotifications();
 
-    sendAndAssertMessages(secondWebsocketClient, 1);
-    sendAndAssertMessages(secondWebsocketClient, 2);
+    sendAndAssertMessage(secondWebsocketClient, websocketClient, 1);
+    sendAndAssertMessage(secondWebsocketClient, websocketClient, 2);
   }
 
   @Test
-  public void userGetHistoryMessages_whenAuthed() {
+  public void b_chatHistoryShouldBeSent2SuccessfullyAuthedUser() {
     WebsocketClient secondWebsocketClient = new WebsocketClient(randomServerPort).connect();
     operationExecutor.auth(secondWebsocketClient, SECOND_USER_ID);
 
     waitForNotifications();
-
-    assertResponseContains(secondWebsocketClient, SENT_MESSAGE);
-    assertTrue(secondWebsocketClient.isConnected());
+    assertMessageReceived(secondWebsocketClient, SENT_MESSAGE, 1);
   }
 
-  private void sendAndAssertMessages(WebsocketClient secondWebsocketClient, int expectedMessagesCount) {
-    operationExecutor.sendChatMessage(websocketClient, SENT_MESSAGE);
+  private void sendAndAssertMessage(WebsocketClient firstWebsocket, WebsocketClient secondWebsocket,
+    int expectedMsgCount) {
+    operationExecutor.sendChatMessage(firstWebsocket, SENT_MESSAGE);
+
     waitForNotifications();
 
-    assertResponseContains(websocketClient, SENT_MESSAGE, expectedMessagesCount);
-    assertResponseContains(secondWebsocketClient, SENT_MESSAGE, expectedMessagesCount);
+    assertMessageReceived(firstWebsocket, SENT_MESSAGE, expectedMsgCount);
+    assertMessageReceived(secondWebsocket, SENT_MESSAGE, expectedMsgCount);
+  }
 
-    assertTrue(websocketClient.isConnected());
-    assertTrue(secondWebsocketClient.isConnected());
+  private void assertMessageReceived(WebsocketClient ws, String chatMessage, int expectedMsgCount) {
+    assertTrue(ws.isConnected());
+
+    assertResponseContains(ws, chatMessage, expectedMsgCount);
   }
 
 }
