@@ -17,8 +17,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <hibernate.version>5.2.12.Final</hibernate.version>
-    <pg-embedded.version>0.11.0</pg-embedded.version>
-    <spock.version>1.1-groovy-2.4</spock.version>
+    <pg-embedded.version>0.12.3</pg-embedded.version>
+    <spock.version>1.2-groovy-2.4</spock.version>
   </properties>
 
   <dependencies>
@@ -91,6 +91,8 @@
       <version>2.10.0</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- For Spock -->
     <dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-core</artifactId>
@@ -103,10 +105,12 @@
       <version>${spock.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
+
+    <!-- Optional dependencies for using Spock -->
+    <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
       <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy</artifactId>
-      <version>2.5.0</version>
+      <artifactId>groovy-all</artifactId>
+      <version>2.4.7</version>
       <scope>test</scope>
     </dependency>
 
@@ -139,6 +143,40 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- Plugins for using Spock -->
+      <!-- The gmavenplus plugin is used to compile Groovy code. To learn more about this plugin,
+      visit https://github.com/groovy/GMavenPlus/wiki -->
+      <plugin>
+        <groupId>org.codehaus.gmavenplus</groupId>
+        <artifactId>gmavenplus-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>addTestSources</goal>
+              <goal>compileTests</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Only required if names of spec classes don't match default Surefire patterns (`*Test` etc.) -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.20.1</version>
+        <configuration>
+          <!--<testSourceDirectory>src/test/groovy</testSourceDirectory>-->
+          <!--<testSourceDirectory>src/test/java</testSourceDirectory>-->
+          <useFile>false</useFile>
+          <includes>
+            <include>**/*Test.java</include>
+            <include>**/*Spec.java</include>
+            <include>**/*Specification.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
