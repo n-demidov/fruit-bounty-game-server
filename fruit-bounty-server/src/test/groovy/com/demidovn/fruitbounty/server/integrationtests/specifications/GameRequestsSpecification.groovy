@@ -14,8 +14,8 @@ class GameRequestsSpecification extends AbstractAuthMockedSpecification {
 
   private static final String GAME_STARTED_NOTIFICATION = "GameStarted"
   private static final int GAME_ASPIRANTS_COUNT = 40, INIT_MOCK_USER_ID_INDEX = 1000
-  private static final int MIN_WAIT_TIME = 100
-  private static final int LONG_WAIT_TIME = DEFAULT_NOTIFICATION_SLEEP * 1.6
+  private static final int MIN_WAIT_TIME = 10
+  private static final int LONG_WAIT_TIME = DEFAULT_NOTIFICATION_SLEEP * 1.5
 
   private List<WebsocketClient> gameAspirants = new ArrayList<>()
 
@@ -51,21 +51,19 @@ class GameRequestsSpecification extends AbstractAuthMockedSpecification {
     operationExecutor.sendGameRequest(websocketClient)
     operationExecutor.rejectGameRequest(websocketClient)
     operationExecutor.rejectGameRequest(websocketClient)
-
     waitForNotifications(MIN_WAIT_TIME)
 
     operationExecutor.sendGameRequest(secondWebsocketClient)
     operationExecutor.sendGameRequest(secondWebsocketClient)
+    waitForNotifications(MIN_WAIT_TIME)
     operationExecutor.rejectGameRequest(secondWebsocketClient)
-
-    waitForNotifications(DEFAULT_NOTIFICATION_SLEEP)
+    waitForNotifications(MIN_WAIT_TIME)
 
     gameAspirants.forEach({ws ->
       operationExecutor.sendGameRequest(ws)})
-
-    then:
     waitForNotifications(LONG_WAIT_TIME)
 
+    then:
     websocketClient.notContainsResponse(GAME_STARTED_NOTIFICATION)
     secondWebsocketClient.notContainsResponse(GAME_STARTED_NOTIFICATION)
 
