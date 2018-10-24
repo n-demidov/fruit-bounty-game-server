@@ -21,33 +21,28 @@ class AuthSpecification extends AbstractAuthMockedSpecification {
 
     assertAuth(websocketClient, getMockedUserName(DEFAULT_USER_ID))
     assertAuth(secondWebsocketClient, getMockedUserName(SECOND_USER_ID))
-
-    assertAdditionalData(websocketClient)
-    assertAdditionalData(secondWebsocketClient)
   }
 
   private void assertAuth(WebsocketClient ws, String userName) throws JSONException {
-    ws.isConnected()
-    assertResponseContains(ws, Constants.USER_INFO_OPERATION_TYPE)
+    assert ws.isConnected()
+
+    assert ws.getServerResponses().size() == 3
+
+    assert ws.containsResponse(Constants.USER_INFO_OPERATION_TYPE)
+    assert ws.containsResponse(Constants.SEND_CHAT_OPERATION_TYPE)
+    assert ws.containsResponse(Constants.RATING_TABLE_OPERATION_TYPE)
+
     assertAccountDetails(ws, userName)
   }
 
   private void assertAccountDetails(WebsocketClient ws, String userName) {
-    String secondResponse = findResponse(ws, Constants.USER_INFO_OPERATION_TYPE)
+    String secondResponse = ws.findResponse(Constants.USER_INFO_OPERATION_TYPE)
     JSONObject jsonObj = new JSONObject(secondResponse)
 
-    jsonObj.get("type") == Constants.USER_INFO_OPERATION_TYPE
-    jsonObj.get("type") == Constants.USER_INFO_OPERATION_TYPE
-    ((JSONObject) jsonObj.get("data")).get("name") == userName
-    ((JSONObject) jsonObj.get("data")).get("score") == 700
-    ((JSONObject) jsonObj.get("data")).get("wins") == 0
-  }
-
-  private void assertAdditionalData(WebsocketClient ws) throws JSONException {
-    ws.getServerResponses().size() == 3
-
-    assertResponseContains(ws, Constants.SEND_CHAT_OPERATION_TYPE)
-    assertResponseContains(ws, Constants.RATING_TABLE_OPERATION_TYPE)
+    assert jsonObj.get("type") == Constants.USER_INFO_OPERATION_TYPE
+    assert ((JSONObject) jsonObj.get("data")).get("name") == userName
+    assert ((JSONObject) jsonObj.get("data")).get("score") == 700
+    assert ((JSONObject) jsonObj.get("data")).get("wins") == 0
   }
 
 }

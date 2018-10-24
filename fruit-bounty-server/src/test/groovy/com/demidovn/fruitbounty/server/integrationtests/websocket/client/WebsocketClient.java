@@ -78,6 +78,38 @@ public class WebsocketClient {
     return session.isConnected();
   }
 
+  public long countResponses(String content) {
+    return getServerResponses()
+            .stream()
+            .filter(msg -> msg.contains(content))
+            .count();
+  }
+
+  public boolean containsResponse(String content) {
+    return countResponses(content) == 1;
+  }
+
+  public boolean notContainsResponse(String content) {
+    return countResponses(content) == 0;
+  }
+
+  public String findResponse(String content) {
+    return getServerResponses()
+            .stream()
+            .filter(msg -> msg.contains(content))
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException(String.format("Can't find '%s' in responses", content)));
+  }
+
+  @Override
+  public String toString() {
+    return "WebsocketClient{" +
+            "websocketConnectionUrl='" + websocketConnectionUrl + '\'' +
+            ", serverResponses=" + serverResponses +
+            '}';
+  }
+
+
   public class QueueHandler implements StompFrameHandler {
     @Override
     public Type getPayloadType(StompHeaders stompHeaders) {

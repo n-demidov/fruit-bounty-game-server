@@ -3,8 +3,6 @@ package com.demidovn.fruitbounty.server.integrationtests.specifications
 import com.demidovn.fruitbounty.server.integrationtests.bases.AbstractAuthMockedSpecification
 import spock.lang.Stepwise
 
-import static org.junit.Assert.assertTrue
-
 import com.demidovn.fruitbounty.server.integrationtests.websocket.client.WebsocketClient
 import org.springframework.test.context.TestPropertySource
 
@@ -68,11 +66,10 @@ class GameRequestsSpecification extends AbstractAuthMockedSpecification {
     then:
     waitForNotifications(LONG_WAIT_TIME)
 
-    assertResponseNotContains(websocketClient, GAME_STARTED_NOTIFICATION)
-    assertResponseNotContains(secondWebsocketClient, GAME_STARTED_NOTIFICATION)
+    websocketClient.notContainsResponse(GAME_STARTED_NOTIFICATION)
+    secondWebsocketClient.notContainsResponse(GAME_STARTED_NOTIFICATION)
 
-    gameAspirants.forEach({ws ->
-      assertResponseContains(ws, GAME_STARTED_NOTIFICATION)})
+    gameAspirants.forEach({ws -> assert ws.containsResponse(GAME_STARTED_NOTIFICATION)})
 
     assertAllConnectionsAlive(Arrays.asList(websocketClient, secondWebsocketClient))
     assertAllConnectionsAlive(gameAspirants)
@@ -83,7 +80,7 @@ class GameRequestsSpecification extends AbstractAuthMockedSpecification {
     waitForNotifications()
 
     for (ws in gameAspirants) {
-      assertResponseContains(ws, GAME_STARTED_NOTIFICATION)
+      assert ws.containsResponse(GAME_STARTED_NOTIFICATION)
 
       ws.getServerResponses().clear()
       operationExecutor.sendGameRequest(ws)
@@ -93,14 +90,13 @@ class GameRequestsSpecification extends AbstractAuthMockedSpecification {
     waitForNotifications()
 
     gameAspirants.forEach({ws ->
-      assertResponseNotContains(ws, GAME_STARTED_NOTIFICATION)})
+      assert ws.notContainsResponse(GAME_STARTED_NOTIFICATION)})
 
     assertAllConnectionsAlive(gameAspirants)
   }
 
   private void assertAllConnectionsAlive(List<WebsocketClient> assertingWebsocketClients) {
-    assertingWebsocketClients.forEach({ws ->
-      assertTrue(ws.isConnected())})
+    assertingWebsocketClients.forEach({ws -> assert ws.isConnected()})
   }
 
 }

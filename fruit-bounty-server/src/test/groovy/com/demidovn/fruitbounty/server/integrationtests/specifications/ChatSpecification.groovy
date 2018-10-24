@@ -4,8 +4,6 @@ import com.demidovn.fruitbounty.server.integrationtests.bases.AbstractAuthMocked
 import com.demidovn.fruitbounty.server.integrationtests.websocket.client.WebsocketClient
 import spock.lang.Stepwise
 
-import static org.junit.Assert.assertTrue
-
 @Stepwise
 class ChatSpecification extends AbstractAuthMockedSpecification {
 
@@ -18,9 +16,9 @@ class ChatSpecification extends AbstractAuthMockedSpecification {
     when:
     operationExecutor.auth(websocketClient, DEFAULT_USER_ID)
     operationExecutor.auth(secondWebsocketClient, SECOND_USER_ID)
+    waitForNotifications()
 
     then:
-    waitForNotifications()
     sendAndAssertMessage(secondWebsocketClient, websocketClient, 1)
     sendAndAssertMessage(secondWebsocketClient, websocketClient, 2)
   }
@@ -31,9 +29,9 @@ class ChatSpecification extends AbstractAuthMockedSpecification {
 
     when:
     operationExecutor.auth(secondWebsocketClient, SECOND_USER_ID)
+    waitForNotifications()
 
     then:
-    waitForNotifications()
     assertMessageReceived(secondWebsocketClient, SENT_MESSAGE, 1)
   }
 
@@ -48,9 +46,8 @@ class ChatSpecification extends AbstractAuthMockedSpecification {
   }
 
   private void assertMessageReceived(WebsocketClient ws, String chatMessage, int expectedMsgCount) {
-    assertTrue(ws.isConnected())
-
-    assertResponseContains(ws, chatMessage, expectedMsgCount)
+    assert ws.isConnected()
+    assert ws.countResponses(chatMessage) == expectedMsgCount
   }
 
 }

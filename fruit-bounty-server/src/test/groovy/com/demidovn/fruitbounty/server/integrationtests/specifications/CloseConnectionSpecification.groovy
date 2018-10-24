@@ -15,59 +15,56 @@ class CloseConnectionSpecification extends AbstractAuthMockedSpecification {
 
     when:
     websocketClient.sendToServer(message)
+    waitForNotifications()
 
     then:
-    waitForNotifications()
     !websocketClient.isConnected()
   }
 
   def "should disconnect when user connects from new device"() {
     when: "auth from old connection"
     operationExecutor.auth(websocketClient, DEFAULT_USER_ID)
+    waitForNotifications()
 
     then:
-    waitForNotifications()
     websocketClient.isConnected()
 
     when: "auth from new connection"
     WebsocketClient newWebsocketClient = new WebsocketClient(randomServerPort).connect()
     operationExecutor.auth(newWebsocketClient, DEFAULT_USER_ID)
-
-    then:
     waitForNotifications()
 
+    then:
     !websocketClient.isConnected()
-    assertResponseContains(websocketClient, OLD_CONNECTION_WILL_CLOSE_MESSAGE)
-    assertResponseContains(websocketClient, Constants.USER_INFO_OPERATION_TYPE)
+    websocketClient.containsResponse(OLD_CONNECTION_WILL_CLOSE_MESSAGE)
+    websocketClient.containsResponse(Constants.USER_INFO_OPERATION_TYPE)
 
     newWebsocketClient.isConnected()
-    assertResponseNotContains(newWebsocketClient, OLD_CONNECTION_WILL_CLOSE_MESSAGE)
-    assertResponseContains(newWebsocketClient, Constants.USER_INFO_OPERATION_TYPE)
+    newWebsocketClient.notContainsResponse(OLD_CONNECTION_WILL_CLOSE_MESSAGE)
+    newWebsocketClient.containsResponse(Constants.USER_INFO_OPERATION_TYPE)
   }
 
   def "should disconnect when user authed twice"() {
     when: "first connection"
     operationExecutor.auth(websocketClient, DEFAULT_USER_ID)
-
-    then:
     waitForNotifications()
 
+    then:
     websocketClient.isConnected()
     assertResponses()
 
     when: "second connection"
     operationExecutor.auth(websocketClient, DEFAULT_USER_ID)
-
-    then:
     waitForNotifications()
 
+    then:
     !websocketClient.isConnected()
     assertResponses()
   }
 
   private void assertResponses() {
-    assertResponseContains(websocketClient, Constants.USER_INFO_OPERATION_TYPE)
-    websocketClient.getServerResponses().size() == 3
+    assert websocketClient.containsResponse(Constants.USER_INFO_OPERATION_TYPE)
+    assert websocketClient.getServerResponses().size() == 3
   }
 
 }

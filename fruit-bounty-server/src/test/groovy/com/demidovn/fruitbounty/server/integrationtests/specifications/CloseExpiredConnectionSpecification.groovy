@@ -24,7 +24,7 @@ class CloseExpiredConnectionSpecification extends AbstractAuthMockedSpecificatio
 
     then:
     !websocketClient.isConnected()
-    assertResponseContains(websocketClient, CONNECTION_WILL_CLOSE_BECAUSE_WAS_NOT_AUTHED_LONG_TIME)
+    websocketClient.containsResponse(CONNECTION_WILL_CLOSE_BECAUSE_WAS_NOT_AUTHED_LONG_TIME)
 
     websocketClient.getServerResponses().size() == 1
   }
@@ -38,8 +38,8 @@ class CloseExpiredConnectionSpecification extends AbstractAuthMockedSpecificatio
 
     then:
     !websocketClient.isConnected()
-    assertResponseContains(websocketClient, Constants.USER_INFO_OPERATION_TYPE)
-    assertResponseContains(websocketClient, CONNECTION_WILL_CLOSE_BECAUSE_USER_WAS_NOT_ACTIVE)
+    websocketClient.containsResponse(Constants.USER_INFO_OPERATION_TYPE)
+    websocketClient.containsResponse(CONNECTION_WILL_CLOSE_BECAUSE_USER_WAS_NOT_ACTIVE)
 
     websocketClient.getServerResponses().size() == 4
   }
