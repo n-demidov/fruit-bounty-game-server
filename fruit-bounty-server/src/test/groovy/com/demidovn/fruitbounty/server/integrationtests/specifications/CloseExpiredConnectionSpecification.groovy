@@ -7,7 +7,7 @@ import org.springframework.test.context.TestPropertySource
 @TestPropertySource(properties = [
     "game-server.schedule-delay.valid-not-authed-connections=91",
     "game-server.ttl.not-authed-connection=0",
-    "game-server.schedule-delay.valid-authed-connections=91",
+    "game-server.schedule-delay.valid-authed-connections=30",
     "game-server.ttl.authed-inactive-connection=0"
 ])
 class CloseExpiredConnectionSpecification extends AbstractAuthMockedSpecification {
