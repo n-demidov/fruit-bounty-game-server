@@ -26,13 +26,29 @@ The server calls only them. The game-module provides an implementation.
 
 ![alt text](https://github.com/n-demidov/fruit-bounty-game-server/blob/master/documents/2.%20modules%20and%20some%20classes%20interactions.png?raw=true "Not full interaction between modules and some classes")
 
-There are both unit and integration tests.
+**There are both unit and integration tests.**
 
-The integration tests cover such cases as checking disconnections if a user was inactive for a long time, etc (the TTLs are extracted to env vars and mocked to speed up such cases in tests); or chat messaging between users.
+In general, tests are used where there are difficult/long/tedious test cases.
 
-The Unit tests are used, for example, when you do not need to raise the context, for example, when covering game rules. Each game rule is implemented by a separate class with a single public method. It is a clean function and easily covered with a tests. In general, for each task are using appropriate tools.
+For example, it may be different tests for disconnections: let's say if the user has connected from a new device, then the old connection needs to be closed. Or for example there is a disconnection check if a user was inactive for 15 minutes (to not wait so long - many parameters are extracted into environment variables and mocked for a few milliseconds to speed up such cases in tests).
 
-There is also a cache between а database and the service layer. Therefore, there are no unnecessary read requests to the database. Consequently, there are no delays in processing game actions.
+Also there is a chat check that different users see each other's messages.
+There are tests for game requests and game creation.
+
+Under the above cases, integration tests well suited (Spring Boot Tests). They up server and IoC context (with mocked external systems). 
+
+Unit tests are also used. For example, where there is no need to up the context; or where you need to check many variations of input parameters.
+
+For example, unit tests are used for test covering of game rules. Each game rule is implemented by a separate class with a single public method. It is a pure function and easily covered by test.
+
+And then - business logic is composed in a separate class from these rule-functions. So it's much easier to read and understand the code.
+
+In general, for each task are using appropriate tools.
+
+Also there is a **cache** between а database and the service layer.
+
+During the authentication the user data is read into the cache (if it has not yet been in the cache). After that, all the rare requests for this data come from the cache. After the end of the game (which happens not often) - the data is updated in cache and DB.
+Consequently the processing of game actions does not slow down due to DB calls.
 
 Please, don't see the client code :) It's small and just a rapid prototype with minimal functionality.
 
