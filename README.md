@@ -35,7 +35,7 @@ For example, it may be different tests for disconnections: let's say if the user
 Also there is a chat check that different users see each other's messages.
 There are tests for game requests and game creation.
 
-Under the above cases, integration tests well suited (Spring Boot Tests). They up server and IoC context (with mocked external systems). 
+Integration tests are well suited for the above cases (Spring Boot Tests). They up server and IoC context (with mocked external systems). 
 
 Unit tests are also used. For example, where there is no need to up the context; or where you need to check many variations of input parameters.
 
