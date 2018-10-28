@@ -5,9 +5,7 @@ import com.demidovn.fruitbounty.server.integrationtests.opeartions.OperationExec
 import com.demidovn.fruitbounty.server.integrationtests.opeartions.OperationsCreator
 import com.demidovn.fruitbounty.server.services.auth.authenticator.ThirdPartyUserAuthenticator
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.mock.mockito.MockBean
-
-import static org.mockito.BDDMockito.given
+import org.spockframework.spring.SpringBean
 
 abstract class AbstractAuthMockedSpecification extends AbstractWebsocketClientSpecification {
 
@@ -16,8 +14,8 @@ abstract class AbstractAuthMockedSpecification extends AbstractWebsocketClientSp
   protected static final int DEFAULT_USER_ID = 1
   protected static final int SECOND_USER_ID = 2
 
-  @MockBean
-  private ThirdPartyUserAuthenticator thirdPartyUserAuthenticator
+  @SpringBean
+  ThirdPartyUserAuthenticator thirdPartyUserAuthenticator = Mock()
 
   @Autowired
   protected OperationExecutor operationExecutor
@@ -38,8 +36,8 @@ abstract class AbstractAuthMockedSpecification extends AbstractWebsocketClientSp
     authedUserInfo.setThirdPartyId(userIdString)
     authedUserInfo.setThirdPartyType(MOCKED_THIRD_PARTY_TYPE)
 
-    given(this.thirdPartyUserAuthenticator.authenticate(operationsCreator.getAuthOperation(userId)))
-        .willReturn(authedUserInfo)
+    thirdPartyUserAuthenticator
+            .authenticate(operationsCreator.getAuthOperation(userId)) >> authedUserInfo
   }
 
   protected String getMockedUserName(int userId) {
