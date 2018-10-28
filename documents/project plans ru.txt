@@ -354,7 +354,10 @@ Spring Websocket Endpoints Testing
 https://medium.com/@MelvinBlokhuijzen/spring-websocket-endpoints-integration-testing-180357b4f24c
 
 
-Программки для просмотра TCP-соединений для винды: TCP View, netstat, WireShark
+== Spock:
+- Introduction to Testing with Spock: http://www.baeldung.com/groovy-spock
+- Running Spock tests with Maven build: https://www.testwithspring.com/lesson/running-unit-tests-with-maven-spock-edition
+- Spock mocking for Spring Integration Testing: https://objectpartners.com/2018/06/14/spock-1-2-annotations-for-spring-integration-testing/
 
 
 Canvas
