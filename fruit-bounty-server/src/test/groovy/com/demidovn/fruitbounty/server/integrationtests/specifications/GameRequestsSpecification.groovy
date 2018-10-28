@@ -58,7 +58,7 @@ class GameRequestsSpecification extends AbstractAuthMockedSpecification {
     operationExecutor.sendGameRequest(secondWebsocketClient)
     operationExecutor.sendGameRequest(secondWebsocketClient)
     operationExecutor.sendGameRequest(secondWebsocketClient)
-    waitForNotifications(MIN_WAIT_TIME)
+    waitForNotifications(MIN_WAIT_TIME * 2)
     operationExecutor.rejectGameRequest(secondWebsocketClient)
     waitForNotifications(MIN_WAIT_TIME)
 
