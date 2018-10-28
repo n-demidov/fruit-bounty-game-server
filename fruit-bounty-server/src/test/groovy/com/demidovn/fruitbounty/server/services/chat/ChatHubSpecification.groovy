@@ -2,12 +2,13 @@ package com.demidovn.fruitbounty.server.services.chat
 
 import com.demidovn.fruitbounty.server.AppConfigs
 import spock.lang.Specification
+import spock.lang.Subject
 
 class ChatHubSpecification extends Specification {
 
   static final PREFIX = "a-"
 
-  ChatHub chatHub = new ChatHub()
+  @Subject ChatHub chatHub = new ChatHub()
 
   def "should store only limited number of messages"() {
     when:
