@@ -4,15 +4,15 @@ var LATER_SYMBOL = "&lt;";
 var GRATER_SYMBOL = "&gt;";
 var WEBSOCKET_ENTRY_URL = "/connect-app";
 var USER_QUEUE = "/app/from_client";
-var APP_ID = "722449047946247";
+var FB_APP_ID = "722449047946247";
+var VK_SDK_URL = "https://vk.com/js/api/xd_connection.js?2";
 
 var TIPS_TIMER_INTERVAL = 12500;
-var READY_TO_PLAY = "Play", WAITING_FOR_GAME = "Matching players...";
 var ENTER_KEY_CODE = 13;
 var C_KEY_CODE = 67;
 var TILDE_KEY_CODE = 192;
 
-var AUTH_OPERATION_TYPE = "Auth", FB_TYPE = "fb";
+var AUTH_OPERATION_TYPE = "Auth", FB_TYPE = "fb", VK_TYPE = "vk";
 var SEND_CHAT_OPERATION_TYPE = "SendChat";
 var SEND_PLAY_REQUEST_OPERATION_TYPE = "GameRequest";
 var SEND_GAME_ACTION = "GameAction", MOVE_GAME_ACTION = "Move", SURRENDER_GAME_ACTION = "Surrender";
@@ -26,8 +26,9 @@ var OP_RES_USER_INFO = "UserInfo", OP_RES_CHAT = "SendChat",
 var chatScrolling = $('#chat-output-scrolling');
 var chatMsg = $("#chat-msg-input");
 
+var queryParams;
 var isAuthed = false;
-var loginStatus;
+var fbLoginStatus;
 var stompClient = null;
 var userInfo;
 var isWaitingForOpponent = false;
@@ -36,19 +37,13 @@ var tipsTimerId;
 function sendOperation(operationType, data) {
   var operation = {
     type: operationType,
-    data: data,
-  }
+    data: data
+  };
 
   stompClient.send(USER_QUEUE, {}, JSON.stringify(operation));
 }
 
-function sendAuth(loginStatus) {
-  var authPayload = {
-    type: FB_TYPE,
-    accessToken: loginStatus.authResponse.accessToken,
-    userId: loginStatus.authResponse.userID
-  }
-
+function sendAuth(authPayload) {
   sendOperation(AUTH_OPERATION_TYPE, authPayload);
 }
 
@@ -61,7 +56,7 @@ function sendChat() {
 
   var sendChatPayload = {
     msg: chatMessage
-  }
+  };
   chatMsg.val("");
 
   sendOperation(SEND_CHAT_OPERATION_TYPE, sendChatPayload);
@@ -73,16 +68,16 @@ function sendPlayRequest() {
   if (isWaitingForOpponent) {
     sendPlayPayload = {
       ack: CANCEL_GAME_REQUEST
-    }
+    };
 
     resetGameRequestUi();
   } else {
     sendPlayPayload = {
       ack: APPLY_GAME_REQUEST
-    }
+    };
 
     isWaitingForOpponent = true;
-    $("#play").text(WAITING_FOR_GAME);
+    $("#play").text(localize("matching-players"));
     startDisplayTips();
   }
 
@@ -91,7 +86,7 @@ function sendPlayRequest() {
 
 function resetGameRequestUi() {
   isWaitingForOpponent = false;
-  $("#play").text(READY_TO_PLAY);
+  $("#play").text(localize("play"));
   stopDisplayTips();
 }
 
@@ -117,12 +112,12 @@ function showRandomTip() {
   var tip;
 
   if (isFirstGame()) {
-    tip = tips[0];
+    tip = getFirstTip();
   } else {
-    tip = tips[getRandomInt(0, tips.length)];
+    tip = getRandomTip();
   }
 
-  $("#tips").html("<strong>Tips: </strong>" + tip);
+  $("#tips").html('<strong>' + localize('tip') + ': </strong>' + tip);
   $("#tips-content").show();
 }
 
@@ -148,7 +143,8 @@ function connectToServer() {
       postSysMsg("Got an error from the server: " + message);
     });
 
-    sendAuth(loginStatus);
+    var authPayload = getSocialNetworkPayload();
+    sendAuth(authPayload);
   }, function(error) {
     postSysMsg("Connection error: " + error);
     setConnected(false);
@@ -176,8 +172,8 @@ function processUserInfoOperation(data) {
 
   $("#userImg").attr("src", userInfo.img);
   $("#userName").text(userInfo.name);
-  $("#userScore").text("Score: " + userInfo.score);
-  $("#user-info-data").attr("data-original-title", "wins: " + userInfo.wins + " defeats: " + userInfo.defeats + " draws: " + userInfo.draws);
+  $("#userScore").text(localize('score') + ': ' + userInfo.score);
+  $("#user-info-data").attr("data-original-title", concatGameStats(userInfo));
 
   showMainWindow();
 }
@@ -216,7 +212,7 @@ function processRatingTableOperation(topRated) {
 
   var counter = 1;
   topRated.forEach(function(user) {
-    var tooltipText = "wins: " + user.wins + " defeats: " + user.defeats + " draws: " + user.draws;
+    var tooltipText = concatGameStats(user);
     var tooltipAttrs = "data-toggle='tooltip' data-placement='bottom' title='" + tooltipText + "'";
     
     topRatedElement.append("<tr " + tooltipAttrs + ">" +
@@ -232,13 +228,11 @@ function wrapTd(text) {
   return "<td class='cursor-default'>" + text + "</td>";
 }
 
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
 
 
 function initUi() {
+  console.log("initUi");
+
   $("form").on('submit', function (e) {
     e.preventDefault();
   });
@@ -246,7 +240,7 @@ function initUi() {
   $("#play").click(sendPlayRequest);
   $("#send").click(sendChat);
 
-  $("#tips").on('click', '#share', share);
+  $("#tips").on('click', '#share', shareFbGame);
 
   $(chatMsg).on('keydown', function(e) {
     if (e.keyCode === ENTER_KEY_CODE) {
@@ -263,7 +257,6 @@ function initUi() {
   });
 
   $('[data-toggle="tooltip"]').tooltip();
-  initGameUi();
 }
 
 function setConnected(connected) {
@@ -289,29 +282,90 @@ function showMainWindow() {
   $("#loading-window").hide();
 }
 
-function share() {
-  FB.ui(
-   {
-    method: 'share',
-    href: 'https://apps.facebook.com/fruit-bounty'
-  }, function(response){});
+function concatGameStats(user) {
+  return localize('wins') + ':' + user.wins + ' ' + localize('defeats') + ":" + user.defeats + ' ' + localize('draws') + ":" + user.draws;
+}
+
+function onSocialNetworkAuthed() {
+  console.log("onSocialNetworkAuthed");
+  isAuthed = true;
+
+  queryParams = parseQueryString();
+  connectToServer();
+  initLocalization();
+  initUi();
+  initGameUi();
 }
 
 
+/* === Generic Social Network methods ===  */
+
+function runApp() {
+  if (isVkSdk()) {
+    console.log('starting vk SDK...');
+    startVkSdk();
+  } else {
+    console.log('starting facebook SDK...');
+    startFbSdk();
+  }
+}
+
+function isVkSdk() {
+  var socialNetworkType = $('#social-network-type');
+  return socialNetworkType.text() === VK_TYPE;
+}
+
+function getSocialNetworkPayload() {
+  var authPayload = {};
+
+  if (isVkSdk()) {
+    authPayload.type = VK_TYPE;
+    authPayload.authKey = queryParams["auth_key"];
+    authPayload.userId = queryParams["viewer_id"];
+  } else {
+    authPayload.type = FB_TYPE;
+    authPayload.accessToken = fbLoginStatus.authResponse.accessToken;
+    authPayload.userId = fbLoginStatus.authResponse.userID;
+  }
+
+  return authPayload;
+}
 
 
-window.fbAsyncInit = function() {
+/* === Facebook Methods === */
+
+function startFbSdk() {
+  window.fbAsyncInit = fbAsyncInit;
+
+  console.log('loading facebook SDK...');
+  loadFbSdk();
+}
+
+function fbAsyncInit() {
   initFb();
 
-//  FB.AppEvents.logPageView();
-//  FB.Event.subscribe('auth.authResponseChange', statusChanged);
+  // FB.AppEvents.logPageView();
+  // FB.Event.subscribe('auth.authResponseChange', fbStatusChanged);
 
-  tryToLogin();
-};
+  tryLoginFb();
+}
+
+function loadFbSdk() {
+  (function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {
+      return;
+    }
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+}
 
 function initFb() {
   FB.init({
-    appId            : APP_ID,
+    appId            : FB_APP_ID,
     version          : 'v2.12',
     autoLogAppEvents : true,
     xfbml            : false,
@@ -320,38 +374,100 @@ function initFb() {
   });
 }
 
-function tryToLogin() {
+function tryLoginFb() {
   FB.getLoginStatus(function(response) {
     if (response.status === 'connected') {
-      statusChanged(response);
+      fbStatusChanged(response);
     } else {
       FB.login(
         function(response) {
-          statusChanged(response);
+          fbStatusChanged(response);
         },
         {scope: 'public_profile'});
     }
   });
 }
 
-function statusChanged(logStatus) {
+function fbStatusChanged(logStatus) {
   if (logStatus.status != 'connected' || isAuthed) {
     return;
   }
 
-  isAuthed = true;
-  loginStatus = logStatus;
+  fbLoginStatus = logStatus;
+  onSocialNetworkAuthed();
+}
 
-  connectToServer();
-  initUi();
+function shareFbGame() {
+  FB.ui(
+    {
+      method: 'share',
+      href: 'https://apps.facebook.com/fruit-bounty'
+    }, function(response){});
 }
 
 
+/* === VK Methods === */
 
-(function(d, s, id){
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) {return;}
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/sdk.js";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
+function startVkSdk() {
+  console.log('loading vk SDK...');
+  loadScript(VK_SDK_URL, initVk);
+}
+
+function initVk() {
+  VK.init(function(d) {
+    // API initialization succeeded. Your code here
+    console.log("VK API initialization succeeded.");
+
+    onSocialNetworkAuthed();
+  }, function(d) {
+    // API initialization failed. Can reload page here
+    console.log("API initialization failed. Try to reload page.");
+  }, '5.87');
+}
+
+
+/* === Other === */
+
+function loadScript(url, callback) {
+  // Adding the script tag to the head as suggested before
+  var head = document.getElementsByTagName('head')[0];
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = url;
+
+  // Then bind the event to the callback function.
+  // There are several events for cross browser compatibility.
+  script.onreadystatechange = callback;
+  script.onload = callback;
+
+  // Fire the loading
+  head.appendChild(script);
+}
+
+function loadScriptDynamically(url) {
+  var script = document.createElement("script");  // create a script DOM node
+  script.src = url;  // set its src to the provided URL
+
+  document.head.appendChild(script);  // add it to the end of the head section of the page (could change 'head' to 'body' to add it to the end of the body section instead)
+}
+
+function parseQueryString() {
+  var str = window.location.search;
+  var objURL = {};
+
+  str.replace(
+    new RegExp( "([^?=&]+)(=([^&]*))?", "g" ),
+    function( $0, $1, $2, $3 ){
+      objURL[ $1 ] = $3;
+    }
+  );
+  return objURL;
+}
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+
+/* === Run App === */
+runApp();

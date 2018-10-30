@@ -68,25 +68,31 @@ Or you can search the game in Facebook app catalog by key-words like *Fruit's Bo
 
 ## How to run locally
 
-1. Set database environment variables* (in `application.yml` or by using your IDE): 
+1. Set database environment variables (in `application.yml` or by using your IDE): 
 - `JDBC_DATABASE_URL`
 - `JDBC_DATABASE_USERNAME`
 - `JDBC_DATABASE_PASS`
 
-2. Run Spring Boot application. And open the game on [http://localhost:5000/app.html/](http://localhost:5000/app.html/)
+2. Set VK environment variables. It's needed only for `vk.com` social network requests.
+ You can skip this step or set dummy/random values if you don't use VK:
+- `VK_APP_ID`
+- `VK_ACCESS_TOKEN`
+- `VK_SECRET_KEY`
+
+3. Run Spring Boot application. And open the game on [http://localhost:5000/fb-app](http://localhost:5000/fb-app)
 
 You can change the port by set `PORT` environment variable or edit it in `application.yml` file.
-By default the port is '5000'.
+By default the port is `5000`.
 
-*Note: you can use docker to run local PosgreSQL instance:
+Note: you can use Docker to run local PosgreSQL instance:
 1. Pull image [https://hub.docker.com/_/postgres/](https://hub.docker.com/_/postgres/)
 2. Run docker container, e.g.: ```docker run --name h-postgres -e POSTGRES_PASSWORD=postgres -p:5432:5432 -d postgres:9.6.4```
 3. Specify environment variable, e.g.:
    1. `JDBC_DATABASE_URL` = `jdbc:postgresql://192.168.99.100:5432/postgres`
    2. `JDBC_DATABASE_USERNAME` = `postgres`
    3. `JDBC_DATABASE_PASS` = `postgres`
-  
-  Note: To use docker on Windows 7 you can setup 'Docker Toolbox' soft. Which will start on specific IP which is shown on startup in a console.
+
+Note: to use Docker on Windows 7 you can setup 'Docker Toolbox' soft. Which will start on specific IP which is shown on startup in a console.
 
 ## License
 Fruit's Bounty is Open Source software released under the

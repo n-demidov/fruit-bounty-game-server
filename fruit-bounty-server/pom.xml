@@ -49,6 +49,16 @@
       <artifactId>jackson-core</artifactId>
       <version>2.9.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    </dependency>
+    <!-- Needs for thymeleaf HTML5 -->
+    <dependency>
+      <groupId>net.sourceforge.nekohtml</groupId>
+      <artifactId>nekohtml</artifactId>
+      <version>1.9.21</version>
+    </dependency>
 
     <!-- Database dependencies -->
     <dependency>

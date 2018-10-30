@@ -4,13 +4,10 @@ var CANVAS_ID = "game-canvas";
 var CANVAS_CONTEXT = "2d";
 var LEFT_TEXT_ALIGN = "left";
 
-var FRUITS_IMAGE = "img/fruits.png";
+var FRUITS_IMAGE = "/img/fruits.png";
 var FIRST_PLAYER_CELLS_COLOR = "green";
 var SECOND_PLAYER_CELLS_COLOR = "blue";
 var BOARD_GRID_COLOR = "black";
-var CLOSE_GAME_TEXT = "Close", CONCEDE_GAME_TEXT = "Concede";
-var CONCEDE_CONFIRMATION_MESSAGE = "Are you sure you want to concede?";
-var WINNER_LABEL = "Winner";
 
 var STARTED_CELL_LINE_WIDTH = 3;
 var ARROWS_LINE_WIDTH = 2;
@@ -78,7 +75,7 @@ function resetGameInfo() {
   $('.added-score').hide();
 
   $('.surrender-btn').hide();
-  $('.surrender-btn').text(CONCEDE_GAME_TEXT);
+  $('.surrender-btn').text(localize('concede'));
   $('.player-winner').hide();
   $('.player-winner').text();
 }
@@ -102,7 +99,7 @@ function switchToGameWindow() {
 }
 
 function closeButtonClicked(e) {
-  if (e.target.innerText === CLOSE_GAME_TEXT) {
+  if (e.target.innerText === localize('close')) {
     closeGameWindowClicked();
   } else {
     surrenderClicked();
@@ -115,10 +112,10 @@ function closeGameWindowClicked() {
 }
 
 function surrenderClicked() {
-  if (confirm(CONCEDE_CONFIRMATION_MESSAGE)) {
+  if (confirm(localize('concede-confirmation'))) {
     var surrenderPayload = {
       type: SURRENDER_GAME_ACTION
-    }
+    };
 
     sendGameAction(surrenderPayload);
   }
@@ -148,7 +145,7 @@ function gameBoardClicked(x, y) {
     type: MOVE_GAME_ACTION,
     x: cellIndexX,
     y: cellIndexY
-  }
+  };
 
   sendGameAction(movePayload);
 }
@@ -166,7 +163,7 @@ function paintGame(game) {
 
   if (game.finished) {
     killGameTimer();
-    $('.surrender-btn').text(CLOSE_GAME_TEXT);
+    $('.surrender-btn').text(localize('close'));
   }
 
   canvas.width = CANVAS_WIDTH;
@@ -199,10 +196,10 @@ function paintPlayer(player, game, playerSide) {
   }
 
   // Other player's params
-  $('#' + playerSide + '-pl-score').text("score: " + player.score);
-  $('#' + playerSide + '-pl-wins').text("wins: " + player.wins);
-  $('#' + playerSide + '-pl-defeats').text("defeats: " + player.defeats);
-  $('#' + playerSide + '-pl-draws').text("draws: " + player.draws);
+  $('#' + playerSide + '-pl-score').text(localize("score") + ": " + player.score);
+  $('#' + playerSide + '-pl-wins').text(localize("wins") + ": " + player.wins);
+  $('#' + playerSide + '-pl-defeats').text(localize("defeats") + ": " + player.defeats);
+  $('#' + playerSide + '-pl-draws').text(localize("draws") + ": " + player.draws);
 
   // if game is going
   if (!game.finished && player.id === game.currentPlayer.id) {
@@ -225,7 +222,7 @@ function paintPlayer(player, game, playerSide) {
     // Winner
     if (game.winner && game.winner.id === player.id) {
       var winnerPlayer = $('#' + playerSide + '-pl-winner');
-      winnerPlayer.text(WINNER_LABEL);
+      winnerPlayer.text(localize('win'));
       winnerPlayer.show();
     }
   }
@@ -319,41 +316,41 @@ function paintTips(game) {
     highlightStartedCell(startedCell);
     drawArrows2Neighbors(startedCell);
 
-    var playerStartedPosition = startedCell.x === 0 ? "left top" : "right bottom";
-    var tip = "You have started in the " + playerStartedPosition + " corner of the game board.";
+    var playerStartedPosition = startedCell.x === 0 ? localize('tutor.left-top') : localize('tutor.right-bottom');
+    var tip = localize('tutor.you-started') + ' ' + playerStartedPosition + ' ' + localize('tutor.board-corner');
 
     tipY += addingTipHeight;
     drawStroked(tip, tipX, tipY);
 
-    tip = "You can grab only those fruits that adjoin yours.";
+    tip = localize('tutor.grab-adjoin-fruits');
     tipY += addingTipHeight;
     drawStroked(tip, tipX, tipY);
 
-    tip = "So capture any of two neighboring fruits.";
+    tip = localize('tutor.capture-any-nearest');
     tipY += addingTipHeight;
     drawStroked(tip, tipX, tipY);
   } else if (playerCells >= 2 && playerCells <= 3) {
-    tip = "If the captured fruit contacts other fruit(s) of the same kind,";
+    tip = localize('tutor.capture-several-fruits-1');
     tipY += addingTipHeight;
     drawStroked(tip, tipX, tipY);
 
-    tip = "they also will be taken.";
+    tip = localize('tutor.capture-several-fruits-2');
     tipY += addingTipHeight;
     drawStroked(tip, tipX, tipY);
   } else if (playerCells >= 4 && playerCells <= 5) {
-    tip = "Also, keep in mind that you can't capture a fruit";
+    tip = localize('tutor.can-not-capture-opponent-fruit-1');
     tipY += addingTipHeight;
     drawStroked(tip, tipX, tipY);
 
-    tip = "if an opponent currently owns the same kind of the fruit.";
+    tip = localize('tutor.can-not-capture-opponent-fruit-2');
     tipY += addingTipHeight;
     drawStroked(tip, tipX, tipY);
   } else if (playerCells >= 6 && playerCells <= 7) {
-    tip = "Try to collect as many fruits as you can.";
+    tip = localize('tutor.try-collect-max-fruits');
     tipY += addingTipHeight;
     drawStroked(tip, tipX, tipY);
 
-    tip = "A winner is determined by the largest number of captured fruits.";
+    tip = localize('tutor.the-max-will-win');
     tipY += addingTipHeight;
     drawStroked(tip, tipX, tipY);
   }
@@ -414,7 +411,6 @@ function getPlayerStartedCell(game, playerId) {
   if (playerId === game.players[0].id) {
     return {"x": BOARD_X, "y": BOARD_Y};
   } else {
-    var lastCellCoordinate = CELL_SIZE;
     var cells = game.board.cells;
     return {
       "x": BOARD_X + (cells.length - 1) * CELL_SIZE,

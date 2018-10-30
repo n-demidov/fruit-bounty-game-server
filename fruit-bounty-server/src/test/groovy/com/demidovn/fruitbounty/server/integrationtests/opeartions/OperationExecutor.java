@@ -2,6 +2,7 @@ package com.demidovn.fruitbounty.server.integrationtests.opeartions;
 
 import com.demidovn.fruitbounty.server.dto.operations.request.AuthOperation;
 import com.demidovn.fruitbounty.server.integrationtests.websocket.client.WebsocketClient;
+import com.demidovn.fruitbounty.server.services.auth.AuthType;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,9 +19,9 @@ public class OperationExecutor {
 
   public void auth(WebsocketClient websocketClient, int userId) {
     Map<String, String> payloadDetails = new LinkedHashMap<>();
-    AuthOperation authOperation = operationsCreator.getAuthOperation(userId);
+    AuthOperation authOperation = operationsCreator.getAuthOperation(userId, AuthType.FB);
 
-    payloadDetails.put("type", authOperation.getType());
+    payloadDetails.put("type", authOperation.getType().getStringRepresentation());
     payloadDetails.put("accessToken", authOperation.getAccessToken());
     payloadDetails.put("userId", String.valueOf(authOperation.getUserId()));
 

@@ -1,16 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8">
 
   <title>Fruit's Bounty</title>
 
-  <link rel="stylesheet" type="text/css" href="style/external/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="style/style.css">
+  <link rel="stylesheet" type="text/css" href="/style/external/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/style/style.css">
 </head>
 <body>
 <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable Javascript and reload this page!</h2></noscript>
 <div id="main-container" class="container-fluid">
+  <div id="vk_api_transport"></div>
+  <span id="social-network-type" th:text="${socialNetworkType}" class="always-hidden"></span>
+
   <!-- Lobby window -->
   <div id="lobby-window" class="lobby-window">
 
@@ -33,10 +36,10 @@
       <div class="col-xs-6">
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
-          <li role="presentation" class="active"><a href="#game-pane" class="background-colored" aria-controls="game-pane" role="tab" data-toggle="tab">Game</a></li>
-          <li role="presentation"><a href="#rules-pane" class="background-colored" aria-controls="rules-pane" role="tab" data-toggle="tab">Rules</a></li>
-          <li role="presentation"><a href="#feedback-pane" class="background-colored" aria-controls="feedback-pane" role="tab" data-toggle="tab">Feedback</a></li>
-          <li role="presentation"><a href="#authors" class="background-colored" aria-controls="authors" role="tab" data-toggle="tab">Authors</a></li>
+          <li role="presentation" class="active"><a id="game-pane-a" href="#game-pane" class="background-colored" aria-controls="game-pane" role="tab" data-toggle="tab">Game</a></li>
+          <li role="presentation"><a id="rules-pane-a" href="#rules-pane" class="background-colored" aria-controls="rules-pane" role="tab" data-toggle="tab">Rules</a></li>
+          <li role="presentation"><a id="feedback-pane-a" href="#feedback-pane" class="background-colored" aria-controls="feedback-pane" role="tab" data-toggle="tab">Feedback</a></li>
+          <li role="presentation"><a id="authors-pane-a" href="#authors" class="background-colored" aria-controls="authors" role="tab" data-toggle="tab">Authors</a></li>
         </ul>
 
         <!-- Tab panes -->
@@ -51,65 +54,9 @@
             </div>
           </div>
           <div role="tabpanel" class="tab-pane pane-padding background-colored" id="rules-pane">
-            <p class="lead">
-              The rules of Fruit's Bounty game:
-            </p>
-            <p>
-              The <strong>goal</strong> of the game - is to capture as many fruits as possible.
-            </p>
-            <p>
-              <strong>Players</strong> start in opposite corners of the game board. Moves are made alternately. A timeout for a move is about 20 seconds.
-            </p>
-            <p>
-              You can grab only those fruits that <strong>adjoin</strong> yours.
-            </p>
-            <p>
-              If the captured fruit contacts other fruit(s) of the same kind, they also will be taken. Due to this, you can significantly increase the speed of conquest of the playing field.
-            </p>
-            <p>
-              Also, you can't capture a fruit if an opponent currently owns the same kind of the fruit. Using this feature, you could hamper your opponent.
-            </p>
-            <p>
-              Fruit's Bounty - is an <strong>intellectual</strong> game with the addition of a randomness element.
-            </p>
-            <p>
-              At the end of a game, the <strong>winner</strong> is determined by the largest number of captured fruits.
-            </p>
-            <p>
-              A <strong>defeat</strong> can happen in three cases:
-              <br>
-              - A player missed 3 turns in a row.
-              <br>
-              - A player gave up.
-              <br>
-              - At the end of the game, a player collected less fruits than an opponent.
-            </p>
-            <p>
-              A <strong>draw</strong> can occur in those rare cases when both players have captured the same number of fruits.
-            </p>
-            <p>
-              The <strong>rating system</strong> is similar to the one used in chess. The <strong>calculation of scores</strong> depends on the difference in the ranking of both opponents: if a player defeats a stronger opponent, he/she will receive more points. In case a high rated player defeats the weaker one, he/she(the winner) will get an insignificant amount of rating (or nothing at all if the difference in rating is too big).
-            </p>
-            <p>
-              The <strong>rating table</strong> (on the main game window) shows the top rated players. The rating table takes into account the rating only starting from 600 points and it is updated every few seconds.
-            </p>
-            <br>
-            <p class="lead">
-              Hot keys:
-            </p>
-            <p>
-              To move focus in the input <strong>chat</strong> text area - press "Enter" key or "Alt" + "C" keys or "Ctrl" + "~" keys.
-            </p>
-            <p>
-              Hold down the "Ctrl" key and press "+" to zoom in.
-              <br>
-              Holds down the "Ctrl" key and press "-" to zoom out.
-              <br>
-              Hold down the "Ctrl" key and press "0" (zero) to reset to 100%.
-            </p>
           </div>
           <div role="tabpanel" class="tab-pane pane-padding background-colored" id="feedback-pane">
-            <address>
+            <address id="feedback-text">
               Please, write your suggestions, feedback and bugs to the <strong>Fruit's Bounty Support:</strong><br>
               <a href="mailto:#">FruitsBounty@gmail.com</a>
             </address>
@@ -131,7 +78,7 @@
       <div class="col-xs-6">
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
-          <li role="presentation" class="active"><a href="#rating-table-pane" aria-controls="rating-table-pane" role="tab" data-toggle="tab">Top rated players</a></li>
+          <li role="presentation" class="active"><a id="rating-table-pane-a" href="#rating-table-pane" aria-controls="rating-table-pane" role="tab" data-toggle="tab">Top rated players</a></li>
         </ul>
 
         <!-- Tab panes -->
@@ -207,7 +154,7 @@
         <form class="form-inline">
           <div class="form-group">
             <div class="input-group">
-              <input type="text" id="chat-msg-input" class="form-control chat-msg-input" placeholder="Type to chat..." maxlength="200" autocomplete="off">
+              <input type="text" id="chat-msg-input" class="form-control chat-msg-input" maxlength="200" autocomplete="off">
               <div id="send" class="btn btn-default input-group-addon send-chat-message">
                 &gt;
               </div>
@@ -236,18 +183,22 @@
 
 <hr>
 <div class="docs-content">
-  <a target="_blank" href="https://springs-sunshine.herokuapp.com/docs/privacy-policy.html">Privacy Policy</a>
-  <span> </span>
-  <a target="_blank" href="https://springs-sunshine.herokuapp.com/docs/terms-of-service.html">Terms of Service</a>
+  <a id="privacy-policy" target="_blank" href="https://springs-sunshine.herokuapp.com/docs/privacy-policy.html">Privacy Policy</a>
+  <span class="blue-color"> </span>
+  <a id="terms-of-service" target="_blank" href="https://springs-sunshine.herokuapp.com/docs/terms-of-service.html">Terms of Service</a>
 </div>
 
-<script src="js/external/sockjs-1.1.2.min.js"></script>
-<script src="js/external/stomp-2.3.4.min.js"></script>
-<script src="js/external/jquery-3.2.1.slim.min.js"></script>
-<script src="js/external/bootstrap.min.js"></script>
+<script defer src="/js/external/sockjs-1.1.2.min.js"></script>
+<script defer src="/js/external/stomp-2.3.4.min.js"></script>
+<script defer src="/js/external/jquery-3.2.1.slim.min.js"></script>
+<script defer src="/js/external/bootstrap.min.js"></script>
+<script defer src="/js/external/l100n.js"></script>
 
-<script src="js/game.js"></script>
-<script src="js/app.js"></script>
-<script src="js/data/tips.js"></script>
+<script defer src="/localization/tips.js"></script>
+<script defer src="/localization/game-rules.js"></script>
+<script defer src="/localization/main-ui.js"></script>
+<script defer src="/js/l10n-wrapper.js"></script>
+<script defer src="/js/game.js"></script>
+<script defer src="/js/app.js"></script>
 </body>
 </html>

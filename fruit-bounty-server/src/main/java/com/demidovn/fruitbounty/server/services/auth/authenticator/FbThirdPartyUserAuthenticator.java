@@ -4,6 +4,7 @@ import com.demidovn.fruitbounty.server.dto.operations.ThirdPartyAuthedUserInfo;
 import com.demidovn.fruitbounty.server.dto.operations.request.AuthOperation;
 import com.demidovn.fruitbounty.server.dto.operations.thirdparties.FacebookAuthedUserInfo;
 import com.demidovn.fruitbounty.server.exceptions.auth.AuthFailedException;
+import com.demidovn.fruitbounty.server.services.auth.AuthType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
@@ -21,6 +22,11 @@ public class FbThirdPartyUserAuthenticator implements ThirdPartyUserAuthenticato
   @Autowired
   @Qualifier("serverConversionService")
   private ConversionService conversionService;
+
+  @Override
+  public AuthType getAuthType() {
+    return AuthType.FB;
+  }
 
   @Override
   public ThirdPartyAuthedUserInfo authenticate(AuthOperation authOperation) {

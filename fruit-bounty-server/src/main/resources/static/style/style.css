@@ -6,6 +6,9 @@ body{
   display:none;
 }
 
+.always-hidden{
+  display:none;
+}
 
 /* ===== Common classes ===== */
 .no-margin-bottom{

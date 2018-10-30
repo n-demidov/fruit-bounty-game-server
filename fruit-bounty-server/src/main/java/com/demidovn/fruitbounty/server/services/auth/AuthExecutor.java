@@ -22,6 +22,7 @@ import com.demidovn.fruitbounty.server.services.chat.ChatHub;
 import com.demidovn.fruitbounty.server.services.auth.authenticator.ThirdPartyUserAuthenticator;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 @Slf4j
 @Component
@@ -44,8 +47,8 @@ public class AuthExecutor implements Runnable {
   @Autowired
   private ConnectionService connectionService;
 
-  @Autowired
-  private ThirdPartyUserAuthenticator thirdPartyUserAuthenticator;
+  @Resource(name = "thirdPartyUserAuthenticators")
+  private Map<AuthType, ThirdPartyUserAuthenticator> thirdPartyUserAuthenticators;
 
   @Autowired
   private UserService userService;
@@ -79,6 +82,8 @@ public class AuthExecutor implements Runnable {
       authAttemptsValidator.valid(connection);
 
       AuthOperation authOperation = conversionService.convert(operation, AuthOperation.class);
+      ThirdPartyUserAuthenticator thirdPartyUserAuthenticator =
+              thirdPartyUserAuthenticators.get(authOperation.getType());
       ThirdPartyAuthedUserInfo thirdPartyAuthedUserInfo = thirdPartyUserAuthenticator.authenticate(authOperation);
       User authedUser = getOrCreateUser(thirdPartyAuthedUserInfo);
 
