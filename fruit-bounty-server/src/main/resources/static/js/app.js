@@ -6,6 +6,8 @@ var WEBSOCKET_ENTRY_URL = "/connect-app";
 var USER_QUEUE = "/app/from_client";
 var FB_APP_ID = "722449047946247";
 var VK_SDK_URL = "https://vk.com/js/api/xd_connection.js?2";
+var VK_MOBILE_SDK_URL = "https://vk.com/js/api/mobile_sdk.js";
+var VK_IFRAME_WINDOW_NAME = "fXD";
 
 var TIPS_TIMER_INTERVAL = 12500;
 var ENTER_KEY_CODE = 13;
@@ -409,8 +411,14 @@ function shareFbGame() {
 /* === VK Methods === */
 
 function startVkSdk() {
-  console.log('loading vk SDK...');
-  loadScript(VK_SDK_URL, initVk);
+  if (isMobileVk) {
+    // window.name = VK_IFRAME_WINDOW_NAME;
+    console.log('loading mobile vk SDK...');
+    loadScript(VK_MOBILE_SDK_URL, initVk);
+  } else {
+    console.log('loading vk SDK...');
+    loadScript(VK_SDK_URL, initVk);
+  }
 }
 
 function initVk() {
@@ -423,6 +431,10 @@ function initVk() {
     // API initialization failed. Can reload page here
     console.log("API initialization failed. Try to reload page.");
   }, '5.87');
+}
+
+function isMobileVk() {
+  return window.name !== VK_IFRAME_WINDOW_NAME;
 }
 
 
