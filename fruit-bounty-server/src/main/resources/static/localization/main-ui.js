@@ -30,8 +30,8 @@ function getLocalization() {
 
     "play": {
       selector: "#play",
-      en: "Play",
-      ru: "Играть"
+      en: "Start game",
+      ru: "Начать игру"
     },
     "feedback-text": {
       selector: "#feedback-text",
@@ -69,7 +69,7 @@ function getLocalization() {
     /* Non HTML text */
     "matching-players": {
       en: "Matching players...",
-      ru: "Поиск противника..."
+      ru: "Поиск оппонента..."
     },
     "score": {
       en: "Score",
