@@ -94,7 +94,8 @@ public class GameRequests {
     Long remainingUserId = userIds.get(0);
     int iterationsCount = incrementPassedIterationsCount(remainingUserId);
 
-    if (iterationsCount >= AppConfigs.GAME_REQUEST_ITERATIONS_BEFORE_BOT_PLAY) {
+    int waitUntilBot = countWaitUntilBot();
+    if (iterationsCount > waitUntilBot) {
       log.debug("Creating game between user (id={}) and bot", remainingUserId);
       gameRequests.remove(remainingUserId);
 
@@ -108,6 +109,23 @@ public class GameRequests {
     gameRequests.put(remainingUserId, newIterationsCount);
 
     return newIterationsCount;
+  }
+
+  private int countWaitUntilBot() {
+    int onlineUsers = connectionService.countOnlineUsers();
+
+    if (onlineUsers <= 1) {
+      return 0;
+    } else if (onlineUsers <= 10) {
+      return 1;
+    } else {
+      int wait = onlineUsers / 10;
+      if (wait > AppConfigs.GAME_REQUEST_ITERATIONS_BEFORE_BOT_PLAY) {
+        wait = AppConfigs.GAME_REQUEST_ITERATIONS_BEFORE_BOT_PLAY;
+      }
+
+      return wait;
+    }
   }
 
 }

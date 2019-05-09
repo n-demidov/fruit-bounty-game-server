@@ -140,6 +140,10 @@ public class ConnectionService {
     return notAuthedConnections.size();
   }
 
+  public int countOnlineUsers() {
+    return onlineUsers.size();
+  }
+
   public int countAuthedConnections() {
     return authedConnections.size();
   }
