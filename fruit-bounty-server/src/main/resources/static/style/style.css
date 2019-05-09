@@ -70,6 +70,11 @@ body{
   margin-left:10px;
 }
 
+.play-loader{
+  height:22px;
+  display:none;
+}
+
 .tips-content{
   background-color:#fff;
   margin-top:70px;

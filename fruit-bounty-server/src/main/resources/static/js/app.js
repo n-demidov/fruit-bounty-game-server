@@ -79,7 +79,8 @@ function sendPlayRequest() {
     };
 
     isWaitingForOpponent = true;
-    $("#play").text(localize("matching-players"));
+    $("#play-text").text(localize("matching-players"));
+    $("#play-loader").show();
     startDisplayTips();
   }
 
@@ -88,7 +89,8 @@ function sendPlayRequest() {
 
 function resetGameRequestUi() {
   isWaitingForOpponent = false;
-  $("#play").text(localize("play"));
+  $("#play-text").text(localize("play"));
+  $("#play-loader").hide();
   stopDisplayTips();
 }
 

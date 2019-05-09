@@ -29,7 +29,7 @@ function getLocalization() {
     },
 
     "play": {
-      selector: "#play",
+      selector: "#play-text",
       en: "Start game",
       ru: "Начать игру"
     },
