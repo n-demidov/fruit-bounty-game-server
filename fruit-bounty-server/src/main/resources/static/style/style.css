@@ -250,7 +250,7 @@ body{
   top:50%;
   left:50%;
   transform:translate(-50%, -100%);
-  width:272px
+  width:272px;
   height:90px;
   padding:15px;
   background-color:#f6f7f9;
