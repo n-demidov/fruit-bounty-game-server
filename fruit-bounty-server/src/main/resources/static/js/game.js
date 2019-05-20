@@ -12,6 +12,9 @@ var BOARD_GRID_COLOR = "black";
 var STARTED_CELL_LINE_WIDTH = 3;
 var ARROWS_LINE_WIDTH = 2;
 
+var VALID_MOVES_ANIMATIOON_DURATION = 1000;
+var BUSY_CELL_ANIMATIOON_DURATION = 1000;
+
 var imageCoordinates = {
   1: {"x": 0, "y": 0},
   2: {"x": 38, "y": 0},
@@ -84,6 +87,7 @@ function resetGameInfo() {
 
 function processGameChangedOperation(game) {
   window.game = game;
+  fillBoardWithCoords();
 
   killGameTimer();
 
@@ -142,23 +146,45 @@ function canvasClicked(e) {
 }
 
 function gameBoardClicked(x, y) {
-  var cellIndexX = Math.floor(x / CELL_SIZE);
-  var cellIndexY = Math.floor(y / CELL_SIZE);
+  var xCellIndex = Math.floor(x / CELL_SIZE);
+  var yCellIndex = Math.floor(y / CELL_SIZE);
 
-  var neighborCells = findValidMoveCells(userInfo.id, game);
-  var moveValid = isMoveValid(cellIndexX, cellIndexY, neighborCells);
+  var cells = game.board.cells;
+  var targetMoveCell = cells[xCellIndex][yCellIndex];
+  var opponentCellType = findOpponentCellType(userInfo.id, game);
+  var validMoveCells = findValidMoveCells(userInfo.id, game);
 
-  if (moveValid) {
+  if (isMoveValid(xCellIndex, yCellIndex, validMoveCells)) {
     var movePayload = {
       type: MOVE_GAME_ACTION,
-      x: cellIndexX,
-      y: cellIndexY
+      x: xCellIndex,
+      y: yCellIndex
     };
 
     sendGameAction(movePayload);
+  } else if (opponentCellType === targetMoveCell.type
+    && isCellNeighbor(targetMoveCell, userInfo.id, cells)) {
+    var opponentId = findOpponentId();
+    animation.busyCells = findPlayerCells(opponentId, game);
+    animation.busyCells.push(targetMoveCell);
+    animation.busyCellsStart = Date.now();
   } else {
-    animation.validMoves = neighborCells;
+    animation.validMoves = validMoveCells;
     animation.validMovesStart = Date.now();
+  }
+}
+
+function fillBoardWithCoords() {
+  var cells = game.board.cells;
+  for (var x = 0; x < cells.length; x++) {
+    var row = cells[x];
+
+    for (var y = 0; y < row.length; y++) {
+      var cell = row[y];
+
+      cell.x = x;
+      cell.y = y;
+    }
   }
 }
 
@@ -461,15 +487,10 @@ function countPlayerCells(cells, playerId) {
 }
 
 function drawAnimation() {
-  if (animation.validMovesStart + 1000 >= Date.now()) {
-
-    // var t = validMovesStart + 1000 - Date.now();
-    // var percentOfTimeout = (1000 - t) / 100;
-    // var radius = CELL_SIZE * 20 * (1/ percentOfTimeout) * 0.01;
-
-    var t = animation.validMovesStart + 1000 - Date.now();
-    var percentOfTimeout = (1000 - t) / 100;
-    var radius = CELL_SIZE * t / percentOfTimeout * 0.01;
+  var validMovesTimeout = animation.validMovesStart + VALID_MOVES_ANIMATIOON_DURATION - Date.now();
+  if (validMovesTimeout > 0) {
+    var percentOfTimeout = (VALID_MOVES_ANIMATIOON_DURATION - validMovesTimeout) / 100;
+    var radius = CELL_SIZE * validMovesTimeout / percentOfTimeout * 0.01;
 
     for (var x = 0; x < animation.validMoves.length; x++) {
       var cell = animation.validMoves[x];
@@ -478,6 +499,16 @@ function drawAnimation() {
       ctx.strokeStyle = "rgba(0, 0, 0, 1)";
       ctx.arc(cell.x * CELL_SIZE + CELL_SIZE / 2, cell.y * CELL_SIZE + CELL_SIZE / 2, radius, 0, 2 * Math.PI, true);
       ctx.stroke();
+    }
+  }
+
+  var busyCellsTimeout = animation.busyCellsStart + BUSY_CELL_ANIMATIOON_DURATION - Date.now();
+  if (busyCellsTimeout > 0) {
+    for (var i = 0; i < animation.busyCells.length; i++) {
+      cell = animation.busyCells[i];
+
+      ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+      ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
     }
   }
 }
@@ -493,8 +524,6 @@ function findValidMoveCells(playerId, game) {
     for (var y = 0; y < row.length; y++) {
       var cell = row[y];
 
-      cell.x = x;
-      cell.y = y;
       if (cell.owner === 0
         && isCellNeighbor(cell, playerId, cells)
         && cell.type !== opponentCellType) {
@@ -506,8 +535,8 @@ function findValidMoveCells(playerId, game) {
   return result;
 }
 
-// Works only for 2 players in game.
 function findOpponentCellType(playerId, game) {
+  // Works only for 2 players in game.
   var cells = game.board.cells;
   for (var x = 0; x < cells.length; x++) {
     var row = cells[x];
@@ -555,4 +584,31 @@ function isCellNeighbor(cell, playerId, cells) {
   }
 
   return false;
+}
+
+function findPlayerCells(playerId, game) {
+  var result = [];
+  var cells = game.board.cells;
+  for (var x = 0; x < cells.length; x++) {
+    var row = cells[x];
+
+    for (var y = 0; y < row.length; y++) {
+      var cell = row[y];
+
+      if (cell.owner === playerId) {
+        result.push(cell);
+      }
+    }
+  }
+
+  return result;
+}
+
+function findOpponentId() {
+  // Works only for 2 players in game.
+  if (game.players[0].id === userInfo.id) {
+    return game.players[1].id;
+  } else {
+    return  game.players[0].id;
+  }
 }
