@@ -41,6 +41,8 @@ var canvas;
 var ctx;
 var timerId;
 var isSurrender;
+var animation = {};
+var game;
 
 function initGameUi() {
   canvas = document.getElementById(CANVAS_ID);
@@ -81,6 +83,8 @@ function resetGameInfo() {
 }
 
 function processGameChangedOperation(game) {
+  window.game = game;
+
   killGameTimer();
 
   game.incomingTime = Date.now();
@@ -141,13 +145,33 @@ function gameBoardClicked(x, y) {
   var cellIndexX = Math.floor(x / CELL_SIZE);
   var cellIndexY = Math.floor(y / CELL_SIZE);
 
-  var movePayload = {
-    type: MOVE_GAME_ACTION,
-    x: cellIndexX,
-    y: cellIndexY
-  };
+  var neighborCells = findValidMoveCells(userInfo.id, game);
+  var moveValid = isMoveValid(cellIndexX, cellIndexY, neighborCells);
 
-  sendGameAction(movePayload);
+  if (moveValid) {
+    var movePayload = {
+      type: MOVE_GAME_ACTION,
+      x: cellIndexX,
+      y: cellIndexY
+    };
+
+    sendGameAction(movePayload);
+  } else {
+    animation.validMoves = neighborCells;
+    animation.validMovesStart = Date.now();
+  }
+}
+
+function isMoveValid(x, y, validCells) {
+  for (var i = 0; i < validCells.length; i++) {
+    var validCell = validCells[i];
+
+    if (validCell.x === x && validCell.y === y) {
+      return  true;
+    }
+  }
+
+  return false;
 }
 
 function sendGameAction(movePayload) {
@@ -172,6 +196,7 @@ function paintGame(game) {
   paintBoard(game);
   paintBoardGrid(game);
   paintTips(game);
+  drawAnimation();
 }
 
 function paintPlayers(game) {
@@ -433,4 +458,101 @@ function countPlayerCells(cells, playerId) {
   }
 
   return playerCells;
+}
+
+function drawAnimation() {
+  if (animation.validMovesStart + 1000 >= Date.now()) {
+
+    // var t = validMovesStart + 1000 - Date.now();
+    // var percentOfTimeout = (1000 - t) / 100;
+    // var radius = CELL_SIZE * 20 * (1/ percentOfTimeout) * 0.01;
+
+    var t = animation.validMovesStart + 1000 - Date.now();
+    var percentOfTimeout = (1000 - t) / 100;
+    var radius = CELL_SIZE * t / percentOfTimeout * 0.01;
+
+    for (var x = 0; x < animation.validMoves.length; x++) {
+      var cell = animation.validMoves[x];
+
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(0, 0, 0, 1)";
+      ctx.arc(cell.x * CELL_SIZE + CELL_SIZE / 2, cell.y * CELL_SIZE + CELL_SIZE / 2, radius, 0, 2 * Math.PI, true);
+      ctx.stroke();
+    }
+  }
+}
+
+function findValidMoveCells(playerId, game) {
+  var result = [];
+
+  var opponentCellType = findOpponentCellType(playerId, game);
+  var cells = game.board.cells;
+  for (var x = 0; x < cells.length; x++) {
+    var row = cells[x];
+
+    for (var y = 0; y < row.length; y++) {
+      var cell = row[y];
+
+      cell.x = x;
+      cell.y = y;
+      if (cell.owner === 0
+        && isCellNeighbor(cell, playerId, cells)
+        && cell.type !== opponentCellType) {
+        result.push(cell);
+      }
+    }
+  }
+
+  return result;
+}
+
+// Works only for 2 players in game.
+function findOpponentCellType(playerId, game) {
+  var cells = game.board.cells;
+  for (var x = 0; x < cells.length; x++) {
+    var row = cells[x];
+
+    for (var y = 0; y < row.length; y++) {
+      var cell = row[y];
+
+      if (cell.owner !== 0 && cell.owner !== playerId) {
+        return cell.type;
+      }
+    }
+  }
+
+  return -1;
+}
+
+function isCellNeighbor(cell, playerId, cells) {
+  var x = cell.x;
+  var y = cell.y;
+  var lastXCell = cells.length - 1;
+  var lastYCell = cells[0].length - 1;
+
+  if (x > 0) {
+    if (cells[x - 1][y].owner === playerId) {
+      return true;
+    }
+  }
+
+  if (x < lastXCell) {
+    if (cells[x + 1][y].owner === playerId) {
+      return true;
+    }
+  }
+
+  if (y > 0) {
+    if (cells[x][y - 1].owner === playerId) {
+      return true;
+    }
+  }
+
+  if (y < lastYCell) {
+    if (cells[x][y + 1].owner === playerId) {
+      return true;
+    }
+  }
+
+  return false;
 }
