@@ -487,6 +487,8 @@ function countPlayerCells(cells, playerId) {
 }
 
 function drawAnimation() {
+  var cells = game.board.cells;
+
   var validMovesTimeout = animation.validMovesStart + VALID_MOVES_ANIMATIOON_DURATION - Date.now();
   if (validMovesTimeout > 0) {
     var percentOfTimeout = (VALID_MOVES_ANIMATIOON_DURATION - validMovesTimeout) / 100;
@@ -509,6 +511,10 @@ function drawAnimation() {
 
       ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
       ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+      var centerX = cells[0].length * CELL_SIZE / 2;
+      var centerY = cells.length * CELL_SIZE / 2;
+      drawStroked(localize('fruitIsOccupied'), centerX, centerY);
     }
   }
 }

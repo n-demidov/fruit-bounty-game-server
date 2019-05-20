@@ -107,6 +107,10 @@ function getLocalization() {
       en: "Win",
       ru: "Победа"
     },
+    "fruitIsOccupied": {
+      en: "Fruit is occupied by opponent",
+      ru: "Фрукт занят оппонентом"
+    },
 
     /*Game tutor */
     "tutor.you-started": {
