@@ -495,11 +495,14 @@ function drawAnimation() {
 
   var validMovesTimeout = animation.validMovesStart + VALID_MOVES_ANIMATIOON_DURATION - Date.now();
   if (validMovesTimeout > 0) {
-    var percentOfTimeout = (VALID_MOVES_ANIMATIOON_DURATION - validMovesTimeout) / 100;
-    var radius = CELL_SIZE * validMovesTimeout / percentOfTimeout * 0.01;
+    var percentOfTimeout = validMovesTimeout / VALID_MOVES_ANIMATIOON_DURATION;
+    var radius = CELL_SIZE * 1.5 * percentOfTimeout;
 
     for (var x = 0; x < animation.validMoves.length; x++) {
       var cell = animation.validMoves[x];
+
+      ctx.fillStyle = "rgba(34, 255, 95, " + percentOfTimeout + ")";
+      ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
       ctx.beginPath();
       ctx.strokeStyle = "rgba(0, 0, 0, 1)";
