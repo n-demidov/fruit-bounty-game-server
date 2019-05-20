@@ -501,7 +501,7 @@ function drawAnimation() {
     for (var x = 0; x < animation.validMoves.length; x++) {
       var cell = animation.validMoves[x];
 
-      ctx.fillStyle = "rgba(34, 255, 95, " + percentOfTimeout + ")";
+      ctx.fillStyle = "rgba(50, 255, 17, " + percentOfTimeout + ")";
       ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
       ctx.beginPath();
