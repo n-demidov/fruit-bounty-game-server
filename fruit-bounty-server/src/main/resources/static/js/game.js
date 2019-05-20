@@ -146,6 +146,10 @@ function canvasClicked(e) {
 }
 
 function gameBoardClicked(x, y) {
+  if (game.currentPlayer.id !== userInfo.id) {
+    return;
+  }
+
   var xCellIndex = Math.floor(x / CELL_SIZE);
   var yCellIndex = Math.floor(y / CELL_SIZE);
 
