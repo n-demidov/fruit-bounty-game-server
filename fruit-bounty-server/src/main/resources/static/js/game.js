@@ -27,7 +27,7 @@ var imageCoordinates = {
   8: {"x": 38, "y": 76},
   9: {"x": 76, "y": 76}
 };
-var OPACITY_CELL = 0.11;
+var CAPTURED_OPACITY_CELL = 0.25;
 var TIMER_INTERVAL = 90;
 var CELL_SIZE = 38;
 
@@ -306,7 +306,7 @@ function paintBoard(game) {
           ctx.fillStyle = SECOND_PLAYER_CELLS_COLOR;
         }
 
-        ctx.globalAlpha = OPACITY_CELL;
+        ctx.globalAlpha = CAPTURED_OPACITY_CELL;
         ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE + BOARD_Y, CELL_SIZE, CELL_SIZE);
         ctx.globalAlpha = 1;
       }
