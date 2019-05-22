@@ -10,7 +10,8 @@ var SECOND_PLAYER_CELLS_COLOR = "blue";
 var BOARD_GRID_COLOR = "black";
 
 var STARTED_CELL_LINE_WIDTH = 3;
-var ARROWS_LINE_WIDTH = 2;
+var ARROWS_LINE_WIDTH = 4;
+var VALID_CELLS_WIDTH = 1;
 
 var VALID_MOVES_ANIMATIOON_DURATION = 1000;
 var BUSY_CELL_ANIMATIOON_DURATION = 1000;
@@ -498,16 +499,51 @@ function drawAnimation() {
     var percentOfTimeout = validMovesTimeout / VALID_MOVES_ANIMATIOON_DURATION;
     var radius = CELL_SIZE * 1.5 * percentOfTimeout;
 
-    for (var x = 0; x < animation.validMoves.length; x++) {
-      var cell = animation.validMoves[x];
+    for (var x = 0; x < cells.length; x++) {
+      var row = cells[x];
+      for (var y = 0; y < row.length; y++) {
+        var cell = row[y];
 
-      ctx.fillStyle = "rgba(50, 255, 17, " + percentOfTimeout + ")";
-      ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        if (animation.validMoves.includes(cell)) {
+          ctx.fillStyle = "rgba(65,242,21, " + percentOfTimeout + ")";
+          ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        } else {
+          ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+          ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        }
+      }
+    }
 
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(0, 0, 0, 1)";
-      ctx.arc(cell.x * CELL_SIZE + CELL_SIZE / 2, cell.y * CELL_SIZE + CELL_SIZE / 2, radius, 0, 2 * Math.PI, true);
-      ctx.stroke();
+    for (var x = 0; x < cells.length; x++) {
+      var row = cells[x];
+      for (var y = 0; y < row.length; y++) {
+        var cell = row[y];
+
+        if (animation.validMoves.includes(cell)) {
+          // Paint circles
+          ctx.beginPath();
+          ctx.strokeStyle = "rgb(65,242,21)";
+          ctx.lineWidth = VALID_CELLS_WIDTH;
+          ctx.arc(cell.x * CELL_SIZE + CELL_SIZE / 2, cell.y * CELL_SIZE + CELL_SIZE / 2, radius, 0, 2 * Math.PI, true);
+          ctx.arc(cell.x * CELL_SIZE + CELL_SIZE / 2, cell.y * CELL_SIZE + CELL_SIZE / 2, radius - 5, 0, 2 * Math.PI, true);
+          ctx.stroke();
+
+          // Paint arrow on first move.
+          if (findPlayerCells(userInfo.id, game).length === 1) {
+            ctx.beginPath();
+            ctx.strokeStyle = "rgb(255,0,5)";
+            ctx.lineWidth = ARROWS_LINE_WIDTH;
+            var fromX = 0;
+            var fromY = 0;
+            if (game.players[0].id !== userInfo.id) {
+              fromX = cells.length - 1;
+              fromY = cells[x].length - 1;
+            }
+            drawArrow(fromX * CELL_SIZE + CELL_SIZE / 2, fromY * CELL_SIZE + CELL_SIZE / 2, cell.x * CELL_SIZE + CELL_SIZE / 2, cell.y * CELL_SIZE + CELL_SIZE / 2);
+            ctx.stroke();
+          }
+        }
+      }
     }
   }
 
