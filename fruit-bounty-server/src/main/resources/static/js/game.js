@@ -505,8 +505,8 @@ function drawAnimation() {
         var cell = row[y];
 
         if (animation.validMoves.includes(cell)) {
-          ctx.fillStyle = "rgba(65,242,21, " + percentOfTimeout + ")";
-          ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+          // ctx.fillStyle = "rgba(65,242,21, " + percentOfTimeout + ")";
+          // ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         } else {
           ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
           ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
