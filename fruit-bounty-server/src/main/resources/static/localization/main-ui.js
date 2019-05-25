@@ -12,20 +12,10 @@ function getLocalization() {
       en: "Rules",
       ru: "Правила"
     },
-    "feedback-pane": {
-      selector: "#feedback-pane-a",
-      en: "Feedback",
-      ru: "Обратная связь"
-    },
     "authors-pane": {
       selector: "#authors-pane-a",
       en: "Authors",
       ru: "Авторы"
-    },
-    "rating-table-pane": {
-      selector: "#rating-table-pane-a",
-      en: "Top rated players",
-      ru: "Топ игроков"
     },
 
     "play": {
@@ -111,6 +101,10 @@ function getLocalization() {
       en: "Fruit is occupied by opponent",
       ru: "Фрукт занят оппонентом"
     },
+    "mobile-layout": {
+      en: "Please, flip your device horizontally.",
+      ru: "Пожалуйста, расположите ваше устройство горизонтально."
+    },
 
     /*Game tutor */
     "tutor.you-started": {
@@ -126,8 +120,8 @@ function getLocalization() {
       ru: "правом нижнем"
     },
     "tutor.board-corner": {
-      en: "corner of the game board.",
-      ru: "углу игрового поля."
+      en: "corner.",
+      ru: "углу."
     },
     "tutor.grab-adjoin-fruits": {
       en: "You can grab only those fruits that adjoin yours.",
@@ -135,31 +129,31 @@ function getLocalization() {
     },
     "tutor.capture-any-nearest": {
       en: "So capture any of two neighboring fruits.",
-      ru: "Итак, захватите любой из двух ближайших плодов."
+      ru: "Щёлкните по любому из двух ближайших."
     },
     "tutor.capture-several-fruits-1": {
-      en: "If the captured fruit contacts other fruit(s) of the same kind,",
-      ru: "Если захватываемый фрукт соприкасается с другими"
+      en: "Neighboring the same kind fruits",
+      ru: "Соседние фрукты такого же вида"
     },
     "tutor.capture-several-fruits-2": {
-      en: "they also will be taken.",
-      ru: "такого же вида - они тоже будут захвачены вами."
+      en: "also will be taken.",
+      ru: "тоже будут захвачены."
     },
     "tutor.can-not-capture-opponent-fruit-1": {
-      en: "Also, keep in mind that you can't capture a fruit",
-      ru: "Также имейте в виду, что вы не сможете захватить фрукт"
+      en: "Note: you can't capture a fruit",
+      ru: "Имейте в виду, что невозможно взять фрукт"
     },
     "tutor.can-not-capture-opponent-fruit-2": {
-      en: "if an opponent currently owns the same kind of the fruit.",
-      ru: "если оппонент в данный момент владеет таким же."
+      en: "if an opponent owns the same kind.",
+      ru: "если оппонент владеет таким же."
     },
     "tutor.try-collect-max-fruits": {
       en: "Try to collect as many fruits as you can.",
-      ru: "Победит тот, кто захватит больше всего фруктов."
+      ru: "Победит захвативший больше всего фруктов."
     },
     "tutor.the-max-will-win": {
-      en: "A winner is determined by the largest number of captured fruits.",
-      ru: "Для победы старайтесь просчитывать ходы наперёд."
+      en: "A winner is determined by the captured fruits count.",
+      ru: "Старайтесь просчитывать ходы наперёд."
     }
   };
 }

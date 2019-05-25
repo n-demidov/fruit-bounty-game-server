@@ -7,7 +7,7 @@ import java.util.List;
 public class GameOptions {
 
   public static final String CONFIG_PROPERTIES = "config.properties";
-  public static final int BOARD_WIDTH = 14;
+  public static final int BOARD_WIDTH = 12;
   public static final int BOARD_HEIGHT = BOARD_WIDTH;
 
   public static final int CELL_TYPES_COUNT = 9;

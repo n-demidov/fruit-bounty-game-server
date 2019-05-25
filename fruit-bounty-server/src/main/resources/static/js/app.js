@@ -236,6 +236,8 @@ function wrapTd(text) {
 
 function initUi() {
   console.log("initUi");
+  window.scroll(0, 0);
+  chatMsg.focus();
 
   $("form").on('submit', function (e) {
     e.preventDefault();

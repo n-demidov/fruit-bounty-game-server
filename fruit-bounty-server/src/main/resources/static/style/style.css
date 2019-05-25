@@ -1,5 +1,6 @@
 body{
   background-image:url(/img/background/background.png);
+  max-width:470px;
 }
 
 .container-fluid{
@@ -28,7 +29,7 @@ body{
 
 /* User Info */
 .user-info{
-  max-width:300px;
+  max-width:350px;
   padding:5px;
   margin-bottom:5px;
   height:60px;
@@ -41,7 +42,11 @@ body{
   border-radius:6px;
 }
 
-.user-info-img{
+.info-margin-left{
+  margin-left:10px;
+}
+
+.info-margin-right{
   margin-right:10px;
 }
 
@@ -51,6 +56,10 @@ body{
 
 
 /* Lobby tabs */
+.panes{
+  max-width:440px;
+}
+
 .tab-content-lobby{
   max-height:342px;
   min-height:342px;
@@ -65,11 +74,13 @@ body{
 
 
 /* Requests */
+.play-content{
+  text-align: center;
+}
+
 .play-btn{
-  margin-top:30px;
-  position:absolute;
+  margin-top:6px;
   width:50%;
-  left:109px;
 }
 
 .play-loader{
@@ -79,8 +90,7 @@ body{
 
 .tips-content{
   background-color:#fff;
-  position:absolute;
-  top:50%;
+  margin-top: 60px;
   padding:10px;
   border-radius:4px;
   display:none;
@@ -89,8 +99,9 @@ body{
 
 /* Rating-Table */
 .top-rated-scrolling{
-  max-height:342px;
-  min-height:342px;
+  margin-top: 20px;
+  max-height:254px;
+  min-height:254px;
   overflow:auto;
   border-radius: 0px 0px 4px 4px;
 }
@@ -108,43 +119,24 @@ body{
 /* ===== Game window ===== */
 .game-window{
   display:none;
-}
-
-@media screen and (max-width:945px){
-  .game-window{
-    overflow-x:auto;
-  }
+  margin-left:-15px;
 }
 
 .game-window-container{
   margin-top:6px;
-  display:flex;
-  flex-direction:row;
-  align-items:flex-start;
 }
 
 .side-game-info{
   min-width:150px;
-  max-width:150px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-
-  background-color:#f6f7f9;
   border:1px solid #dddfe2;
   border-radius:6px;
 }
 
-.side-left{
-  margin-right:20px;
-}
-
-.side-right{
-  margin-left:20px;
+.side-game-info-right{
+  float:right;
 }
 
 .player-img{
-  margin-top:5px;
   margin-bottom:10px;
   min-width:50px;
   min-height:50px;
@@ -157,13 +149,18 @@ body{
 
 .surrender-btn{
   display:none;
-  margin-bottom:30px;
+  max-height:28px;
 }
 
 .player-timer{
   font-size:24px;
   display:none;
   margin-bottom:25px;
+  background-color:#fff;
+  height:40px;
+  width:40px;
+  border-radius: 50%;
+  text-align: center;
 }
 
 .added-score{
@@ -184,7 +181,7 @@ body{
 
 .chat-output-scrolling{
   margin-bottom:6px;
-  max-width:910px;
+  max-width:796px;
   height:155px;
   overflow:auto;
   border-radius:4px;
@@ -250,7 +247,7 @@ body{
   top:50%;
   left:50%;
   transform:translate(-50%, -100%);
-  width:272px;
+  width:280px;
   height:90px;
   padding:15px;
   background-color:#f6f7f9;

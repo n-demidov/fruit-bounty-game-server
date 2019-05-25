@@ -9,8 +9,6 @@ var FIRST_PLAYER_CELLS_COLOR = "green";
 var SECOND_PLAYER_CELLS_COLOR = "blue";
 var BOARD_GRID_COLOR = "black";
 
-var STARTED_CELL_LINE_WIDTH = 3;
-var ARROWS_LINE_WIDTH = 4;
 var VALID_CELLS_WIDTH = 1;
 
 var VALID_MOVES_ANIMATIOON_DURATION = 1000;
@@ -31,7 +29,7 @@ var CAPTURED_OPACITY_CELL = 0.25;
 var TIMER_INTERVAL = 90;
 var CELL_SIZE = 38;
 
-var CELLS_COUNT = 14;
+var CELLS_COUNT = 12;
 var BOARD_X = 0;
 var BOARD_Y = 0;
 var BOARD_WIDTH = CELL_SIZE * CELLS_COUNT;
@@ -41,6 +39,7 @@ var CANVAS_WIDTH = BOARD_X + BOARD_WIDTH;
 var CANVAS_HEIGHT = BOARD_HEIGHT;
 
 var fruitsImage;
+var handImage;
 var canvas;
 var ctx;
 var timerId;
@@ -59,7 +58,9 @@ function initGameUi() {
   $('.surrender-btn').on("click", closeButtonClicked);
 
   fruitsImage = new Image();
+  handImage = new Image();
   fruitsImage.src = FRUITS_IMAGE;
+  handImage.src = "/img/hand.png";
 }
 
 function processGameStartedOperation(game) {
@@ -253,9 +254,7 @@ function paintPlayer(player, game, playerSide) {
 
   // Other player's params
   $('#' + playerSide + '-pl-score').text(localize("score") + ": " + player.score);
-  $('#' + playerSide + '-pl-wins').text(localize("wins") + ": " + player.wins);
-  $('#' + playerSide + '-pl-defeats').text(localize("defeats") + ": " + player.defeats);
-  $('#' + playerSide + '-pl-draws').text(localize("draws") + ": " + player.draws);
+  $('#' + playerSide + '-pl-info').attr("data-original-title", concatGameStats(player));
 
   // if game is going
   if (!game.finished && player.id === game.currentPlayer.id) {
@@ -369,9 +368,6 @@ function paintTips(game) {
 
   var playerCells = countPlayerCells(cells, userInfo.id);
   if (playerCells === 1) {
-    highlightStartedCell(startedCell);
-    drawArrows2Neighbors(startedCell);
-
     var playerStartedPosition = startedCell.x === 0 ? localize('tutor.left-top') : localize('tutor.right-bottom');
     var tip = localize('tutor.you-started') + ' ' + playerStartedPosition + ' ' + localize('tutor.board-corner');
 
@@ -412,41 +408,6 @@ function paintTips(game) {
   }
 }
 
-function highlightStartedCell(startedCell) {
-  ctx.strokeStyle = "red";
-  ctx.lineWidth = STARTED_CELL_LINE_WIDTH;
-
-  ctx.beginPath();
-  var halfCell = CELL_SIZE / 2;
-  ctx.arc(startedCell.x + halfCell, startedCell.y + halfCell, halfCell, 0, 2 * Math.PI);
-  ctx.stroke();
-}
-
-function drawArrows2Neighbors(startedCell) {
-  ctx.beginPath();
-  ctx.lineWidth = ARROWS_LINE_WIDTH;
-  var coef = 1;
-  if (startedCell.x != 0) {
-    coef = -1;
-  }
-
-  var initArrow = startedCell.x + CELL_SIZE / 2;
-  drawArrow(initArrow, initArrow, initArrow + CELL_SIZE * coef, initArrow);
-  drawArrow(initArrow, initArrow, initArrow, initArrow + CELL_SIZE * coef);
-  ctx.stroke();
-}
-
-
-/* == General functions == */
-function drawArrow(fromx, fromy, tox, toy) {
-  var headlen = 10;   // length of head in pixels
-  var angle = Math.atan2(toy-fromy,tox-fromx);
-  ctx.moveTo(fromx, fromy);
-  ctx.lineTo(tox, toy);
-  ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
-  ctx.moveTo(tox, toy);
-  ctx.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
-}
 
 function drawStroked(text, x, y) {
   ctx.textAlign = "center";
@@ -520,6 +481,11 @@ function drawAnimation() {
         var cell = row[y];
 
         if (animation.validMoves.includes(cell)) {
+          // Paint hand icon.
+          ctx.drawImage(
+            handImage,
+            cell.x * CELL_SIZE + CELL_SIZE / 4, cell.y * CELL_SIZE + BOARD_Y + CELL_SIZE / 4, CELL_SIZE, CELL_SIZE);
+
           // Paint circles
           ctx.beginPath();
           ctx.strokeStyle = "rgb(65,242,21)";
@@ -527,21 +493,6 @@ function drawAnimation() {
           ctx.arc(cell.x * CELL_SIZE + CELL_SIZE / 2, cell.y * CELL_SIZE + CELL_SIZE / 2, radius, 0, 2 * Math.PI, true);
           ctx.arc(cell.x * CELL_SIZE + CELL_SIZE / 2, cell.y * CELL_SIZE + CELL_SIZE / 2, radius - 5, 0, 2 * Math.PI, true);
           ctx.stroke();
-
-          // Paint arrow on first move.
-          if (findPlayerCells(userInfo.id, game).length === 1) {
-            ctx.beginPath();
-            ctx.strokeStyle = "rgb(255,0,5)";
-            ctx.lineWidth = ARROWS_LINE_WIDTH;
-            var fromX = 0;
-            var fromY = 0;
-            if (game.players[0].id !== userInfo.id) {
-              fromX = cells.length - 1;
-              fromY = cells[x].length - 1;
-            }
-            drawArrow(fromX * CELL_SIZE + CELL_SIZE / 2, fromY * CELL_SIZE + CELL_SIZE / 2, cell.x * CELL_SIZE + CELL_SIZE / 2, cell.y * CELL_SIZE + CELL_SIZE / 2);
-            ctx.stroke();
-          }
         }
       }
     }
