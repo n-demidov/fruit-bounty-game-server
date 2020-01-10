@@ -99,6 +99,8 @@ Note: to use Docker on Windows 7 you can setup 'Docker Toolbox' soft. Which will
 Fruit's Bounty is Open Source software released under the
 [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html)
 
+Copyright 2019 Nikita Demidov
+
 The fruits images and the icon were taken from https://opengameart.org/content/flat-designed-fruits under "CC-BY 3.0" license (https://creativecommons.org/licenses/by/3.0/). Reference to the author of images is https://www.tumblr.com/blog/paulinefranky
 
 The beach background image was taken from https://opengameart.org/content/beach-background under "CC0 1.0" license (https://creativecommons.org/publicdomain/zero/1.0/). Reference to the author of images is https://opengameart.org/users/tgfcoder
