@@ -2,6 +2,7 @@ package com.demidovn.fruitbounty.game.services.game.bot;
 
 import com.demidovn.fruitbounty.game.converters.bot.MoveActionConverter;
 import com.demidovn.fruitbounty.game.model.Pair;
+import com.demidovn.fruitbounty.game.services.Randomizer;
 import com.demidovn.fruitbounty.game.services.game.rules.CellsFinder;
 import com.demidovn.fruitbounty.game.services.game.rules.MoveCorrectness;
 import com.demidovn.fruitbounty.gameapi.model.Cell;
@@ -30,12 +31,18 @@ public class BotMoveFinder {
 
   private final MoveCorrectness moveCorrectness = new MoveCorrectness();
   private final CellsFinder cellsFinder = new CellsFinder();
+  private final Randomizer randomizer = new Randomizer();
 
   public Pair<Integer, Integer> findMove(Game game) {
     Cell[][] cells = game.getBoard().getCells();
     List<Cell> maybeCapturedCells = findMaybeCapturedCells(game);
 
-    List<Cell> sortedMaybeCapturedCells = calculateSortedStatistics(maybeCapturedCells, cells);
+    List<Cell> sortedMaybeCapturedCells;
+    if (game.isTutorial() && randomizer.generateFromRange(1, 3) == 1) {
+      sortedMaybeCapturedCells = maybeCapturedCells;
+    } else {
+      sortedMaybeCapturedCells = calculateSortedStatistics(maybeCapturedCells, cells);
+    }
 
     for (Cell cell : sortedMaybeCapturedCells) {
       GameAction gameAction = moveActionConverter.convert2MoveAction(game, cell.getX(), cell.getY());

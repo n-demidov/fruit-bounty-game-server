@@ -206,7 +206,7 @@ function processChatOperation(messages) {
 }
 
 function isNeedScrollChat() {
-  return chatScrolling.scrollTop() + chatScrolling.prop('offsetHeight') >= chatScrolling.prop('scrollHeight');
+  return chatScrolling.scrollTop() + chatScrolling.prop('offsetHeight') >= chatScrolling.prop('scrollHeight') - 1;
 }
 
 function processRatingTableOperation(topRated) {
@@ -480,6 +480,9 @@ function parseQueryString() {
   return objURL;
 }
 
+/**
+ * max not in
+ */
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }

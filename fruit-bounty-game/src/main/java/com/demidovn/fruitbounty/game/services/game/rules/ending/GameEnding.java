@@ -21,7 +21,12 @@ public abstract class GameEnding {
     if (winner != null) {
       Player looser = findLooser(players, winner);
 
-      int winnerAddedScore = addedScoreCalculator.findWinnerAddedScore(winner, looser);
+      int winnerAddedScore;
+      if (game.isTutorial()) {
+        winnerAddedScore = 0;
+      } else {
+        winnerAddedScore = addedScoreCalculator.findWinnerAddedScore(winner, looser);
+      }
 
       winner.setAddedScore(winnerAddedScore);
       looser.setAddedScore(-winnerAddedScore);

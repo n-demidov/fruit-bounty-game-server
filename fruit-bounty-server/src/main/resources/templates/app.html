@@ -34,61 +34,27 @@
 
     <!-- Requests & Tips -->
     <div class="row">
-        <div class="panes">
-          <!-- Nav tabs -->
-          <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a id="game-pane-a" href="#game-pane" class="background-colored" aria-controls="game-pane" role="tab" data-toggle="tab">Game</a></li>
-            <li role="presentation"><a id="rules-pane-a" href="#rules-pane" class="background-colored" aria-controls="rules-pane" role="tab" data-toggle="tab">Rules</a></li>
-            <li role="presentation"><a id="authors-pane-a" href="#authors" class="background-colored" aria-controls="authors" role="tab" data-toggle="tab">Authors</a></li>
-          </ul>
+      <div class="col-xs-12">
+        <!-- Play button -->
+        <div class="play-content">
+          <button id="play" class="btn btn-danger btn-lg play-btn" type="submit">
+            <span id="play-text">Play</span>
+            <img id="play-loader" class="play-loader" src="https://thumbs.gfycat.com/EmptyDeliriousBluefish-size_restricted.gif" alt="Smiley face">
+          </button>
+        </div>
 
-          <!-- Tab panes -->
-          <div class="tab-content tab-content-lobby">
-            <div role="tabpanel" class="tab-pane pane-padding active" id="game-pane">
-              <!-- Play button -->
-              <div class="play-content">
-                <button id="play" class="btn btn-danger btn-lg play-btn" type="submit">
-                  <span id="play-text">Play</span>
-                  <img id="play-loader" class="play-loader" src="https://thumbs.gfycat.com/EmptyDeliriousBluefish-size_restricted.gif" alt="Smiley face">
-                </button>
-              </div>
+        <div class="top-rated-scrolling background-colored">
+          <table id="top-rated-table" class="table table-striped table-condensed no-margin-bottom">
+            <tbody id="top-rated-players">
+            </tbody>
+          </table>
+        </div>
 
-              <div class="top-rated-scrolling background-colored">
-                <table id="top-rated-table" class="table table-striped table-condensed no-margin-bottom">
-                  <tbody id="top-rated-players">
-                  </tbody>
-                </table>
-              </div>
-
-              <div id="tips-content" class="tips-content">
-                <p id="tips" class="no-margin-bottom"></p>
-              </div>
-            </div>
-
-            <div role="tabpanel" class="tab-pane pane-padding background-colored" id="rules-pane">
-            </div>
-
-            <div role="tabpanel" class="tab-pane pane-padding background-colored" id="authors">
-              <address id="feedback-text">
-                Please, write your suggestions, feedback and bugs to the <strong>Fruit's Bounty Support:</strong><br>
-                <a href="mailto:#">FruitsBounty@gmail.com</a>
-              </address>
-
-              <address>
-                <p>
-                  Developer is Nikita Demidov.
-                </p>
-                <p>
-                  The fruits images and the icon were taken from https://opengameart.org/content/flat-designed-fruits under "CC-BY 3.0" license (https://creativecommons.org/licenses/by/3.0/). Reference to the author of images is https://www.tumblr.com/blog/paulinefranky
-                </p>
-                <p>
-                  The beach background image was taken from https://opengameart.org/content/beach-background under "CC0 1.0" license (https://creativecommons.org/publicdomain/zero/1.0/). Reference to the author of images is https://opengameart.org/users/tgfcoder
-                </p>
-              </address>
-            </div>
-          </div>
+        <div id="tips-content" class="tips-content">
+          <p id="tips" class="no-margin-bottom"></p>
         </div>
       </div>
+    </div>
   </div>
 
   <!-- Game window -->
@@ -96,38 +62,42 @@
     <div class="row">
       <div class="col-xs-12">
         <div class="game-window-container">
-          <div id="left-pl-info" class="side-game-info user-info" data-toggle="tooltip" data-placement="bottom" title="">
-            <img id="left-pl-img" class="img-rounded player-img" src="#">
 
-            <div class="user-info-data info-margin-left" data-toggle="tooltip" data-placement="bottom" title="">
-              <span id="left-pl-name" class="player-name"></span>
-              <br>
-              <span id="left-pl-score"></span>
+          <div class="players-container">
+            <div id="left-pl-info" class="side-game-info user-info" data-toggle="tooltip" data-placement="bottom" title="">
+              <img id="left-pl-img" class="img-rounded player-img" src="#">
+
+              <div class="user-info-data info-margin-left" data-toggle="tooltip" data-placement="bottom" title="">
+                <span id="left-pl-name" class="player-name"></span>
+                <br>
+                <span id="left-pl-score" class="player-score"></span>
+                <span id="left-pl-added-score" class="added-score info-margin-left"></span>
+              </div>
             </div>
 
-            <span id="left-pl-added-score" class="added-score info-margin-left"></span>
-            <span id="left-pl-winner" class="player-winner info-margin-left"></span>
-            <button id="left-pl-surrender" class="btn btn-default btn-sm surrender-btn info-margin-left" type="submit">Concede</button>
-            <span id="left-pl-timer" class="player-timer info-margin-left"></span>
+            <div class="center-panel">
+              <span id="player-timer" class="player-timer"></span>
+              <div>
+                <button id="left-pl-surrender" class="btn btn-default btn-sm surrender-btn info-margin-left" type="submit">Concede</button>
+                <button id="right-pl-surrender" class="btn btn-default btn-sm surrender-btn info-margin-right" type="submit">Concede</button>
+              </div>
+            </div>
+
+
+            <div id="right-pl-info" class="side-game-info user-info side-game-info-right" data-toggle="tooltip" data-placement="bottom" title="">
+              <div class="user-info-data info-margin-right" data-toggle="tooltip" data-placement="bottom" title="">
+                <span id="right-pl-name" class="player-name"></span>
+                <br>
+                <span id="right-pl-added-score" class="added-score info-margin-right"></span>
+                <span id="right-pl-score" class="player-score"></span>
+              </div>
+
+              <img id="right-pl-img" class="img-rounded player-img" src="#">
+            </div>
           </div>
 
           <div>
             <canvas id="game-canvas">This text is displayed if your browser does not support HTML5 Canvas.</canvas>
-          </div>
-
-          <div id="right-pl-info" class="side-game-info user-info side-game-info-right" data-toggle="tooltip" data-placement="bottom" title="">
-            <span id="right-pl-timer" class="player-timer info-margin-right"></span>
-            <button id="right-pl-surrender" class="btn btn-default btn-sm surrender-btn info-margin-right" type="submit">Concede</button>
-            <span id="right-pl-winner" class="player-winner info-margin-right"></span>
-            <span id="right-pl-added-score" class="added-score info-margin-right"></span>
-
-            <div class="user-info-data info-margin-right" data-toggle="tooltip" data-placement="bottom" title="">
-              <span id="right-pl-name" class="player-name"></span>
-              <br>
-              <span id="right-pl-score"></span>
-            </div>
-
-            <img id="right-pl-img" class="img-rounded player-img" src="#">
           </div>
         </div>
       </div>
@@ -183,6 +153,8 @@
   <a id="privacy-policy" target="_blank" href="https://springs-sunshine.herokuapp.com/docs/privacy-policy.html">Privacy Policy</a>
   <span class="blue-color"> </span>
   <a id="terms-of-service" target="_blank" href="https://springs-sunshine.herokuapp.com/docs/terms-of-service.html">Terms of Service</a>
+  <span class="blue-color"> </span>
+  <a id="about" target="_blank" href="https://springs-sunshine.herokuapp.com/">About & Feedback</a>
 </div>
 
 <script defer src="/js/external/sockjs-1.1.2.min.js"></script>

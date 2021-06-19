@@ -11,8 +11,9 @@ public interface BotService {
 
   Player createNewBot();
 
+  Player createTrainer();
+
   boolean isPlayerBot(Player player);
 
   void actionIfBot(Game game);
-
 }

@@ -47,7 +47,7 @@ public class GameNotifier {
   }
 
   private void updateCurrentMoveTimeLeft(Game game) {
-    long currentMoveTimeLeft = GameOptions.TIME_PER_MOVE -
+    long currentMoveTimeLeft = game.getTimePerMoveMs() -
       (Instant.now().toEpochMilli() - game.getCurrentMoveStarted());
 
     game.setClientCurrentMoveTimeLeft(currentMoveTimeLeft);

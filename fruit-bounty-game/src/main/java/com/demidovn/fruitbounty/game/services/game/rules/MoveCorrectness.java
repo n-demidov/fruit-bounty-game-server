@@ -32,7 +32,7 @@ public class MoveCorrectness extends AbstractGameRules {
   }
 
   private boolean isActionBeforeGameExpired(GameAction gameAction) {
-    return gameAction.getGame().getCurrentMoveStarted() + GameOptions.TIME_PER_MOVE
+    return gameAction.getGame().getCurrentMoveStarted() + gameAction.getGame().getTimePerMoveMs()
       + GameOptions.MOVE_TIME_DELAY_CORRECTION > Instant.now().toEpochMilli();
   }
 

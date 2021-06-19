@@ -13,6 +13,16 @@ var VALID_CELLS_WIDTH = 1;
 
 var VALID_MOVES_ANIMATIOON_DURATION = 1000;
 var BUSY_CELL_ANIMATIOON_DURATION = 1000;
+var CAPTURING_CELLS_ANIMATION_DURATION = 400;
+var HAND_ICON_ANIMATION_SPEED = 1;
+var HAND_ICON_ANIMATION_MOVES_MAX = 5;
+var HAND_ICON_ANIMATION_START_MOVES = HAND_ICON_ANIMATION_MOVES_MAX + HAND_ICON_ANIMATION_SPEED;
+var POSSIBLE_CELLS_ANIMATION_INTERVAL_MS = 1000 * 6;
+var POSSIBLE_CELLS_ANIMATION_DURATION = 1000 * 3;
+var POSSIBLE_CELLS_ANIMATION_SPEED = 1;
+var POSSIBLE_CELLS_ANIMATION_VALUE_MIN = -3;
+var POSSIBLE_CELLS_ANIMATION_VALUE_MAX = 1;
+var POSSIBLE_CELLS_ANIMATION_VALUE_STARTED = 1;
 
 var imageCoordinates = {
   1: {"x": 0, "y": 0},
@@ -46,6 +56,9 @@ var timerId;
 var isSurrender;
 var animation = {};
 var game;
+var oldGame;
+var capturedCellsAnimation;
+var movesCounter;
 
 function initGameUi() {
   canvas = document.getElementById(CANVAS_ID);
@@ -63,19 +76,41 @@ function initGameUi() {
   handImage.src = "/img/hand.png";
 }
 
-function processGameStartedOperation(game) {
+function processGameStartedOperation(newGame) {
+  window.game = newGame;
+  
   resetGameRequestUi();
   switchToGameWindow();
-  processGameChangedOperation(game);
+  resetProps(newGame);
+  processGameChangedOperation(newGame);
 
   resetGameInfo();
 
   // Surrender button
-  if (game.players[0].id === userInfo.id) {
+  if (newGame.players[0].id === userInfo.id) {
     $('#left-pl-surrender').show();
   } else {
     $('#right-pl-surrender').show();
   }
+}
+
+function resetProps(game) {
+  capturedCellsAnimation = {};
+  for (var i = 0; i < game.players.length; i++) {
+    capturedCellsAnimation[game.players[i].id] = {};
+    capturedCellsAnimation[game.players[i].id].cells = [];
+    capturedCellsAnimation[game.players[i].id].started = Date.now();
+  }
+
+  movesCounter = 0;
+  animation.busyCellsStart = 0;
+  animation.validMovesStart = 0;
+  resetPossibleCellsAnimation();
+}
+
+function resetPossibleCellsAnimation() {
+  animation.possibleCellsEnabled = false;
+  animation.possibleCellsLastMs = Date.now();
 }
 
 function resetGameInfo() {
@@ -83,22 +118,26 @@ function resetGameInfo() {
 
   $('.surrender-btn').hide();
   $('.surrender-btn').text(localize('concede'));
-  $('.player-winner').hide();
-  $('.player-winner').text();
 }
 
-function processGameChangedOperation(game) {
-  window.game = game;
-  fillBoardWithCoords();
-
+function processGameChangedOperation(newGame) {
+  oldGame = window.game;
+  window.game = newGame;
   killGameTimer();
+  movesCounter += 1;
 
-  game.incomingTime = Date.now();
-  paintGame(game);
+  newGame.incomingTime = Date.now();
+
+  fillBoardWithCoords();
+  game.board.cells = reverseBoard();
+  resetPossibleCellsAnimation();
+  prepareCapturedCellsAnimation(oldGame, newGame);
+  paintGame(newGame);
 
   timerId = setInterval(
     function() {
-      paintGame(game);
+      preparePossibleCellsAnimation(newGame);
+      paintGame(newGame);
     },
     TIMER_INTERVAL);
 }
@@ -148,7 +187,7 @@ function canvasClicked(e) {
 }
 
 function gameBoardClicked(x, y) {
-  if (game.currentPlayer.id !== userInfo.id) {
+  if (game.finished || game.currentPlayer.id !== userInfo.id) {
     return;
   }
 
@@ -161,6 +200,11 @@ function gameBoardClicked(x, y) {
   var validMoveCells = findValidMoveCells(userInfo.id, game);
 
   if (isMoveValid(xCellIndex, yCellIndex, validMoveCells)) {
+    if (game.reversedBoard) {
+      xCellIndex = game.board.cells.length - xCellIndex - 1;
+      yCellIndex = game.board.cells[xCellIndex].length - yCellIndex - 1;
+    }
+
     var movePayload = {
       type: MOVE_GAME_ACTION,
       x: xCellIndex,
@@ -176,6 +220,8 @@ function gameBoardClicked(x, y) {
     animation.busyCellsStart = Date.now();
   } else {
     animation.validMoves = validMoveCells;
+    animation.handReverseMoving = HAND_ICON_ANIMATION_SPEED;
+    animation.handValue = HAND_ICON_ANIMATION_START_MOVES;
     animation.validMovesStart = Date.now();
   }
 }
@@ -192,6 +238,40 @@ function fillBoardWithCoords() {
       cell.y = y;
     }
   }
+}
+
+function reverseBoard() {
+  var startedCell = getPlayerStartedCell(game, userInfo.id);
+  game.reversedBoard = startedCell.x !== 0;
+
+  if (!game.reversedBoard) {
+    return game.board.cells;
+  }
+
+  var cells = game.board.cells;
+  var reversedCells = [];
+
+  for (var x = 0; x < cells.length; x++) {
+    var row = cells[x];
+    reversedCells.push([]);
+
+    for (var y = 0; y < row.length; y++) {
+      reversedCells[x].push([]);
+    }
+  }
+
+  for (var x = 0; x < cells.length; x++) {
+    var row = cells[x];
+    for (var y = 0; y < row.length; y++) {
+      var reversedCell = row[y];
+      reversedCell.x = cells.length - reversedCell.x - 1;
+      reversedCell.y = row.length - reversedCell.y - 1;
+
+      reversedCells[reversedCell.x][reversedCell.y] = reversedCell;
+    }
+  }
+
+  return reversedCells;
 }
 
 function isMoveValid(x, y, validCells) {
@@ -226,17 +306,88 @@ function paintGame(game) {
 
   paintPlayers(game);
   paintBoard(game);
+  paintPossibleCellsAnimation(game);
   paintBoardGrid(game);
   paintTips(game);
-  drawAnimation();
+  paintHelpAnimation();
+  paintBusyCellsAnimation();
+  if (!game.finished) {
+    paintCellsCapturingAnimation();
+  }
+  paintWinner(game);
+}
+
+function prepareCapturedCellsAnimation(oldGame, newGame) {
+  if (oldGame === undefined || newGame === undefined || newGame.finished) {
+    return;
+  }
+
+  for (var i = 0; i < game.players.length; i++) {
+    capturedCellsAnimation[game.players[i].id].cells = [];
+  }
+
+  var cells = newGame.board.cells;
+  var playerIdLastChanges = findPlayerIdBoardChanges(oldGame, newGame, cells);
+  for (var x = 0; x < cells.length; x++) {
+    var row = cells[x];
+
+    for (var y = 0; y < row.length; y++) {
+      var cell = row[y];
+
+      if (cell.owner === playerIdLastChanges) {
+        capturedCellsAnimation[cell.owner].cells.push(cell);
+        capturedCellsAnimation[cell.owner].started = Date.now();
+      }
+    }
+  }
+}
+
+function preparePossibleCellsAnimation(newGame) {
+  if (newGame.finished) {
+    return;
+  }
+
+  var validMovesTimeout = Date.now() - animation.possibleCellsLastMs;
+  if (validMovesTimeout > POSSIBLE_CELLS_ANIMATION_INTERVAL_MS) {
+    animation.possibleCellsSpeed = POSSIBLE_CELLS_ANIMATION_SPEED;
+    animation.possibleCellsValue = POSSIBLE_CELLS_ANIMATION_VALUE_STARTED;
+    animation.possibleCellsLastMs = Date.now();
+    animation.possibleCellsEnabled = true;
+  } else if (validMovesTimeout > POSSIBLE_CELLS_ANIMATION_DURATION) {
+    animation.possibleCellsEnabled = false;
+  }
+}
+
+function findPlayerIdBoardChanges(oldGame, newGame, cells) {
+  for (var x = 0; x < cells.length; x++) {
+    var row = cells[x];
+
+    for (var y = 0; y < row.length; y++) {
+      var cell = row[y];
+
+      if (cell.owner !== oldGame.board.cells[x][y].owner) {
+        return cell.owner;
+      }
+    }
+  }
 }
 
 function paintPlayers(game) {
-  // hide all timers
-  $('.player-timer').hide();
+  $('#player-timer').hide();
 
-  paintPlayer(game.players[0], game, "left");
-  paintPlayer(game.players[1], game, "right");
+  var leftPlayerIndex;
+  var rightPlayerIndex;
+  for (var i = 0; i < game.players.length; i++) {
+    var player = game.players[i];
+    if (userInfo.id === player.id) {
+      leftPlayerIndex = i;
+    } else {
+      rightPlayerIndex = i;
+    }
+  }
+
+  paintPlayer(game.players[leftPlayerIndex], game, "left");
+  paintPlayer(game.players[rightPlayerIndex], game, "right");
 }
 
 function paintPlayer(player, game, playerSide) {
@@ -256,15 +407,28 @@ function paintPlayer(player, game, playerSide) {
   $('#' + playerSide + '-pl-score').text(localize("score") + ": " + player.score);
   $('#' + playerSide + '-pl-info').attr("data-original-title", concatGameStats(player));
 
-  // if game is going
-  if (!game.finished && player.id === game.currentPlayer.id) {
+  // If game is going on
+  if (!game.finished) {
+    // Active player
+    if (player.id === game.currentPlayer.id && userInfo.id === player.id) {
+      $('#' + playerSide + '-pl-info').addClass("player-active");
+    } else {
+      $('#' + playerSide + '-pl-info').removeClass("player-active");
+    }
+
     // Timer
-    var moveTimeLeft = Math.ceil((game.clientCurrentMoveTimeLeft - (Date.now() - game.incomingTime)) / 1000);
-    $('#' + playerSide + '-pl-timer').text(moveTimeLeft);
-    $('#' + playerSide + '-pl-timer').show();
+    if (!isTutorialGame()) {
+      var moveTimeLeft = Math.ceil((game.clientCurrentMoveTimeLeft - (Date.now() - game.incomingTime)) / 1000);
+      if ($('#player-timer').text() != moveTimeLeft) {
+        $('#player-timer').text(moveTimeLeft);
+      }
+      $('#player-timer').show();
+    }
   }
 
   if (game.finished) {
+    $('#' + playerSide + '-pl-info').removeClass("player-active");
+
     // Score
     var addedScore = player.addedScore;
     if (addedScore > -1) {
@@ -273,13 +437,6 @@ function paintPlayer(player, game, playerSide) {
     var playerAddedScore = $('#' + playerSide + '-pl-added-score');
     playerAddedScore.text(addedScore);
     playerAddedScore.show();
-
-    // Winner
-    if (game.winner && game.winner.id === player.id) {
-      var winnerPlayer = $('#' + playerSide + '-pl-winner');
-      winnerPlayer.text(localize('win'));
-      winnerPlayer.show();
-    }
   }
 }
 
@@ -311,6 +468,49 @@ function paintBoard(game) {
       }
     }
   }
+}
+
+function paintPossibleCellsAnimation(game) {
+  if (game.finished || !isClientMove(game) || !animation.possibleCellsEnabled) {
+    return;
+  }
+
+  var validMoveCells = findValidMoveCells(userInfo.id, game);
+  var cells = game.board.cells;
+  for (var x = 0; x < cells.length; x++) {
+    var row = cells[x];
+
+    for (var y = 0; y < row.length; y++) {
+      var cell = row[y];
+      if (!isMoveValid(x, y, validMoveCells)) {
+        continue;
+      }
+
+      var fruitImgCoords = getImageCoordinates(cell);
+
+      // Fill background
+      ctx.fillStyle = "white";
+      ctx.globalAlpha = 1;
+      ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE + BOARD_Y, CELL_SIZE, CELL_SIZE);
+
+      // Paint zoomed fruit
+      ctx.drawImage(
+        fruitsImage,
+        fruitImgCoords.x, fruitImgCoords.y, CELL_SIZE, CELL_SIZE,
+        x * CELL_SIZE - animation.possibleCellsValue,
+        y * CELL_SIZE + BOARD_Y - animation.possibleCellsValue,
+        CELL_SIZE + animation.possibleCellsValue * 2,
+        CELL_SIZE + animation.possibleCellsValue * 2);
+    }
+  }
+
+  // Change animation values
+  if (animation.possibleCellsValue <= POSSIBLE_CELLS_ANIMATION_VALUE_MIN) {
+    animation.possibleCellsSpeed = Math.abs(animation.possibleCellsSpeed);
+  } else if (animation.possibleCellsValue >= POSSIBLE_CELLS_ANIMATION_VALUE_MAX) {
+    animation.possibleCellsSpeed = -Math.abs(animation.possibleCellsSpeed);
+  }
+  animation.possibleCellsValue += animation.possibleCellsSpeed;
 }
 
 function paintBoardGrid(game) {
@@ -354,62 +554,105 @@ function getImageCoordinates(cell) {
   return imageCoordinates[cell.type];
 }
 
+function isTutorialGame() {
+  return userInfo.wins < 1;
+}
+
 function paintTips(game) {
-  if (userInfo.wins > 0
-  || !isClientMove(game)) {
+  if (game.finished || !isTutorialGame() || !isClientMove(game)) {
     return;
   }
 
   var cells = game.board.cells;
-  var startedCell = getPlayerStartedCell(game, userInfo.id);
   var addingTipHeight = 40;
   var tipY = cells[0].length * CELL_SIZE / 2 - addingTipHeight * 2;
   var tipX = cells.length * CELL_SIZE / 2;
 
-  var playerCells = countPlayerCells(cells, userInfo.id);
-  if (playerCells === 1) {
-    var playerStartedPosition = startedCell.x === 0 ? localize('tutor.left-top') : localize('tutor.right-bottom');
-    var tip = localize('tutor.you-started') + ' ' + playerStartedPosition + ' ' + localize('tutor.board-corner');
+  var playerMovesCount = Math.ceil(movesCounter / 2);
+  var i = 1;
+
+  if (playerMovesCount === i++) {
+    var playerStartedPosition = localize('tutor.1.2l');
+    var tip = localize('tutor.1.1') + ' ' + playerStartedPosition + ' ' + localize('tutor.1.3');
 
     tipY += addingTipHeight;
-    drawStroked(tip, tipX, tipY);
+    paintStrokedText(tip, tipX, tipY);
 
-    tip = localize('tutor.grab-adjoin-fruits');
+    tip = localize('tutor.1.4');
     tipY += addingTipHeight;
-    drawStroked(tip, tipX, tipY);
+    paintStrokedText(tip, tipX, tipY);
 
-    tip = localize('tutor.capture-any-nearest');
+    tip = localize('tutor.1.5');
     tipY += addingTipHeight;
-    drawStroked(tip, tipX, tipY);
-  } else if (playerCells >= 2 && playerCells <= 3) {
-    tip = localize('tutor.capture-several-fruits-1');
+    paintStrokedText(tip, tipX, tipY);
+  } else if (playerMovesCount === i++) {
+    tip = localize('tutor.2');
     tipY += addingTipHeight;
-    drawStroked(tip, tipX, tipY);
+    paintStrokedText(tip, tipX, tipY);
+  } else if (playerMovesCount === i++) {
+    tip = localize('tutor.3');
+    tipY += addingTipHeight;
+    paintStrokedText(tip, tipX, tipY);
+  } else if (playerMovesCount === i++) {
+    tip = localize('tutor.4.1');
+    tipY += addingTipHeight;
+    paintStrokedText(tip, tipX, tipY);
 
-    tip = localize('tutor.capture-several-fruits-2');
+    tip = localize('tutor.4.2');
     tipY += addingTipHeight;
-    drawStroked(tip, tipX, tipY);
-  } else if (playerCells >= 4 && playerCells <= 5) {
-    tip = localize('tutor.can-not-capture-opponent-fruit-1');
+    paintStrokedText(tip, tipX, tipY);
+  } else if (playerMovesCount === i++) {
+    tip = localize('tutor.5.1');
     tipY += addingTipHeight;
-    drawStroked(tip, tipX, tipY);
+    paintStrokedText(tip, tipX, tipY);
 
-    tip = localize('tutor.can-not-capture-opponent-fruit-2');
+    tip = localize('tutor.5.2');
     tipY += addingTipHeight;
-    drawStroked(tip, tipX, tipY);
-  } else if (playerCells >= 6 && playerCells <= 7) {
-    tip = localize('tutor.try-collect-max-fruits');
+    paintStrokedText(tip, tipX, tipY);
+  } else if (playerMovesCount === i++) {
+    tip = localize('tutor.6');
     tipY += addingTipHeight;
-    drawStroked(tip, tipX, tipY);
-
-    tip = localize('tutor.the-max-will-win');
-    tipY += addingTipHeight;
-    drawStroked(tip, tipX, tipY);
+    paintStrokedText(tip, tipX, tipY);
   }
 }
 
+function paintWinner(game) {
+  if (!game.finished) {
+    return;
+  }
 
-function drawStroked(text, x, y) {
+  // Paint result
+  var text;
+  if (game.winner) {
+    if (game.winner.id === userInfo.id) {
+      text = localize('win');
+    } else {
+      text = localize('defeat');
+    }
+  }
+
+  if (text === undefined) {
+    return;
+  }
+
+  var cells = game.board.cells;
+  var addingTipHeight = 40;
+  var tipY = cells[0].length * CELL_SIZE / 2 - addingTipHeight / 2;
+  var tipX = cells.length * CELL_SIZE / 2;
+
+  paintStrokedText(text, tipX, tipY);
+
+  // Paint cells count
+  var playerCellsCount = findPlayerCells(userInfo.id, game).length;
+  var opponentId = findOpponentId();
+  var opponentCellsCount = findPlayerCells(opponentId, game).length;
+  text = playerCellsCount + " : " + opponentCellsCount;
+  tipY += addingTipHeight;
+  paintStrokedText(text, tipX, tipY);
+}
+
+
+function paintStrokedText(text, x, y) {
   ctx.textAlign = "center";
   ctx.font = '20px Sans-serif';
   ctx.strokeStyle = 'black';
@@ -452,65 +695,130 @@ function countPlayerCells(cells, playerId) {
   return playerCells;
 }
 
-function drawAnimation() {
+function paintHelpAnimation() {
+  var validMovesTimeout = animation.validMovesStart + VALID_MOVES_ANIMATIOON_DURATION - Date.now();
+  if (validMovesTimeout < 0) {
+    return;
+  }
+
+  // Find only one cell (to highlight).
+  var cells = game.board.cells;
+  var highlightSum = 999;
+  var highlightCells = [];
+  for (var x = 0; x < cells.length; x++) {
+    var row = cells[x];
+    for (var y = 0; y < row.length; y++) {
+      var cell = row[y];
+      if (animation.validMoves.includes(cell)) {
+        if (highlightSum > findCenterRange(x, y, cells)) {
+          highlightSum = findCenterRange(x, y, cells);
+          highlightCells = [];
+          highlightCells.push(cell);
+        } else if (highlightSum === findCenterRange(x, y, cells)) {
+          highlightCells.push(cell);
+        }
+      }
+    }
+  }
+
+  var recommendedCell = highlightCells[Math.floor(highlightCells.length / 2)];
+
+  darkenCells([recommendedCell]);
+
+  // Paint circles
+  var percentOfTimeout = validMovesTimeout / VALID_MOVES_ANIMATIOON_DURATION;
+  var radius = CELL_SIZE * 1.5 * percentOfTimeout;
+  ctx.beginPath();
+  ctx.strokeStyle = "rgb(65,242,21)";
+  ctx.lineWidth = VALID_CELLS_WIDTH;
+  ctx.arc(recommendedCell.x * CELL_SIZE + CELL_SIZE / 2, recommendedCell.y * CELL_SIZE + CELL_SIZE / 2, radius, 0, 2 * Math.PI, true);
+
+  radius -= 5;
+  if (radius > 0) {
+    ctx.arc(recommendedCell.x * CELL_SIZE + CELL_SIZE / 2, recommendedCell.y * CELL_SIZE + CELL_SIZE / 2, radius, 0, 2 * Math.PI, true);
+  }
+  ctx.stroke();
+
+  // Paint hand icon.
+  if (animation.handValue <= 0) {
+    animation.handReverseMoving = Math.abs(animation.handReverseMoving);
+  } else if (animation.handValue >= HAND_ICON_ANIMATION_MOVES_MAX) {
+    animation.handReverseMoving = -Math.abs(animation.handReverseMoving);
+  }
+  animation.handValue += animation.handReverseMoving;
+
+  ctx.drawImage(
+    handImage,
+    recommendedCell.x * CELL_SIZE + CELL_SIZE / 4,
+    recommendedCell.y * CELL_SIZE + BOARD_Y + CELL_SIZE / 4,
+    CELL_SIZE + animation.handValue,
+    CELL_SIZE + animation.handValue);
+}
+
+function paintBusyCellsAnimation() {
+  var busyCellsTimeout = animation.busyCellsStart + BUSY_CELL_ANIMATIOON_DURATION - Date.now();
+  if (busyCellsTimeout < 0) {
+    return;
+  }
   var cells = game.board.cells;
 
-  var validMovesTimeout = animation.validMovesStart + VALID_MOVES_ANIMATIOON_DURATION - Date.now();
-  if (validMovesTimeout > 0) {
-    var percentOfTimeout = validMovesTimeout / VALID_MOVES_ANIMATIOON_DURATION;
-    var radius = CELL_SIZE * 1.5 * percentOfTimeout;
+  for (var i = 0; i < animation.busyCells.length; i++) {
+    var cell = animation.busyCells[i];
 
-    for (var x = 0; x < cells.length; x++) {
-      var row = cells[x];
-      for (var y = 0; y < row.length; y++) {
-        var cell = row[y];
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+    ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
-        if (animation.validMoves.includes(cell)) {
-          // ctx.fillStyle = "rgba(65,242,21, " + percentOfTimeout + ")";
-          // ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    var centerX = cells[0].length * CELL_SIZE / 2;
+    var centerY = cells.length * CELL_SIZE / 2;
+    paintStrokedText(localize('fruitIsOccupied'), centerX, centerY);
+  }
+}
+
+function darkenCells(exceptCells) {
+  var cells = game.board.cells;
+  for (var x = 0; x < cells.length; x++) {
+    var row = cells[x];
+    for (var y = 0; y < row.length; y++) {
+      var cell = row[y];
+
+      if (!exceptCells.includes(cell)) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+      }
+    }
+  }
+}
+
+function paintCellsCapturingAnimation() {
+  for (var playerId = 0; playerId < game.players.length; playerId++) {
+    var player = game.players[playerId];
+
+    var timeout = capturedCellsAnimation[player.id].started + CAPTURING_CELLS_ANIMATION_DURATION - Date.now();
+    if (timeout < 0) {
+      continue;
+    }
+    var percentOfTimeout = timeout / CAPTURING_CELLS_ANIMATION_DURATION;
+
+    for (var i = 0; i < capturedCellsAnimation[player.id].cells.length; i++) {
+      var cell = capturedCellsAnimation[player.id].cells[i];
+      if (cell.owner) {
+        if (cell.owner === game.players[0].id) {
+          ctx.fillStyle = FIRST_PLAYER_CELLS_COLOR;
         } else {
-          ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-          ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+          ctx.fillStyle = SECOND_PLAYER_CELLS_COLOR;
         }
-      }
-    }
 
-    for (var x = 0; x < cells.length; x++) {
-      var row = cells[x];
-      for (var y = 0; y < row.length; y++) {
-        var cell = row[y];
-
-        if (animation.validMoves.includes(cell)) {
-          // Paint hand icon.
-          ctx.drawImage(
-            handImage,
-            cell.x * CELL_SIZE + CELL_SIZE / 4, cell.y * CELL_SIZE + BOARD_Y + CELL_SIZE / 4, CELL_SIZE, CELL_SIZE);
-
-          // Paint circles
-          ctx.beginPath();
-          ctx.strokeStyle = "rgb(65,242,21)";
-          ctx.lineWidth = VALID_CELLS_WIDTH;
-          ctx.arc(cell.x * CELL_SIZE + CELL_SIZE / 2, cell.y * CELL_SIZE + CELL_SIZE / 2, radius, 0, 2 * Math.PI, true);
-          ctx.arc(cell.x * CELL_SIZE + CELL_SIZE / 2, cell.y * CELL_SIZE + CELL_SIZE / 2, radius - 5, 0, 2 * Math.PI, true);
-          ctx.stroke();
-        }
+        ctx.globalAlpha = percentOfTimeout;
+        ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE + BOARD_Y, CELL_SIZE, CELL_SIZE);
+        ctx.globalAlpha = 1;
       }
     }
   }
+}
 
-  var busyCellsTimeout = animation.busyCellsStart + BUSY_CELL_ANIMATIOON_DURATION - Date.now();
-  if (busyCellsTimeout > 0) {
-    for (var i = 0; i < animation.busyCells.length; i++) {
-      cell = animation.busyCells[i];
-
-      ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-      ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-
-      var centerX = cells[0].length * CELL_SIZE / 2;
-      var centerY = cells.length * CELL_SIZE / 2;
-      drawStroked(localize('fruitIsOccupied'), centerX, centerY);
-    }
-  }
+function findCenterRange(x, y, cells) {
+  return Math.abs(cells.length / 2 - x) +
+    Math.abs(cells.length / 2 - y);
 }
 
 function findValidMoveCells(playerId, game) {

@@ -20,6 +20,12 @@ public class DefaultBotService implements BotService {
   private static final int MIN_BOT_DEFEATS = 20;
   private static final int MAX_BOT_DEFEATS = 100;
 
+  private static final String TRAINER_NAME = "Trainer";
+  private static final int TRAINER_SCORE = 2000;
+  private static final int TRAINER_WINS = 10_000;
+  private static final int TRAINER_DEFEATS = 1_000;
+  private static final int TRAINER_DRAWS = 100;
+
   private final Random rand = new Random();
 
   @Autowired
@@ -56,6 +62,20 @@ public class DefaultBotService implements BotService {
 
     bot.setWins(rand.nextInt(MAX_BOT_WINS));
     bot.setDefeats(rand.nextInt(MAX_BOT_DEFEATS - MIN_BOT_DEFEATS) + MIN_BOT_DEFEATS);
+
+    return bot;
+  }
+
+  @Override
+  public Player createTrainer() {
+    Player bot = createNewBot();
+
+    bot.setPublicName(TRAINER_NAME);
+    bot.setScore(TRAINER_SCORE);
+
+    bot.setWins(TRAINER_WINS);
+    bot.setDefeats(TRAINER_DEFEATS);
+    bot.setDraws(TRAINER_DRAWS);
 
     return bot;
   }

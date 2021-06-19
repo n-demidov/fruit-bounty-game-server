@@ -2,6 +2,8 @@ package com.demidovn.fruitbounty.server.services;
 
 import com.demidovn.fruitbounty.gameapi.model.Game;
 import com.demidovn.fruitbounty.server.AppConfigs;
+import com.demidovn.fruitbounty.server.AppConstants;
+import com.demidovn.fruitbounty.server.persistence.entities.User;
 import com.demidovn.fruitbounty.server.services.game.GameNotifier;
 import com.demidovn.fruitbounty.server.services.game.UserGames;
 import java.util.ArrayList;
@@ -29,6 +31,9 @@ public class GameRequests {
 
   @Autowired
   private GameNotifier gameNotifier;
+
+  @Autowired
+  private UserService userService;
 
   private final Random random = new Random();
   private final Map<Long, Integer> gameRequests = new ConcurrentHashMap<>();
@@ -71,13 +76,24 @@ public class GameRequests {
     Iterator<Long> users = userIds.iterator();
     while (users.hasNext()) {
       Long userId = users.next();
+      User user = userService.get(userId);
 
-      if (userGames.isUserPlaying(userId) ||
-          !connectionService.isUserOnline(userId)) {
+      if (userGames.isUserPlaying(userId) || !connectionService.isUserOnline(userId)) {
+        users.remove();
+        gameRequests.remove(userId);
+      } else if (isTutorialGame(user)) {
+        log.debug("Creating tutorial game for: {}", userId);
+        Game game = userGames.startTutorialGame(userId);
+        gameNotifier.notifyThatGameStarted(game);
+
         users.remove();
         gameRequests.remove(userId);
       }
     }
+  }
+
+  private boolean isTutorialGame(User user) {
+    return user.getWins() <= AppConstants.MAX_WINS_FOR_TUTORIAL_GAME;
   }
 
   private long extractRandomUser(List<Long> userIds) {

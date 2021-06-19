@@ -13,7 +13,10 @@ public class Game {
   private Board board;
   private List<Player> players;
   private Player currentPlayer;
+  private boolean isTutorial;
 
+  @JsonIgnore
+  private long timePerMoveMs;
   @JsonIgnore
   private long currentMoveStarted;
   private long clientCurrentMoveTimeLeft;

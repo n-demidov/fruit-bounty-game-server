@@ -129,7 +129,7 @@ public class GameLoop {
 
       currentPlayer.incrementMissedMoves();
 
-      if (currentPlayer.getConsecutivelyMissedMoves() > GameOptions.MAX_GAME_MISSED_MOVES) {
+      if (currentPlayer.getConsecutivelyMissedMoves() > GameOptions.MAX_GAME_MISSED_MOVES || game.isTutorial()) {
         playerSurrendered(currentPlayer, game);
       } else {
         gameRules.switchCurrentPlayer(game);
@@ -141,7 +141,7 @@ public class GameLoop {
 
   private boolean isCurrentMoveExpired(Game game) {
     return
-      game.getCurrentMoveStarted() + GameOptions.TIME_PER_MOVE < Instant.now().toEpochMilli();
+      game.getCurrentMoveStarted() + game.getTimePerMoveMs() < Instant.now().toEpochMilli();
   }
 
   private void notifyIfGameChanged(Game game, GameProcessingContext processContext) {

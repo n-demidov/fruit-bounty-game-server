@@ -1,5 +1,6 @@
 package com.demidovn.fruitbounty.server.services.game;
 
+import com.demidovn.fruitbounty.game.GameOptions;
 import com.demidovn.fruitbounty.gameapi.model.Game;
 import com.demidovn.fruitbounty.gameapi.model.GameAction;
 import com.demidovn.fruitbounty.gameapi.model.Player;
@@ -50,6 +51,19 @@ public class UserGames {
     return createGame(Collections.singletonList(userId), players);
   }
 
+  public Game startTutorialGame(Long userId) {
+    Player userPlayer = conversionService.convert(userId, Player.class);
+    Player botPlayer = botService.createTrainer();
+
+    List<Player> players = new ArrayList<>(Arrays.asList(userPlayer, botPlayer));
+
+    Game game = createGame(Collections.singletonList(userId), players);
+    game.setTimePerMoveMs(GameOptions.TUTORIAL_TIME_PER_MOVE_MS);
+    game.setTutorial(true);
+
+    return game;
+  }
+
   public void processGameAction(GameAction gameAction) {
     gameFacade.processGameAction(gameAction);
   }
@@ -82,6 +96,7 @@ public class UserGames {
   private Game createGame(List<Long> userIds, List<Player> players) {
     Game createdGame = gameFacade.startGame(players);
     updateUsersGame(userIds, createdGame);
+    createdGame.setTimePerMoveMs(GameOptions.TIME_PER_MOVE_MS);
     return createdGame;
   }
 
@@ -89,5 +104,4 @@ public class UserGames {
     userIds
       .forEach(userId -> userGames.put(userId, createdGame));
   }
-
 }

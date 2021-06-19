@@ -14,7 +14,8 @@ public class GameOptions {
   public static final int CELL_TYPES_MIN = 1;
 
   public static final String GAME_LOOP_SCHEDULE_DELAY = "30";
-  public static final int TIME_PER_MOVE = 20000;
+  public static final int TIME_PER_MOVE_MS = 1000 * 20;
+  public static final int TUTORIAL_TIME_PER_MOVE_MS = 1000 * 60 * 60;
   public static final int MOVE_TIME_DELAY_CORRECTION = 800;
   public static final int MAX_GAME_MISSED_MOVES = 3;
 
