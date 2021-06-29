@@ -15,7 +15,6 @@ public class Game {
   private Player currentPlayer;
   private boolean isTutorial;
 
-  @JsonIgnore
   private long timePerMoveMs;
   @JsonIgnore
   private long currentMoveStarted;

@@ -1,20 +1,24 @@
 "use strict";
 
 var DEFAULT_LOCALE = "en";
+var SUPPORTED_LOCALES = ["en", "ru"];
 var DEFAULT_PAGE_NAME = "app-ui";
 
-var browserLocale;
+var browserLocale;  // Main var for locale
 var tips = {};
 
 function initLocalization() {
   console.log("initLocalization");
 
-  l100n.add_page(DEFAULT_PAGE_NAME, getLocalization());
-
-  browserLocale = l100n.get_browser_locale();
-  l100n.locale = browserLocale;
   l100n.default_locale = DEFAULT_LOCALE;
 
+  browserLocale = l100n.get_browser_locale();
+  if (!SUPPORTED_LOCALES.includes(browserLocale)) {
+    browserLocale = DEFAULT_LOCALE;
+  }
+  l100n.locale = browserLocale;
+
+  l100n.add_page(DEFAULT_PAGE_NAME, getLocalization());
   l100n.localize_all_pages();
   initTips();
 }

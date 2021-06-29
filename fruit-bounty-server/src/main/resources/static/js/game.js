@@ -4,7 +4,6 @@ var CANVAS_ID = "game-canvas";
 var CANVAS_CONTEXT = "2d";
 var LEFT_TEXT_ALIGN = "left";
 
-var FRUITS_IMAGE = "/img/fruits.png";
 var FIRST_PLAYER_CELLS_COLOR = "green";
 var SECOND_PLAYER_CELLS_COLOR = "blue";
 var BOARD_GRID_COLOR = "black";
@@ -24,6 +23,10 @@ var POSSIBLE_CELLS_ANIMATION_VALUE_MIN = -3;
 var POSSIBLE_CELLS_ANIMATION_VALUE_MAX = 1;
 var POSSIBLE_CELLS_ANIMATION_VALUE_STARTED = 1;
 
+var fontsByLocale = {
+  "en": '"Showcard Gothic"',
+  "ru": '"Showcard gothic cyrillic"'
+}
 var imageCoordinates = {
   1: {"x": 0, "y": 0},
   2: {"x": 38, "y": 0},
@@ -37,61 +40,67 @@ var imageCoordinates = {
 };
 var CAPTURED_OPACITY_CELL = 0.25;
 var TIMER_INTERVAL = 90;
+var FRUIT_IMG_SIZE = 38;
 var CELL_SIZE = 38;
 
-var CELLS_COUNT = 12;
 var BOARD_X = 0;
 var BOARD_Y = 0;
-var BOARD_WIDTH = CELL_SIZE * CELLS_COUNT;
-var BOARD_HEIGHT = BOARD_WIDTH;
+var boardWidth;
+var boardHeight;
 
-var CANVAS_WIDTH = BOARD_X + BOARD_WIDTH;
-var CANVAS_HEIGHT = BOARD_HEIGHT;
+var imgGameScreen = new Image();
+var fruitsImage = new Image();
+var handImage = new Image();
+var imgWarning = new Image();
+var imgDefeat = new Image();
+var imgVictory = new Image();
+var imgDraw = new Image();
+var imgBtnNext = new Image();
+var imgSurrender = new Image();
 
-var fruitsImage;
-var handImage;
 var canvas;
 var ctx;
 var timerId;
-var isSurrender;
 var animation = {};
 var game;
 var oldGame;
 var capturedCellsAnimation;
 var movesCounter;
+var maxTimerProgressWidth;
+var gameWindowMayBeClosed;
 
 function initGameUi() {
+  maxTimerProgressWidth = $('#time-progress').width();
   canvas = document.getElementById(CANVAS_ID);
   ctx = canvas.getContext(CANVAS_CONTEXT);
 
-  canvas.width = CANVAS_WIDTH;
-  canvas.height = CANVAS_HEIGHT;
-
   $("#" + CANVAS_ID).on("click", canvasClicked);
-  $('.surrender-btn').on("click", closeButtonClicked);
+  $('#player-surrender').on("click", surrenderClicked);
+  $('#subwindow-close').on("click", onSubwindowClose);
+  $('#subwindow-btn-next').on("click", onSubwindowClose);
 
-  fruitsImage = new Image();
-  handImage = new Image();
-  fruitsImage.src = FRUITS_IMAGE;
-  handImage.src = "/img/hand.png";
+  preloadGameSecondImages();
+  setImagesOnTags();
 }
 
 function processGameStartedOperation(newGame) {
   window.game = newGame;
-  
+  $(".background").css("background-image", "url(" + imgGameScreen.src + ")");
+
+  canvas = document.getElementById(CANVAS_ID);
+  CELL_SIZE = getCanvasWidth() / getCellsCount();
+  boardWidth = CELL_SIZE * getCellsCount();
+  boardHeight = boardWidth;
+
+  canvas.width = getCanvasWidth();
+  canvas.height = getCanvasHeight();
+
+  resetGameInfo();
+
   resetGameRequestUi();
   switchToGameWindow();
   resetProps(newGame);
   processGameChangedOperation(newGame);
-
-  resetGameInfo();
-
-  // Surrender button
-  if (newGame.players[0].id === userInfo.id) {
-    $('#left-pl-surrender').show();
-  } else {
-    $('#right-pl-surrender').show();
-  }
 }
 
 function resetProps(game) {
@@ -114,10 +123,27 @@ function resetPossibleCellsAnimation() {
 }
 
 function resetGameInfo() {
-  $('.added-score').hide();
+  gameWindowMayBeClosed = false;
+  $('#subwindow-background').hide();
+  hideConfirmWindow();
+}
 
-  $('.surrender-btn').hide();
-  $('.surrender-btn').text(localize('concede'));
+function preloadGameSecondImages() {
+  fruitsImage.src = "/img/fruits.png";
+  handImage.src = "/img/hand.png";
+  imgGameScreen.src = '/img/components/game-background.png';
+  imgWarning.src = '/img/components/window_warning.' + browserLocale + '.png';
+  imgDefeat.src = '/img/components/window_defeat.' + browserLocale + '.png';
+  imgVictory.src = '/img/components/window_victory.' + browserLocale + '.png';
+  imgDraw.src = '/img/components/window_draw.' + browserLocale + '.png';
+  imgBtnNext.src = '/img/components/button_next.' + browserLocale + '.png';
+  imgSurrender.src = '/img/components/surrender.' + browserLocale + '.png';
+}
+
+function setImagesOnTags() {
+  $('#player-surrender-img').attr('src', imgSurrender.src);
+  $('#subwindow-btn-next').css("background-image", "url(" + imgBtnNext.src + ")");
+  $('#warnwindow-container').css("background-image", "url(" + imgWarning.src + ")");
 }
 
 function processGameChangedOperation(newGame) {
@@ -147,27 +173,36 @@ function switchToGameWindow() {
   $("#game-window").show();
 }
 
-function closeButtonClicked(e) {
-  if (e.target.innerText === localize('close')) {
-    closeGameWindowClicked();
-  } else {
-    surrenderClicked();
-  }
+function showConfirmWindow(yesFunction, noFunction, text) {
+  $("#warnwindow-text").text(text);
+
+  $("#warnwindow-yes").on("click", yesFunction);
+  $("#warnwindow-no").on("click", noFunction);
+
+  $("#warnwindow-background").show();
 }
 
-function closeGameWindowClicked() {
+function hideConfirmWindow() {
+  $("#warnwindow-background").hide();
+}
+
+function onSubwindowClose(e) {
+  $(".background").css("background-image", "url(" + imgLobbyScreen.src + ")");
   $("#game-window").hide();
   $("#lobby-window").show();
 }
 
 function surrenderClicked() {
-  if (confirm(localize('concede-confirmation'))) {
-    var surrenderPayload = {
-      type: SURRENDER_GAME_ACTION
-    };
+  showConfirmWindow(onSurrender, hideConfirmWindow, localize('concede-confirmation'));
+}
 
-    sendGameAction(surrenderPayload);
-  }
+function onSurrender() {
+  var surrenderPayload = {
+    type: SURRENDER_GAME_ACTION
+  };
+  sendGameAction(surrenderPayload);
+
+  hideConfirmWindow();
 }
 
 function killGameTimer() {
@@ -180,8 +215,8 @@ function canvasClicked(e) {
   var x = e.offsetX;
   var y = e.offsetY;
 
-  if (x >= BOARD_X && x < BOARD_X + BOARD_WIDTH &&
-      y >= BOARD_Y && y < BOARD_Y + BOARD_HEIGHT) {
+  if (x >= BOARD_X && x < BOARD_X + boardWidth &&
+      y >= BOARD_Y && y < BOARD_Y + boardHeight) {
     gameBoardClicked(x, y);
   }
 }
@@ -299,10 +334,11 @@ function paintGame(game) {
 
   if (game.finished) {
     killGameTimer();
-    $('.surrender-btn').text(localize('close'));
+    gameWindowMayBeClosed = true;
+    hideConfirmWindow();
   }
 
-  canvas.width = CANVAS_WIDTH;
+  canvas.width = getCanvasWidth();
 
   paintPlayers(game);
   paintBoard(game);
@@ -373,8 +409,6 @@ function findPlayerIdBoardChanges(oldGame, newGame, cells) {
 }
 
 function paintPlayers(game) {
-  $('#player-timer').hide();
-
   var leftPlayerIndex;
   var rightPlayerIndex;
   for (var i = 0; i < game.players.length; i++) {
@@ -410,37 +444,31 @@ function paintPlayer(player, game, playerSide) {
   // If game is going on
   if (!game.finished) {
     // Active player
-    if (player.id === game.currentPlayer.id && userInfo.id === player.id) {
-      $('#' + playerSide + '-pl-info').addClass("player-active");
+    if (player.id === game.currentPlayer.id) {
+      $('#' + playerSide + '-pl-shadow').show();
     } else {
-      $('#' + playerSide + '-pl-info').removeClass("player-active");
+      $('#' + playerSide + '-pl-shadow').hide();
     }
 
     // Timer
     if (!isTutorialGame()) {
-      var moveTimeLeft = Math.ceil((game.clientCurrentMoveTimeLeft - (Date.now() - game.incomingTime)) / 1000);
-      if ($('#player-timer').text() != moveTimeLeft) {
-        $('#player-timer').text(moveTimeLeft);
-      }
-      $('#player-timer').show();
+      var moveTimeLeft = game.clientCurrentMoveTimeLeft - (Date.now() - game.incomingTime);
+      var timerProgressWidth = maxTimerProgressWidth * moveTimeLeft / game.timePerMoveMs;
+      $('#time-progress').width(timerProgressWidth);
     }
   }
 
   if (game.finished) {
     $('#' + playerSide + '-pl-info').removeClass("player-active");
-
-    // Score
-    var addedScore = player.addedScore;
-    if (addedScore > -1) {
-      addedScore = "+" + addedScore;
-    }
-    var playerAddedScore = $('#' + playerSide + '-pl-added-score');
-    playerAddedScore.text(addedScore);
-    playerAddedScore.show();
   }
 }
 
 function paintBoard(game) {
+  // Fill background
+  ctx.fillStyle = "white";
+  ctx.globalAlpha = 1;
+  ctx.fillRect(BOARD_X, BOARD_Y, boardWidth, boardHeight);
+
   var cells = game.board.cells;
   for (var x = 0; x < cells.length; x++) {
     var row = cells[x];
@@ -452,7 +480,7 @@ function paintBoard(game) {
 
       ctx.drawImage(
         fruitsImage,
-        fruitImgCoords.x, fruitImgCoords.y, CELL_SIZE, CELL_SIZE,
+        fruitImgCoords.x, fruitImgCoords.y, FRUIT_IMG_SIZE, FRUIT_IMG_SIZE,
         x * CELL_SIZE, y * CELL_SIZE + BOARD_Y, CELL_SIZE, CELL_SIZE);
 
       if (cell.owner) {
@@ -496,7 +524,7 @@ function paintPossibleCellsAnimation(game) {
       // Paint zoomed fruit
       ctx.drawImage(
         fruitsImage,
-        fruitImgCoords.x, fruitImgCoords.y, CELL_SIZE, CELL_SIZE,
+        fruitImgCoords.x, fruitImgCoords.y, FRUIT_IMG_SIZE, FRUIT_IMG_SIZE,
         x * CELL_SIZE - animation.possibleCellsValue,
         y * CELL_SIZE + BOARD_Y - animation.possibleCellsValue,
         CELL_SIZE + animation.possibleCellsValue * 2,
@@ -540,13 +568,13 @@ function paintBoardGrid(game) {
   // Top border
   ctx.beginPath();
   ctx.moveTo(0, 0);
-  ctx.lineTo(BOARD_X + BOARD_WIDTH, 0);
+  ctx.lineTo(BOARD_X + boardWidth, 0);
   ctx.stroke();
 
   // Left border
   ctx.beginPath();
   ctx.moveTo(0, 0);
-  ctx.lineTo(0, BOARD_Y + BOARD_HEIGHT);
+  ctx.lineTo(0, BOARD_Y + boardHeight);
   ctx.stroke();
 }
 
@@ -564,17 +592,21 @@ function paintTips(game) {
   }
 
   var cells = game.board.cells;
-  var addingTipHeight = 40;
-  var tipY = cells[0].length * CELL_SIZE / 2 - addingTipHeight * 2;
+  var addingTipHeight = getCanvasTipsParams().addingTipHeight;
+  var tipY = cells[0].length * CELL_SIZE / 2 - addingTipHeight;
   var tipX = cells.length * CELL_SIZE / 2;
 
   var playerMovesCount = Math.ceil(movesCounter / 2);
   var i = 1;
 
   if (playerMovesCount === i++) {
-    var playerStartedPosition = localize('tutor.1.2l');
-    var tip = localize('tutor.1.1') + ' ' + playerStartedPosition + ' ' + localize('tutor.1.3');
+    tipY -= addingTipHeight * 2;
 
+    var tip = localize('tutor.1.1');
+    tipY += addingTipHeight;
+    paintStrokedText(tip, tipX, tipY);
+
+    tip = localize('tutor.1.2l') + ' ' + localize('tutor.1.3');
     tipY += addingTipHeight;
     paintStrokedText(tip, tipX, tipY);
 
@@ -585,12 +617,24 @@ function paintTips(game) {
     tip = localize('tutor.1.5');
     tipY += addingTipHeight;
     paintStrokedText(tip, tipX, tipY);
-  } else if (playerMovesCount === i++) {
-    tip = localize('tutor.2');
+
+    tip = localize('tutor.1.6');
     tipY += addingTipHeight;
     paintStrokedText(tip, tipX, tipY);
   } else if (playerMovesCount === i++) {
-    tip = localize('tutor.3');
+    tip = localize('tutor.2.1');
+    tipY += addingTipHeight;
+    paintStrokedText(tip, tipX, tipY);
+
+    tip = localize('tutor.2.2');
+    tipY += addingTipHeight;
+    paintStrokedText(tip, tipX, tipY);
+  } else if (playerMovesCount === i++) {
+    tip = localize('tutor.3.1');
+    tipY += addingTipHeight;
+    paintStrokedText(tip, tipX, tipY);
+
+    tip = localize('tutor.3.2');
     tipY += addingTipHeight;
     paintStrokedText(tip, tipX, tipY);
   } else if (playerMovesCount === i++) {
@@ -621,42 +665,59 @@ function paintWinner(game) {
     return;
   }
 
-  // Paint result
-  var text;
+  var gameResult;
   if (game.winner) {
     if (game.winner.id === userInfo.id) {
-      text = localize('win');
+      gameResult = 'win';
     } else {
-      text = localize('defeat');
+      gameResult = 'defeat';
     }
+  } else {
+    gameResult = "draw";
   }
 
-  if (text === undefined) {
-    return;
-  }
-
-  var cells = game.board.cells;
-  var addingTipHeight = 40;
-  var tipY = cells[0].length * CELL_SIZE / 2 - addingTipHeight / 2;
-  var tipX = cells.length * CELL_SIZE / 2;
-
-  paintStrokedText(text, tipX, tipY);
-
-  // Paint cells count
+  // Cells count
   var playerCellsCount = findPlayerCells(userInfo.id, game).length;
   var opponentId = findOpponentId();
   var opponentCellsCount = findPlayerCells(opponentId, game).length;
-  text = playerCellsCount + " : " + opponentCellsCount;
-  tipY += addingTipHeight;
-  paintStrokedText(text, tipX, tipY);
+  var text = playerCellsCount + "/" + opponentCellsCount;
+  $('#subwindow-cells').text(text);
+
+  // Game points
+  var player = findSelfPlayer();
+  var addedScore = player.addedScore;
+  if (addedScore > -1) {
+    addedScore = "+" + addedScore;
+  }
+  text = localize('score') + ": " + addedScore;
+  $('#subwindow-points').text(text);
+
+  // Set player images
+  $('#subwindow-left-pl-img').attr('src', $('#left-pl-img').attr('src'));
+  $('#subwindow-right-pl-img').attr('src', $('#right-pl-img').attr('src'));
+
+  // Set player names
+  $('#subwindow-left-pl-name').text($('#left-pl-name').text());
+  $('#subwindow-right-pl-name').text($('#right-pl-name').text());
+
+  // Set background image
+  if (gameResult === "win") {
+    $('#subwindow-container').css("background-image", "url(" + imgVictory.src + ")");
+  } else if (gameResult === "defeat") {
+    $('#subwindow-container').css("background-image", "url(" + imgDefeat.src + ")");
+  } else {
+    $('#subwindow-container').css("background-image", "url(" + imgDraw.src + ")");
+  }
+
+  $('#subwindow-background').show();
 }
 
 
 function paintStrokedText(text, x, y) {
   ctx.textAlign = "center";
-  ctx.font = '20px Sans-serif';
+  ctx.font = getCanvasTipsParams().fontSize + ' ' + fontsByLocale[browserLocale];
   ctx.strokeStyle = 'black';
-  ctx.lineWidth = 6;
+  ctx.lineWidth = getCanvasTipsParams().lineWidth;
   ctx.strokeText(text, x, y);
 
   ctx.fillStyle = 'white';
@@ -720,12 +781,15 @@ function paintHelpAnimation() {
       }
     }
   }
+  if (highlightCells.length === 0) {
+    return;
+  }
 
   var recommendedCell = highlightCells[Math.floor(highlightCells.length / 2)];
 
   darkenCells([recommendedCell]);
 
-  // Paint circles
+  // Paint help circles
   var percentOfTimeout = validMovesTimeout / VALID_MOVES_ANIMATIOON_DURATION;
   var radius = CELL_SIZE * 1.5 * percentOfTimeout;
   ctx.beginPath();
@@ -749,8 +813,8 @@ function paintHelpAnimation() {
 
   ctx.drawImage(
     handImage,
-    recommendedCell.x * CELL_SIZE + CELL_SIZE / 4,
-    recommendedCell.y * CELL_SIZE + BOARD_Y + CELL_SIZE / 4,
+    recommendedCell.x * CELL_SIZE + CELL_SIZE / 2,
+    recommendedCell.y * CELL_SIZE + BOARD_Y + CELL_SIZE / 2,
     CELL_SIZE + animation.handValue,
     CELL_SIZE + animation.handValue);
 }
@@ -919,4 +983,26 @@ function findOpponentId() {
   } else {
     return  game.players[0].id;
   }
+}
+
+function findSelfPlayer() {
+  // Works only for 2 players in game.
+  if (game.players[0].id === userInfo.id) {
+    return game.players[0];
+  } else {
+    return  game.players[1];
+  }
+}
+
+function getCanvasWidth() {
+  var chatOutputScrolling = document.getElementById("chat-output-scrolling");
+  return chatOutputScrolling.offsetWidth;
+}
+
+function getCanvasHeight() {
+  return getCanvasWidth();
+}
+
+function getCellsCount() {
+  return game.board.cells.length;
 }

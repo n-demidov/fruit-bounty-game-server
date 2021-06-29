@@ -4,7 +4,7 @@ var LATER_SYMBOL = "&lt;";
 var GRATER_SYMBOL = "&gt;";
 var WEBSOCKET_ENTRY_URL = "/connect-app";
 var USER_QUEUE = "/app/from_client";
-var FB_APP_ID = "722449047946247";
+var FB_APP_ID = "722449047946247";  // for dev: 554726609114367
 var VK_SDK_URL = "https://vk.com/js/api/xd_connection.js?2";
 var VK_MOBILE_SDK_URL = "https://vk.com/js/api/mobile_sdk.js";
 var VK_IFRAME_WINDOW_NAME = "fXD";
@@ -35,6 +35,8 @@ var stompClient = null;
 var userInfo;
 var isWaitingForOpponent = false;
 var tipsTimerId;
+
+var imgLobbyScreen = new Image();
 
 function sendOperation(operationType, data) {
   var operation = {
@@ -210,26 +212,50 @@ function isNeedScrollChat() {
 }
 
 function processRatingTableOperation(topRated) {
-  var topRatedElement = $("#top-rated-players");
+  var topPlayers = $("#top-players-container");
+  topPlayers.html("");
 
-  topRatedElement.html("");
-
-  var counter = 1;
+  var counter = 0;
   topRated.forEach(function(user) {
+    counter++;
     var tooltipText = concatGameStats(user);
     var tooltipAttrs = "data-toggle='tooltip' data-placement='bottom' title='" + tooltipText + "'";
-    
-    topRatedElement.append("<tr " + tooltipAttrs + ">" +
-      wrapTd(counter++ + ".") +
-      wrapTd('<img class="rating-table-player-img" src="' + user.img + '">') +
-      wrapTd(user.name) + wrapTd(user.score) + "</tr>");
+    var placeColor = getPlayerPlaceColor(counter);
+
+    topPlayers.append(
+      "<div class='top-player " + placeColor + "' " + tooltipAttrs + ">" +
+          wrapSpan(counter) +
+          '<img class="rating-table-player-img" src="' + user.img + '">' +
+          "<div class='top-player-info'>" +
+            "<div class='top-player-text'>" +
+              "<span>" +
+                user.name +
+              "</span>" +
+            "</div>" +
+            "<span class='bold'>" +
+              user.score +
+            "</span>" +
+          "</div>" +
+      "</div>");
   });
 
   $('[data-toggle="tooltip"]').tooltip();
 }
 
-function wrapTd(text) {
-  return "<td class='cursor-default'>" + text + "</td>";
+function getPlayerPlaceColor(counter) {
+  if (counter === 1) {
+    return "player-first-place";
+  } else if (counter === 2) {
+    return "player-second-place";
+  } else if (counter === 3) {
+    return "player-third-place";
+  } else {
+    return "";
+  }
+}
+
+function wrapSpan(text) {
+  return "<span class='top-player-place'>" + text + "</span>";
 }
 
 
@@ -265,6 +291,23 @@ function initUi() {
   $('[data-toggle="tooltip"]').tooltip();
 }
 
+function preloadFirstImages() {
+  imgLobbyScreen.src = '/img/components/lobby_background.png';
+
+  var imgTopPlayer = new Image();
+  var imgTopPlayerGold = new Image();
+  var imgTopPlayerBronze = new Image();
+  var imgTopPlayerSilver = new Image();
+  var imgUserInfo = new Image();
+  var imgRatingLabel = new Image();
+  imgTopPlayer.src = '/img/components/top_player.png';
+  imgTopPlayerGold.src = '/img/components/top_player_gold.png';
+  imgTopPlayerSilver.src = '/img/components/top_player_silver.png';
+  imgTopPlayerBronze.src = '/img/components/top_player_bronze.png';
+  imgUserInfo.src = '/img/components/user_info.png';
+  imgRatingLabel.src = '/img/components/rating_label.png';
+}
+
 function setConnected(connected) {
   if (connected) {
     $("#discnctPopup").hide();
@@ -297,6 +340,7 @@ function onSocialNetworkAuthed() {
   isAuthed = true;
 
   queryParams = parseQueryString();
+  preloadFirstImages();
   connectToServer();
   initLocalization();
   initUi();
