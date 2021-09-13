@@ -478,7 +478,7 @@ function initVk() {
   }, function(d) {
     // API initialization failed. Can reload page here
     console.log("API initialization failed. Try to reload page.");
-  }, '5.87');
+  }, '5.131');
 }
 
 function isMobileVk() {
