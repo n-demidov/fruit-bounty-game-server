@@ -1,3 +1,5 @@
+"use strict";
+
 var MOBILE_SCREEN = "M";
 var TABLET_SCREEN = "T";
 
