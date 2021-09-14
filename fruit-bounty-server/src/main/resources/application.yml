@@ -159,6 +159,8 @@ game-server:
     rating-table-notification: ${RATING_TABLE_NOTIFICATION_SCHEDULE_DELAY:15000}
     metrics: ${METRICS_SCHEDULE_DELAY:30000}
     clear-not-actual-users: ${CLEAR_NOT_ACTUAL_USERS_SCHEDULE_DELAY:1200000}
+  facebook:
+    application-id: ${FACEBOOK_APP_ID}
   vk:
     application-id: ${VK_APP_ID}
     access-token: ${VK_ACCESS_TOKEN}

@@ -4,7 +4,6 @@ var LATER_SYMBOL = "&lt;";
 var GRATER_SYMBOL = "&gt;";
 var WEBSOCKET_ENTRY_URL = "/connect-app";
 var USER_QUEUE = "/app/from_client";
-var FB_APP_ID = "722449047946247";  // for dev: 554726609114367
 var VK_SDK_URL = "https://vk.com/js/api/xd_connection.js?2";
 var VK_MOBILE_SDK_URL = "https://vk.com/js/api/mobile_sdk.js";
 var VK_IFRAME_WINDOW_NAME = "fXD";
@@ -335,6 +334,10 @@ function concatGameStats(user) {
   return localize('wins') + ':' + user.wins + ' ' + localize('defeats') + ":" + user.defeats + ' ' + localize('draws') + ":" + user.draws;
 }
 
+function getAppId() {
+  return $('#social-network-app-id').text();
+}
+
 function onSocialNetworkAuthed() {
   console.log("onSocialNetworkAuthed");
   isAuthed = true;
@@ -349,7 +352,6 @@ function onSocialNetworkAuthed() {
 
 
 /* === Generic Social Network methods ===  */
-
 function runApp() {
   if (isVkSdk()) {
     console.log('starting vk SDK...');
@@ -383,7 +385,6 @@ function getSocialNetworkPayload() {
 
 
 /* === Facebook Methods === */
-
 function startFbSdk() {
   window.fbAsyncInit = fbAsyncInit;
 
@@ -415,7 +416,7 @@ function loadFbSdk() {
 
 function initFb() {
   FB.init({
-    appId            : FB_APP_ID,
+    appId            : getAppId(),
     version          : 'v2.12',
     autoLogAppEvents : true,
     xfbml            : false,
@@ -457,7 +458,6 @@ function shareFbGame() {
 
 
 /* === VK Methods === */
-
 function startVkSdk() {
   if (isMobileVk) {
     // window.name = VK_IFRAME_WINDOW_NAME;
@@ -487,7 +487,6 @@ function isMobileVk() {
 
 
 /* === Other === */
-
 function loadScript(url, callback) {
   // Adding the script tag to the head as suggested before
   var head = document.getElementsByTagName('head')[0];

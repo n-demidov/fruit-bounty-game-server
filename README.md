@@ -48,7 +48,7 @@ In general, for each task are using appropriate tools.
 Also there is a **cache** between а database and the service layer.
 
 During the authentication the user data is read into the cache (if it has not yet been in the cache). After that, all the rare requests for this data come from the cache. After the end of the game (which happens not often) - the data is updated in cache and DB.
-Consequently the processing of game actions does not slow down due to DB calls.
+Consequently, the processing of game actions does not slow down due to DB calls.
 
 Please, don't see the client code :) It's small and just a rapid prototype with minimal functionality.
 
@@ -65,7 +65,7 @@ Other technologies: Spring WebSocket, Spring Boot Test, JPA, PostgreSQL; client 
 - On Facebook: [https://apps.facebook.com/fruit-bounty](https://apps.facebook.com/fruit-bounty)
 - On vk.com: [https://vk.com/app5154054](https://vk.com/app5154054)
 
-Or you can search the game in Facebook app catalog by key-words like *Fruit's Bounty*.
+Or you can search the game in `Facebook` or `vk.com` app catalog by key-words like *Fruit's Bounty*.
 
 ## How to run locally
 
@@ -74,16 +74,21 @@ Or you can search the game in Facebook app catalog by key-words like *Fruit's Bo
 - `JDBC_DATABASE_USERNAME`
 - `JDBC_DATABASE_PASS`
 
-2. Set VK environment variables. It's needed only for `vk.com` social network requests.
- You can skip this step or set dummy/random values if you don't use VK:
+2. Set `Facebook` environment variables. It's needed only for `Facebook` social network requests.
+You can skip this step or set dummy/random values if you don't log in via `Facebook`:
+- `FACEBOOK_APP_ID` (E.g. `554726609114367` - my dev test appId)
+
+3. Set `vk.com` (`VK`) environment variables. It's needed only for `vk.com` social network requests.
+You can skip this step or set dummy/random values if you don't log in via `vk.com`:
 - `VK_APP_ID`
 - `VK_ACCESS_TOKEN`
 - `VK_SECRET_KEY`
 
-3. Run Spring Boot application. And open the game on [http://localhost:5000/fb-app](http://localhost:5000/fb-app)
+4. Run Spring Boot application. And open the game on [http://localhost:5000/fb-app](http://localhost:5000/fb-app) for `Facebook`.
+Or open [http://localhost:5000/vk-app](http://localhost:5000/vk-app) for `vk.com`.
 
 You can change the port by set `PORT` environment variable or edit it in `application.yml` file.
-By default the port is `5000`.
+By default, the port is `5000`.
 
 Note: you can use Docker to run local PosgreSQL instance:
 1. Pull image [https://hub.docker.com/_/postgres/](https://hub.docker.com/_/postgres/)
