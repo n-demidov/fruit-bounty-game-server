@@ -1,5 +1,7 @@
 # Fruit's Bounty
 
+![alt text](./screenshots/en/en.desktop.1.png "Game screenshot")
+
 ## Description
 
 Fruits' Bounty - is the prototype of multiplayer game server.
@@ -104,9 +106,18 @@ Note: to use Docker on Windows 7 you can setup 'Docker Toolbox' soft. Which will
 Fruit's Bounty is Open Source software released under the
 [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html)
 
-The fruits images and the icon were taken from https://opengameart.org/content/flat-designed-fruits under "CC-BY 3.0" license (https://creativecommons.org/licenses/by/3.0/). Reference to the author of images is https://www.tumblr.com/blog/paulinefranky
+Design and images: Irina Pichugina, Elena Pichugina.
+Contacts: https://vk.com/i.pichugina99, https://vk.com/id382496812
 
-The beach background image was taken from https://opengameart.org/content/beach-background under "CC0 1.0" license (https://creativecommons.org/publicdomain/zero/1.0/). Reference to the author of images is https://opengameart.org/users/tgfcoder
+Developer is Nikita Demidov.
+
+Fonts 'Showcard Gothic' and 'Showcard Gothic Cyrillic':
+Copyright: Copyright (c) 1997, 1998 The Font Bureau, Inc. and Jim Parkinson. All rights reserved.
+Trademark: Copyright (c) 1985, 1987, 1988, 1989 The Font Bureau, Inc. All rights reserved. Showcard Gothic is a trademark of The Font Bureau, Inc.
+
+## Feedback
+Please, write your suggestions, feedback and bugs to the Fruit's Bounty Support:
+FruitsBounty@gmail.com
 
 ## Dates
 It was written in ~Oct 2017 ~ Jan 2018.
