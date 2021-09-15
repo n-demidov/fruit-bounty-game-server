@@ -249,6 +249,7 @@ body{
 }
 
 .top-player{
+  z-index: 1;  /* To up under "Play div-container" */
   background-size: cover;
   color: white;
   background-image: url(/img/components/top_player.png);
