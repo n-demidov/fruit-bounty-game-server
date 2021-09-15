@@ -12,6 +12,7 @@ var VALID_CELLS_WIDTH = 1;
 
 var VALID_MOVES_ANIMATIOON_DURATION = 1000;
 var BUSY_CELL_ANIMATIOON_DURATION = 1000;
+var OPPONENT_TURN_ANIMATION_DURATION_MS = 1000;
 var CAPTURING_CELLS_ANIMATION_DURATION = 400;
 var HAND_ICON_ANIMATION_SPEED = 1;
 var HAND_ICON_ANIMATION_MOVES_MAX = 5;
@@ -96,6 +97,9 @@ function processGameStartedOperation(newGame) {
   canvas.height = getCanvasHeight();
 
   resetGameInfo();
+  if (game.currentPlayer.id === userInfo.id) {
+    resetOpponentTurnAnimation();
+  }
 
   resetGameRequestUi();
   switchToGameWindow();
@@ -222,8 +226,15 @@ function canvasClicked(e) {
 }
 
 function gameBoardClicked(x, y) {
-  if (game.finished || game.currentPlayer.id !== userInfo.id) {
+  if (game.finished) {
     return;
+  }
+
+  if (game.currentPlayer.id !== userInfo.id) {
+    startOpponentTurnAnimation();
+    return;
+  } else {
+    resetOpponentTurnAnimation();
   }
 
   var xCellIndex = Math.floor(x / CELL_SIZE);
@@ -259,6 +270,14 @@ function gameBoardClicked(x, y) {
     animation.handValue = HAND_ICON_ANIMATION_START_MOVES;
     animation.validMovesStart = Date.now();
   }
+}
+
+function startOpponentTurnAnimation() {
+  animation.opponentTurnStartedMs = Date.now();
+}
+
+function resetOpponentTurnAnimation() {
+  animation.opponentTurnStartedMs = undefined;
 }
 
 function fillBoardWithCoords() {
@@ -346,6 +365,7 @@ function paintGame(game) {
   paintBoardGrid(game);
   paintTips(game);
   paintHelpAnimation();
+  paintOpponentTurnAnimation();
   paintBusyCellsAnimation();
   if (!game.finished) {
     paintCellsCapturingAnimation();
@@ -836,6 +856,25 @@ function paintBusyCellsAnimation() {
     var centerY = cells.length * CELL_SIZE / 2;
     paintStrokedText(localize('fruitIsOccupied'), centerX, centerY);
   }
+}
+
+function paintOpponentTurnAnimation() {
+  if (animation.opponentTurnStartedMs === undefined) {
+    return;
+  }
+
+  if (Date.now() - animation.opponentTurnStartedMs > OPPONENT_TURN_ANIMATION_DURATION_MS) {
+    resetOpponentTurnAnimation();
+    return;
+  }
+
+  var cells = game.board.cells;
+  var addingTipHeight = getCanvasTipsParams().addingTipHeight;
+  var tipY = cells[0].length * CELL_SIZE / 2 - addingTipHeight;
+  var tipX = cells.length * CELL_SIZE / 2;
+
+  tipY += addingTipHeight;
+  paintStrokedText(localize('opponentTurn'), tipX, tipY);
 }
 
 function darkenCells(exceptCells) {

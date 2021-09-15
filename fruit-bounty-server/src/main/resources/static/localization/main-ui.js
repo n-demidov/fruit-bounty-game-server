@@ -115,6 +115,10 @@ function getLocalization() {
       en: "Fruit is occupied by opponent",
       ru: "Фрукт занят оппонентом"
     },
+    "opponentTurn": {
+      en: "Wait for your turn",
+      ru: "Дождитесь своего хода"
+    },
     "mobile-layout": {
       en: "Please, flip your device horizontally.",
       ru: "Пожалуйста, расположите ваше устройство горизонтально."
