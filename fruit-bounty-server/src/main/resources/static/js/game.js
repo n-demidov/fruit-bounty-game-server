@@ -844,18 +844,15 @@ function paintBusyCellsAnimation() {
   if (busyCellsTimeout < 0) {
     return;
   }
-  var cells = game.board.cells;
 
   for (var i = 0; i < animation.busyCells.length; i++) {
     var cell = animation.busyCells[i];
 
     ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
     ctx.fillRect(cell.x * CELL_SIZE, cell.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-
-    var centerX = cells[0].length * CELL_SIZE / 2;
-    var centerY = cells.length * CELL_SIZE / 2;
-    paintStrokedText(localize('fruitIsOccupied'), centerX, centerY);
   }
+
+  paintTextOnCenter(localize('fruitIsOccupied'));
 }
 
 function paintOpponentTurnAnimation() {
@@ -868,13 +865,15 @@ function paintOpponentTurnAnimation() {
     return;
   }
 
-  var cells = game.board.cells;
-  var addingTipHeight = getCanvasTipsParams().addingTipHeight;
-  var tipY = cells[0].length * CELL_SIZE / 2 - addingTipHeight;
-  var tipX = cells.length * CELL_SIZE / 2;
+  paintTextOnCenter(localize('opponentTurn'));
+}
 
-  tipY += addingTipHeight;
-  paintStrokedText(localize('opponentTurn'), tipX, tipY);
+function paintTextOnCenter(text) {
+  var cells = game.board.cells;
+  var centerX = cells[0].length * CELL_SIZE / 2;
+  var centerY = cells.length * CELL_SIZE / 2;
+
+  paintStrokedText(text, centerX, centerY);
 }
 
 function darkenCells(exceptCells) {
