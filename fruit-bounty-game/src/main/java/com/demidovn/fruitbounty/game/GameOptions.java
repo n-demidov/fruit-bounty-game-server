@@ -9,6 +9,8 @@ public class GameOptions {
   public static final String CONFIG_PROPERTIES = "config.properties";
   public static final int BOARD_WIDTH = 12;
   public static final int BOARD_HEIGHT = BOARD_WIDTH;
+  public static final int TUTORIAL_BOARD_WIDTH = 9;
+  public static final int TUTORIAL_BOARD_HEIGHT = TUTORIAL_BOARD_WIDTH;
 
   public static final int CELL_TYPES_COUNT = 9;
   public static final int CELL_TYPES_MIN = 1;

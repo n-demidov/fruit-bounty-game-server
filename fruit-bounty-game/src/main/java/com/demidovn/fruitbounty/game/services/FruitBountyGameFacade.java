@@ -21,8 +21,8 @@ public class FruitBountyGameFacade implements GameFacade {
   private final List<Game> games = new CopyOnWriteArrayList<>();
 
   @Override
-  public Game startGame(List<Player> players) {
-    Game game = gameCreator.createNewGame(players);
+  public Game startGame(List<Player> players, boolean isTutorial) {
+    Game game = gameCreator.createNewGame(players, isTutorial);
     games.add(game);
 
     return game;

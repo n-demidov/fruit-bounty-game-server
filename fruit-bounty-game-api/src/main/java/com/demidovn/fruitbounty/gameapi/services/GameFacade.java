@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface GameFacade {
 
-  Game startGame(List<Player> players);
+  Game startGame(List<Player> players, boolean isTutorial);
 
   void processGameAction(GameAction gameAction);
 

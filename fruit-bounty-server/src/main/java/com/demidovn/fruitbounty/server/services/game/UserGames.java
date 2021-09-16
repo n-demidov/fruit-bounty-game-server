@@ -39,7 +39,7 @@ public class UserGames {
   public Game startGame(List<Long> userIds) {
     List<Player> players = convert2Players(userIds);
 
-    return createGame(userIds, players);
+    return createGame(userIds, players, false);
   }
 
   public Game startGameWithBot(long userId) {
@@ -48,7 +48,7 @@ public class UserGames {
 
     List<Player> players = new ArrayList<>(Arrays.asList(userPlayer, botPlayer));
 
-    return createGame(Collections.singletonList(userId), players);
+    return createGame(Collections.singletonList(userId), players, false);
   }
 
   public Game startTutorialGame(Long userId) {
@@ -57,7 +57,7 @@ public class UserGames {
 
     List<Player> players = new ArrayList<>(Arrays.asList(userPlayer, botPlayer));
 
-    Game game = createGame(Collections.singletonList(userId), players);
+    Game game = createGame(Collections.singletonList(userId), players, true);
     game.setTimePerMoveMs(GameOptions.TUTORIAL_TIME_PER_MOVE_MS);
     game.setTutorial(true);
 
@@ -93,8 +93,8 @@ public class UserGames {
         .collect(Collectors.toList());
   }
 
-  private Game createGame(List<Long> userIds, List<Player> players) {
-    Game createdGame = gameFacade.startGame(players);
+  private Game createGame(List<Long> userIds, List<Player> players, boolean isTutorial) {
+    Game createdGame = gameFacade.startGame(players, isTutorial);
     updateUsersGame(userIds, createdGame);
     createdGame.setTimePerMoveMs(GameOptions.TIME_PER_MOVE_MS);
     return createdGame;
