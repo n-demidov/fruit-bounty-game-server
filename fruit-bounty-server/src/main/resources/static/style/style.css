@@ -1,5 +1,5 @@
 body{
-  background-image:url(/img/background/background.jpg);
+  background-image:url(../img/background/background.jpg);
   background-color: #57992C;
   font-family: "Showcard Gothic", "Showcard gothic cyrillic";
 
@@ -10,12 +10,12 @@ body{
 
 @font-face {
   font-family: "Showcard Gothic";
-  src: url("/fonts/Showcard_Gothic_Regular.ttf");
+  src: url("../fonts/Showcard_Gothic_Regular.ttf");
 }
 
 @font-face {
   font-family: "Showcard gothic cyrillic";
-  src: url("/fonts/Showcard_Gothic_Cyr.otf");
+  src: url("../fonts/Showcard_Gothic_Cyr.otf");
 }
 
 .container-fluid{
@@ -70,7 +70,7 @@ body{
 }
 
 .background{
-  background-image: url(/img/components/lobby_background.png);
+  background-image: url(../img/components/lobby_background.png);
   background-size: cover;
 
   /* 360px */
@@ -213,7 +213,7 @@ body{
 
 /* Rating-Table */
 .top-players-rating{
-  background-image:url(/img/components/rating_label.png);
+  background-image:url(../img/components/rating_label.png);
   background-size: cover;
   color: white;
 
@@ -252,7 +252,7 @@ body{
   z-index: 1;  /* To up under "Play div-container" */
   background-size: cover;
   color: white;
-  background-image: url(/img/components/top_player.png);
+  background-image: url(../img/components/top_player.png);
   overflow: hidden;
   position: relative;
   margin-bottom: 8px;
@@ -298,15 +298,15 @@ body{
 }
 
 .player-first-place{
-  background-image: url(/img/components/top_player_gold.png);
+  background-image: url(../img/components/top_player_gold.png);
 }
 
 .player-second-place{
-  background-image: url(/img/components/top_player_silver.png);
+  background-image: url(../img/components/top_player_silver.png);
 }
 
 .player-third-place{
-  background-image: url(/img/components/top_player_bronze.png);
+  background-image: url(../img/components/top_player_bronze.png);
 }
 
 
