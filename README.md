@@ -64,8 +64,8 @@ Other technologies: Spring WebSocket, Spring Boot Test, JPA, PostgreSQL; client 
 
 ## How to play online
 
-- On Facebook: [https://apps.facebook.com/fruit-bounty](https://apps.facebook.com/fruit-bounty)
-- On vk.com: [https://vk.com/app5154054](https://vk.com/app5154054)
+- On `Facebook`: [https://apps.facebook.com/fruit-bounty](https://apps.facebook.com/fruit-bounty)
+- On `vk.com`: [https://vk.com/app5154054](https://vk.com/app5154054)
 
 Or you can search the game in `Facebook` or `vk.com` app catalog by key-words like *Fruit's Bounty*.
 
@@ -86,8 +86,10 @@ You can skip this step or set dummy/random values if you don't log in via `vk.co
 - `VK_ACCESS_TOKEN`
 - `VK_SECRET_KEY`
 
-4. Run Spring Boot application. And open the game on [http://localhost:5000/fb-app](http://localhost:5000/fb-app) for `Facebook`.
-Or open [http://localhost:5000/vk-app](http://localhost:5000/vk-app) for `vk.com`.
+4. Run Spring Boot application. And open the game:
+- on [http://localhost:5000/fb-app](http://localhost:5000/fb-app) for `Facebook`;
+- or open [http://localhost:5000/vk-app?viewer_id=_vk_user_id_&auth_key=_auth_key_](http://localhost:5000/vk-app?viewer_id=_vk_user_id_&auth_key=_auth_key_) for `vk.com`
+(you can find `auth_key` in your real `vk` game in `vk` iframe).
 
 You can change the port by set `PORT` environment variable or edit it in `application.yml` file.
 By default, the port is `5000`.
