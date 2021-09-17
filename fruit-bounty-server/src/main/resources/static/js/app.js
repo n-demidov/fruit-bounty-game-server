@@ -291,7 +291,7 @@ function initUi() {
 }
 
 function preloadFirstImages() {
-  imgLobbyScreen.src = '/img/components/lobby_background.png';
+  imgLobbyScreen.src = '../img/components/lobby_background.png';
 
   var imgTopPlayer = new Image();
   var imgTopPlayerGold = new Image();
@@ -299,12 +299,12 @@ function preloadFirstImages() {
   var imgTopPlayerSilver = new Image();
   var imgUserInfo = new Image();
   var imgRatingLabel = new Image();
-  imgTopPlayer.src = '/img/components/top_player.png';
-  imgTopPlayerGold.src = '/img/components/top_player_gold.png';
-  imgTopPlayerSilver.src = '/img/components/top_player_silver.png';
-  imgTopPlayerBronze.src = '/img/components/top_player_bronze.png';
-  imgUserInfo.src = '/img/components/user_info.png';
-  imgRatingLabel.src = '/img/components/rating_label.png';
+  imgTopPlayer.src = '../img/components/top_player.png';
+  imgTopPlayerGold.src = '../img/components/top_player_gold.png';
+  imgTopPlayerSilver.src = '../img/components/top_player_silver.png';
+  imgTopPlayerBronze.src = '../img/components/top_player_bronze.png';
+  imgUserInfo.src = '../img/components/user_info.png';
+  imgRatingLabel.src = '../img/components/rating_label.png';
 }
 
 function setConnected(connected) {

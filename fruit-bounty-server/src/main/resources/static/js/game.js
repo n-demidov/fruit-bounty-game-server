@@ -133,15 +133,15 @@ function resetGameInfo() {
 }
 
 function preloadGameSecondImages() {
-  fruitsImage.src = "/img/fruits.png";
-  handImage.src = "/img/hand.png";
-  imgGameScreen.src = '/img/components/game-background.png';
-  imgWarning.src = '/img/components/window_warning.' + browserLocale + '.png';
-  imgDefeat.src = '/img/components/window_defeat.' + browserLocale + '.png';
-  imgVictory.src = '/img/components/window_victory.' + browserLocale + '.png';
-  imgDraw.src = '/img/components/window_draw.' + browserLocale + '.png';
-  imgBtnNext.src = '/img/components/button_next.' + browserLocale + '.png';
-  imgSurrender.src = '/img/components/surrender.' + browserLocale + '.png';
+  fruitsImage.src = "../img/fruits.png";
+  handImage.src = "../img/hand.png";
+  imgGameScreen.src = '../img/components/game-background.png';
+  imgWarning.src = '../img/components/window_warning.' + browserLocale + '.png';
+  imgDefeat.src = '../img/components/window_defeat.' + browserLocale + '.png';
+  imgVictory.src = '../img/components/window_victory.' + browserLocale + '.png';
+  imgDraw.src = '../img/components/window_draw.' + browserLocale + '.png';
+  imgBtnNext.src = '../img/components/button_next.' + browserLocale + '.png';
+  imgSurrender.src = '../img/components/surrender.' + browserLocale + '.png';
 }
 
 function setImagesOnTags() {
