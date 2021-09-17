@@ -263,6 +263,7 @@ function initUi() {
   console.log("initUi");
   window.scroll(0, 0);
   chatMsg.focus();
+  $("#chat-msg-input").attr('placeholder', localize('chat'));
 
   $("form").on('submit', function (e) {
     e.preventDefault();

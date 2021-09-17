@@ -123,6 +123,10 @@ function getLocalization() {
       en: "Please, flip your device horizontally.",
       ru: "Пожалуйста, расположите ваше устройство горизонтально."
     },
+    "chat": {
+      en: "chat",
+      ru: "чат"
+    },
 
     /*Game tutor */
     "tutor.1.1": {
