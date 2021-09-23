@@ -49,6 +49,14 @@ public class WebSocketConfig extends WebSocketMessageBrokerConfigurationSupport 
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
     registry.addEndpoint(AppConfigs.CONNECT_WEBSOCKET_URL).setAllowedOrigins("*").withSockJS();
+
+//    registry.addEndpoint(AppConfigs.CONNECT_WEBSOCKET_URL)
+//            .setAllowedOrigins("vkfile://mini.app.host.com")
+//            .setAllowedOrigins("vkfile://qrappm.juice.vk-apps.com")
+//            .setAllowedOrigins("mini.app.host.com")
+//            .setAllowedOrigins("vk-apps.com")
+//            .setAllowedOrigins("qrappm.juice.vk-apps.com")
+//            .withSockJS();
   }
 
   @Override
