@@ -17,6 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <hibernate.version>5.2.12.Final</hibernate.version>
+    <hibernate-types.version>2.12.1</hibernate-types.version>
     <pg-embedded.version>0.12.3</pg-embedded.version>
     <spock.version>1.2-groovy-2.4</spock.version>
   </properties>
@@ -75,6 +76,11 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-ehcache</artifactId>
       <version>${hibernate.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.vladmihalcea</groupId>
+      <artifactId>hibernate-types-52</artifactId>
+      <version>${hibernate-types.version}</version>
     </dependency>
 
     <!-- Test Dependencies -->

@@ -47,7 +47,8 @@ public class ScheduledTasks {
     playersRating.notifyAllWithTopRated();
   }
 
-  @Scheduled(fixedDelayString = "${game-server.schedule-delay.metrics}")
+  @Scheduled(fixedDelayString = "${game-server.schedule-delay.metrics}",
+           initialDelayString = "${game-server.schedule-delay.metrics}")
   public void logMetrics() {
     serverMetricsLogger.logMetrics();
   }
