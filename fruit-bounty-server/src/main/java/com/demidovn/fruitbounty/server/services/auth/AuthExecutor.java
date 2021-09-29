@@ -107,7 +107,11 @@ public class AuthExecutor implements Runnable {
     if (!thirdPartyUsers.isEmpty()) {
       User user = thirdPartyUsers.get(0);
 
-      updateUserLastLogin(user);
+      user.setPublicName(thirdPartyAuthedUserInfo.getPublicName());
+      user.setImg(thirdPartyAuthedUserInfo.getImg());
+      user.setLastLogin(Instant.now().toEpochMilli());
+
+      userService.update(user);
       return user;
     }
 
@@ -126,11 +130,6 @@ public class AuthExecutor implements Runnable {
     authedUser.setScore(AppConfigs.INITIAL_USER_SCORE);
 
     return authedUser;
-  }
-
-  private void updateUserLastLogin(User user) {
-    user.setLastLogin(Instant.now().toEpochMilli());
-    userService.update(user);
   }
 
   private void sendChatHistory(Connection connection) {
