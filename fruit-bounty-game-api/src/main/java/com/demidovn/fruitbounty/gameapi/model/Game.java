@@ -48,11 +48,30 @@ public class Game {
   @Override
   public String toString() {
     return "Game{" +
-      "players=" + players +
-      ", currentPlayer=" + currentPlayer +
-      ", isFinished=" + isFinished +
-      ", winner=" + winner +
-      '}';
+            "players=" + players +
+            ", currentPlayer=" + currentPlayer +
+            ", isTutorial=" + isTutorial +
+            ", timePerMoveMs=" + timePerMoveMs +
+            ", currentMoveStarted=" + currentMoveStarted +
+            ", clientCurrentMoveTimeLeft=" + clientCurrentMoveTimeLeft +
+            ", isFinished=" + isFinished +
+            ", winner=" + winner +
+            '}';
+  }
+
+  public String toFullString() {
+    return "Game{" +
+            "board=" + board +
+            ", players=" + players +
+            ", currentPlayer=" + currentPlayer +
+            ", isTutorial=" + isTutorial +
+            ", timePerMoveMs=" + timePerMoveMs +
+            ", currentMoveStarted=" + currentMoveStarted +
+            ", clientCurrentMoveTimeLeft=" + clientCurrentMoveTimeLeft +
+            ", isFinished=" + isFinished +
+            ", winner=" + winner +
+            ", gameActions=" + gameActions +
+            '}';
   }
 
 }

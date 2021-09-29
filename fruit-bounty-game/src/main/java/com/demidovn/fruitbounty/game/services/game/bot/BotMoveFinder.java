@@ -51,7 +51,7 @@ public class BotMoveFinder {
       }
     }
 
-    String err = String.format(CAN_NOT_FIND_ANY_MOVE_FOR_BOT_GAME, game);
+    String err = String.format(CAN_NOT_FIND_ANY_MOVE_FOR_BOT_GAME, game.toFullString());
     log.error(err);
     throw new IllegalStateException(err);
   }
