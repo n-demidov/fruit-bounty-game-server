@@ -129,7 +129,7 @@ public class GameLoop {
 
       currentPlayer.incrementMissedMoves();
 
-      if (currentPlayer.getConsecutivelyMissedMoves() > GameOptions.MAX_GAME_MISSED_MOVES || game.isTutorial()) {
+      if (currentPlayer.getConsecutivelyMissedMoves() >= GameOptions.MAX_GAME_MISSED_MOVES) {
         playerSurrendered(currentPlayer, game);
       } else {
         gameRules.switchCurrentPlayer(game);
