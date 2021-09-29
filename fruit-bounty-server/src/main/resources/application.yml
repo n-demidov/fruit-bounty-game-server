@@ -157,7 +157,7 @@ game-server:
     valid-authed-connections: ${VALID_AUTHED_CONNECTIONS_SCHEDULE_DELAY:60000}
     process-game-requests: ${PROCESS_GAME_REQUESTS_SCHEDULE_DELAY:5000}
     rating-table-notification: ${RATING_TABLE_NOTIFICATION_SCHEDULE_DELAY:15000}
-    metrics: ${METRICS_SCHEDULE_DELAY:30000}
+    metrics: ${METRICS_SCHEDULE_DELAY:60000}
     clear-not-actual-users: ${CLEAR_NOT_ACTUAL_USERS_SCHEDULE_DELAY:1200000}
   metrics:
     store-days:  ${STORE_STATISTICS_DAYS:7}
