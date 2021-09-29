@@ -51,9 +51,9 @@ public class BotMoveFinder {
       }
     }
 
-    String err = String.format(CAN_NOT_FIND_ANY_MOVE_FOR_BOT_GAME, game.toFullString());
-    log.error(err);
-    throw new IllegalStateException(err);
+    String errMsg = String.format(CAN_NOT_FIND_ANY_MOVE_FOR_BOT_GAME, game.toFullString());
+    log.error(errMsg);
+    throw new IllegalStateException(errMsg);
   }
 
   private List<Cell> findMaybeCapturedCells(Game game) {
