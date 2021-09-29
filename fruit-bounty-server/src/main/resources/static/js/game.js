@@ -471,11 +471,9 @@ function paintPlayer(player, game, playerSide) {
     }
 
     // Timer
-    if (!isTutorialGame()) {
-      var moveTimeLeft = game.clientCurrentMoveTimeLeft - (Date.now() - game.incomingTime);
-      var timerProgressWidth = maxTimerProgressWidth * moveTimeLeft / game.timePerMoveMs;
-      $('#time-progress').width(timerProgressWidth);
-    }
+    var moveTimeLeft = game.clientCurrentMoveTimeLeft - (Date.now() - game.incomingTime);
+    var timerProgressWidth = maxTimerProgressWidth * moveTimeLeft / game.timePerMoveMs;
+    $('#time-progress').width(timerProgressWidth);
   }
 
   if (game.finished) {
