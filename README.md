@@ -1,6 +1,6 @@
 # Fruit's Bounty
 
-![alt text](./screenshots/en/en.desktop.1.png "Game screenshot")
+![alt text](./screenshots/en/en.desktop.2.png "Game screenshot")
 
 ## Description
 
