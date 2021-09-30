@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
@@ -17,8 +18,19 @@ public interface UserRepository extends CrudRepository<User, Long> {
   @Query("select u from User u where u.score >= :minRating")
   List<User> getTopRatedUsers(@Param("minRating") int minRating, Pageable pageable);
 
+  @Transactional
+  @Modifying(clearAutomatically = true)
+  @Query("delete from User u where u.wins <= :winsThreshold and now() - u.lastLogin >= make_interval(0, 0, 0, 0, :hoursThreshold)")
+  int deleteByWinsAndHours(@Param("winsThreshold") int winsThreshold, @Param("hoursThreshold") int hoursThreshold);
+
+  @Transactional
   @Modifying(clearAutomatically  = true)
-  @Query("delete from User u where u.score <= :minScoreThreshold")
-  int deleteByScoreLessThanEqual(@Param("minScoreThreshold") int minScoreThreshold);
+  @Query(value = "delete from accounts where id in (SELECT id \n" +
+          "             FROM accounts \n" +
+          "             where now() - last_login >= make_interval(0, 0, 0, 0, :hoursThreshold) \n" +
+          "             order by score \n" +
+          "             LIMIT :limit)"
+          , nativeQuery = true)
+  int deleteByHours(@Param("hoursThreshold") int hoursThreshold, @Param("limit") long limit);
 
 }

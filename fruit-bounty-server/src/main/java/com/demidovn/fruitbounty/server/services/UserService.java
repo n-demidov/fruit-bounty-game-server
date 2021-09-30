@@ -12,13 +12,16 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
 public class UserService {
 
   private static final String USER_SCORE_FIELD = "score";
+  private static final int WINS_THRESHOLD = 0;
+  private static final int HOURS_THRESHOLD = 48;
+  private static final int SECOND_TRIE_HOURS_THRESHOLD = 48;
+  private static final int SECOND_TRIE_LIMIT = 1000;
 
   @Autowired
   private UserRepository userRepository;
@@ -56,17 +59,25 @@ public class UserService {
   }
 
   /*
-    It is needed because there is a limit of rows for my free DB account.
+    It is necessary because there is a limit of rows for my free DB account.
    */
-  @Transactional
   public void clearNotActual() {
-    if (userRepository.count() >= AppConfigs.USERS_COUNT_LIMIT_TO_CLEAR_DB) {
+    if (areTooManyUsers()) {
       log.info("There are too much users in DB. Starting of clear users from DB...");
-
-      int deletedUsersCount = userRepository.deleteByScoreLessThanEqual(AppConfigs.INITIAL_USER_SCORE);
-
+      int deletedUsersCount = userRepository.deleteByWinsAndHours(WINS_THRESHOLD, HOURS_THRESHOLD);
       log.debug("Deleted {} users from DB", deletedUsersCount);
+
+      if (areTooManyUsers()) {
+        log.info("There are too much users in DB. Starting of clear users from DB...");
+        long limit = SECOND_TRIE_LIMIT + userRepository.count() - AppConfigs.DELETTING_USERS_COUNT_LIMIT_TO_CLEAR_DB;
+        deletedUsersCount = userRepository.deleteByHours(SECOND_TRIE_HOURS_THRESHOLD, limit);
+        log.debug("Deleted {} users from DB", deletedUsersCount);
+      }
     }
+  }
+
+  private boolean areTooManyUsers() {
+    return userRepository.count() >= AppConfigs.DELETTING_USERS_COUNT_LIMIT_TO_CLEAR_DB;
   }
 
 }
