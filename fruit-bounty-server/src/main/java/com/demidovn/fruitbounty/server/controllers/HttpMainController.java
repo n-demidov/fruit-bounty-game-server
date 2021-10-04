@@ -14,9 +14,11 @@ public class HttpMainController {
 
     private static final String FB_APP_URL = "/fb-app";
     private static final String VK_APP_URL = "/vk-app";
+    private static final String YANDEX_APP_URL = "/ya-app";
     private static final String MVC_REDIRECT = "redirect:/";
     private static final String APP_HTML_VIEW = "app";
     private static final String VK_SOCIAL_NETWORK_TYPE = "vk";
+    private static final String YANDEX_SOCIAL_NETWORK_TYPE = "ya";
     private static final String SOCIAL_NETWORK_TYPE_PARAM = "socialNetworkType";
     private static final String SOCIAL_NETWORK_APP_ID_PARAM = "socialNetworkAppId";
 
@@ -38,6 +40,12 @@ public class HttpMainController {
     @RequestMapping(value = VK_APP_URL, method = RequestMethod.GET)
     public String vkAppGet(Map<String, Object> model) {
         model.put(SOCIAL_NETWORK_TYPE_PARAM, VK_SOCIAL_NETWORK_TYPE);
+        return APP_HTML_VIEW;
+    }
+
+    @RequestMapping(value = YANDEX_APP_URL, method = RequestMethod.GET)
+    public String yaAppGet(Map<String, Object> model) {
+        model.put(SOCIAL_NETWORK_TYPE_PARAM, YANDEX_SOCIAL_NETWORK_TYPE);
         return APP_HTML_VIEW;
     }
 

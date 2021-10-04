@@ -13,7 +13,7 @@ var ENTER_KEY_CODE = 13;
 var C_KEY_CODE = 67;
 var TILDE_KEY_CODE = 192;
 
-var AUTH_OPERATION_TYPE = "Auth", FB_TYPE = "fb", VK_TYPE = "vk";
+var AUTH_OPERATION_TYPE = "Auth", FB_TYPE = "fb", VK_TYPE = "vk", YA_TYPE = "ya";
 var SEND_CHAT_OPERATION_TYPE = "SendChat";
 var SEND_PLAY_REQUEST_OPERATION_TYPE = "GameRequest";
 var SEND_GAME_ACTION = "GameAction", MOVE_GAME_ACTION = "Move", SURRENDER_GAME_ACTION = "Surrender";
@@ -353,28 +353,40 @@ function onSocialNetworkAuthed() {
 
 
 /* === Generic Social Network methods ===  */
+function getState() {
+  var socialNetworkType = $('#social-network-type');
+  if (socialNetworkType.text() === VK_TYPE) {
+    return VK_TYPE;
+  } else if (socialNetworkType.text() === YA_TYPE) {
+    return YA_TYPE;
+  } else {
+    return FB_TYPE;
+  }
+}
+
 function runApp() {
-  if (isVkSdk()) {
+  if (getState() === VK_TYPE) {
     console.log('starting vk SDK...');
     startVkSdk();
+  } else if (getState() === YA_TYPE) {
+    console.log('starting yandex SDK...');
+    startYandexSdk();
   } else {
     console.log('starting facebook SDK...');
     startFbSdk();
   }
 }
 
-function isVkSdk() {
-  var socialNetworkType = $('#social-network-type');
-  return socialNetworkType.text() === VK_TYPE;
-}
-
 function getSocialNetworkPayload() {
   var authPayload = {};
 
-  if (isVkSdk()) {
+  if (getState() === VK_TYPE) {
     authPayload.type = VK_TYPE;
     authPayload.authKey = queryParams["auth_key"];
     authPayload.userId = queryParams["viewer_id"];
+  } else if (getState() === YA_TYPE) {
+    authPayload.type = YA_TYPE;
+    authPayload.userId = storeUuid();
   } else {
     authPayload.type = FB_TYPE;
     authPayload.accessToken = fbLoginStatus.authResponse.accessToken;
@@ -382,6 +394,21 @@ function getSocialNetworkPayload() {
   }
 
   return authPayload;
+}
+
+function storeUuid() {
+  try {
+    var uuid = localStorage.getItem('uuid');
+    if (uuid === null) {
+      uuid = getRandomInt(1000000000, 1000000000000);
+      localStorage.setItem('uuid', uuid);
+    }
+    return uuid;
+  } catch (e) {
+    console.log("error while store to localStorage");
+    console.log(e);
+    throw e;
+  }
 }
 
 
@@ -484,6 +511,29 @@ function initVk() {
 
 function isMobileVk() {
   return window.name !== VK_IFRAME_WINDOW_NAME;
+}
+
+
+/* === Yandex Methods === */
+function startYandexSdk() {
+  (function(d) {
+    var t = d.getElementsByTagName('script')[0];
+    var s = d.createElement('script');
+    s.src = 'https://yandex.ru/games/sdk/v2';
+    s.async = true;
+    t.parentNode.insertBefore(s, t);
+    s.onload = initSDK;
+  })(document);
+}
+
+function initSDK() {
+  YaGames
+    .init()
+    .then(ysdk => {
+      console.log('Yandex SDK initialization succeeded.');
+      window.ysdk = ysdk;
+      onSocialNetworkAuthed();
+    });
 }
 
 

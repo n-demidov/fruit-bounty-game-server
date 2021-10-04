@@ -1,5 +1,6 @@
 package com.demidovn.fruitbounty.server.services.auth;
 
+import com.demidovn.fruitbounty.game.services.game.bot.BotNameGenerator;
 import com.demidovn.fruitbounty.gameapi.model.Game;
 import com.demidovn.fruitbounty.server.AppConfigs;
 import com.demidovn.fruitbounty.server.dto.operations.ThirdPartyAuthedUserInfo;
@@ -23,6 +24,7 @@ import com.demidovn.fruitbounty.server.services.auth.authenticator.ThirdPartyUse
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,8 @@ import javax.annotation.Resource;
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AuthExecutor implements Runnable {
+
+  private static final String UNKNOWN_PERSON_IMG = "https://graph.facebook.com/107543663779701/picture";
 
   @Autowired
   @Qualifier("serverConversionService")
@@ -70,6 +74,9 @@ public class AuthExecutor implements Runnable {
 
   @Autowired
   private PlayersRating playersRating;
+
+  @Autowired
+  private BotNameGenerator nameGenerator;
 
   @Setter
   private RequestOperation operation;
@@ -107,16 +114,31 @@ public class AuthExecutor implements Runnable {
     if (!thirdPartyUsers.isEmpty()) {
       User user = thirdPartyUsers.get(0);
 
-      user.setPublicName(thirdPartyAuthedUserInfo.getPublicName());
-      user.setImg(thirdPartyAuthedUserInfo.getImg());
+      // Refresh Name and avatar.
+      if (thirdPartyAuthedUserInfo.getImg() != null && !Objects.equals(thirdPartyAuthedUserInfo.getImg(), user.getImg())) {
+        user.setImg(thirdPartyAuthedUserInfo.getImg());
+      }
+      if (thirdPartyAuthedUserInfo.getPublicName() != null && !Objects.equals(thirdPartyAuthedUserInfo.getPublicName(), user.getPublicName())) {
+        user.setPublicName(thirdPartyAuthedUserInfo.getPublicName());
+      }
       user.setLastLogin(Instant.now().toEpochMilli());
 
       userService.update(user);
       return user;
     }
 
+    setRandomParamsIfNecessary(thirdPartyAuthedUserInfo);
     User authedUser = createUser(thirdPartyAuthedUserInfo);
     return userService.create(authedUser);
+  }
+
+  private void setRandomParamsIfNecessary(ThirdPartyAuthedUserInfo userInfo) {
+    if (userInfo.getImg() == null) {
+      userInfo.setImg(UNKNOWN_PERSON_IMG);
+    }
+    if (userInfo.getPublicName() == null) {
+      userInfo.setPublicName(nameGenerator.getRandomName());
+    }
   }
 
   private User createUser(ThirdPartyAuthedUserInfo thirdPartyAuthedUserInfo) {
