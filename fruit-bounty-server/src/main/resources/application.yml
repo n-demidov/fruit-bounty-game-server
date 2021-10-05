@@ -136,7 +136,7 @@ spring:
 logging:
   level:
     root: WARN
-    com.demidovn: TRACE
+    com.demidovn: DEBUG
     org.springframework: WARN
 #    org.springframework.boot.autoconfigure: DEBUG       # To debug auto-configurations
     org.apache: WARN
@@ -150,7 +150,7 @@ endpoints:
 
 game-server:
   ttl:
-    not-authed-connection: ${NOT_AUTHED_CONNECTION_TTL:8}
+    not-authed-connection: ${NOT_AUTHED_CONNECTION_TTL:10}
     authed-inactive-connection: ${AUTHED_INACTIVE_CONNECTION_TTL:600}
   schedule-delay:
     valid-not-authed-connections: ${VALID_NOT_AUTHED_CONNECTIONS_SCHEDULE_DELAY:10000}
