@@ -52,6 +52,14 @@ public class GameLoop {
   }
 
   private void processGame(Game game) {
+    try {
+      doProcessGame(game);
+    } catch (Exception e) {
+      log.error("error while process game", e);
+    }
+  }
+
+  private void doProcessGame(Game game) {
     GameProcessingContext processContext = new GameProcessingContext();
 
     int i = 0;
