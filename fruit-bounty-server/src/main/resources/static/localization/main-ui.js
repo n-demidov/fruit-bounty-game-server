@@ -62,7 +62,7 @@ function getLocalization() {
     },
     "reconnect-label": {
       selector: "#discnctPopup p",
-      en: "Sorry, the connection is losszzzzsst...",
+      en: "Sorry, the connection is lost...",
       ru: "Соединение было потеряно..."
     },
 
