@@ -36,10 +36,10 @@ public class ConnectionService {
       "Connection will close, because you was not active a long time.";
 
   @Value("${game-server.ttl.not-authed-connection}")
-  private long NOT_AUTHED_CONNECTION_TTL;
+  private long NOT_AUTHED_CONNECTION_TTL_SEC;
 
   @Value("${game-server.ttl.authed-inactive-connection}")
-  private long AUTHED_INACTIVE_CONNECTION_TTL;
+  private long AUTHED_INACTIVE_CONNECTION_TTL_SEC;
 
   @Autowired
   private WebSocketSender webSocketSender;
@@ -173,7 +173,7 @@ public class ConnectionService {
     List<Connection> copiedConnections = new ArrayList<>(authedConnections.values());
 
     for (Connection connection : copiedConnections) {
-      if (nowSeconds > connection.getLastActionTime() + AUTHED_INACTIVE_CONNECTION_TTL) {
+      if (nowSeconds > connection.getLastActionTime() + AUTHED_INACTIVE_CONNECTION_TTL_SEC) {
         log.debug("TTL of inactive authed-connection id='{}' was expired and it will be closed", connection.getId());
         sendMessageBeforeCloseConnection(connection,
             CONNECTION_WILL_CLOSE_BECAUSE_USER_WAS_NOT_ACTIVE);
@@ -231,7 +231,7 @@ public class ConnectionService {
   }
 
   private boolean isNotAuthedConnectionExpired(long nowSeconds, Connection connection) {
-    return nowSeconds > connection.getConnectionEstablished() + NOT_AUTHED_CONNECTION_TTL;
+    return nowSeconds > connection.getConnectionEstablished() + NOT_AUTHED_CONNECTION_TTL_SEC;
   }
 
   private void sendMessageBeforeCloseConnection(Connection oldConnectionId, String causeClosingMessage) {

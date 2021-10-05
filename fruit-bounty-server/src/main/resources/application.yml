@@ -150,8 +150,8 @@ endpoints:
 
 game-server:
   ttl:
-    not-authed-connection: ${NOT_AUTHED_CONNECTION_TTL:10}
-    authed-inactive-connection: ${AUTHED_INACTIVE_CONNECTION_TTL:600}
+    not-authed-connection: ${NOT_AUTHED_CONNECTION_TTL_SEC:10}
+    authed-inactive-connection: ${AUTHED_INACTIVE_CONNECTION_TTL_SEC:600}
   schedule-delay:
     valid-not-authed-connections: ${VALID_NOT_AUTHED_CONNECTIONS_SCHEDULE_DELAY:10000}
     valid-authed-connections: ${VALID_AUTHED_CONNECTIONS_SCHEDULE_DELAY:60000}
