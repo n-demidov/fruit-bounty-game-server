@@ -1,9 +1,12 @@
 package com.demidovn.fruitbounty.server.services.metrics;
 
-import com.demidovn.fruitbounty.server.persistence.entities.metrics.DateStat;
-import com.demidovn.fruitbounty.server.persistence.entities.metrics.DateStatMinutes;
+import com.demidovn.fruitbounty.server.dto.operations.MetricsDto;
+import com.demidovn.fruitbounty.server.persistence.entities.metrics.players.DateStat;
+import com.demidovn.fruitbounty.server.persistence.entities.metrics.players.DateStatMinutes;
 import com.demidovn.fruitbounty.server.persistence.entities.metrics.Metrics;
-import com.demidovn.fruitbounty.server.persistence.entities.metrics.HistoryMetrics;
+import com.demidovn.fruitbounty.server.persistence.entities.metrics.players.HistoryPlayersMetrics;
+import com.demidovn.fruitbounty.server.persistence.entities.metrics.requests.HistoryStats;
+import com.demidovn.fruitbounty.server.persistence.entities.metrics.requests.DateStats;
 import com.demidovn.fruitbounty.server.persistence.repository.MetricsRepository;
 import com.demidovn.fruitbounty.server.services.ConnectionService;
 import com.demidovn.fruitbounty.server.services.UserService;
@@ -28,8 +31,11 @@ public class ServerMetricsLogger {
 
   private static final long METRICS_ID = 1L;
 
-  @Value("${game-server.metrics.store-days}")
-  private int STORE_METRICS_DAYS;
+  @Value("${game-server.metrics.players-ttl-days}")
+  private int PLAYER_METRICS_TTL_DAYS;
+
+  @Value("${game-server.metrics.stats-ttl-days}")
+  private int STATS_TTL_DAYS;
 
   @Autowired
   private ConnectionService connectionService;
@@ -43,6 +49,9 @@ public class ServerMetricsLogger {
   @Autowired
   private MetricsRepository metricsRepository;
 
+  @Autowired
+  private StatService statService;
+
   private BlockingQueue<Runnable> authPoolQueue;
   private BlockingQueue<Runnable> gameNotifierPoolQueue;
 
@@ -55,44 +64,47 @@ public class ServerMetricsLogger {
   }
 
   public void logMetrics() {
-    int authedConns = connectionService.countAuthedConnections();
-    String currentMetrics = String.format(
-            "threads=%d, notAuthCons=%d, authCons=%d, playingUsers=%d, authPoolQueue.size=%d, gameNotifierPoolQueue.size=%d, users=%d",
+    Metrics metrics = loadMetrics();
+
+    MetricsDto currentMetrics = getCurrentMetrics();
+    log.info("Current metrics: {}", currentMetrics.getString());
+    metrics.setCurrentMetrics(currentMetrics.getString());
+
+    updateHistPlayers(currentMetrics.getAuthedConns(), metrics.getHistPlayers());
+    updateHistStats(metrics.getHistStats());
+
+    metricsRepository.save(metrics);
+  }
+
+  private MetricsDto getCurrentMetrics() {
+    return new MetricsDto(
             ManagementFactory.getThreadMXBean().getThreadCount(),
             connectionService.countNotAuthedConnections(),
-            authedConns,
+            connectionService.countAuthedConnections(),
             userGames.countPlayingUsers(),
             authPoolQueue.size(),
             gameNotifierPoolQueue.size(),
             userService.getCount());
-
-    log.info("metrics: {}", currentMetrics);
-
-    persistMetricsToDb(authedConns, currentMetrics);
   }
 
-  private void persistMetricsToDb(int authedConns, String currentMetrics) {
-    // Keep all in one row because free DB has a limit of rows :)
-    Metrics metrics = loadMetrics();
-
+  private void updateHistPlayers(int onlinePlayersNum, HistoryPlayersMetrics persistedHistPlayers) {
     LocalDate localDate = LocalDate.now(ZoneOffset.UTC);
     String currentDate = localDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
 
-    HistoryMetrics histMetrics = metrics.getHistMetrics();
-    DateStat dateStat = histMetrics.getStatsByDate().get(currentDate);
+    DateStat dateStat = persistedHistPlayers.getStatsByDate().get(currentDate);
     if (dateStat == null) {
       dateStat = new DateStat();
-      histMetrics.getStatsByDate().put(currentDate, dateStat);
+      persistedHistPlayers.getStatsByDate().put(currentDate, dateStat);
     }
 
     // Increment total minutes for Date
     int totalDayMinutes = dateStat.getTotalMinutes() + 1;
     dateStat.setTotalMinutes(totalDayMinutes);
 
-    DateStatMinutes dateStatMinutes = dateStat.getMinutesByPlayers().get(authedConns);
+    DateStatMinutes dateStatMinutes = dateStat.getMinutesByPlayers().get(onlinePlayersNum);
     if (dateStatMinutes == null) {
       dateStatMinutes = new DateStatMinutes();
-      dateStat.getMinutesByPlayers().put(authedConns, dateStatMinutes);
+      dateStat.getMinutesByPlayers().put(onlinePlayersNum, dateStatMinutes);
     }
 
     // Increment minutes for authed connections.
@@ -100,19 +112,42 @@ public class ServerMetricsLogger {
     dateStatMinutes.setMinutes(connectionsDayMinutes);
 
     recalculateDayPercents(dateStat.getMinutesByPlayers(), totalDayMinutes);
-    removeRedundantDates(histMetrics);
+    removeRedundantDates(persistedHistPlayers.getStatsByDate(), PLAYER_METRICS_TTL_DAYS);
+  }
 
-    // Update current metric info
-    metrics.setCurrentMetrics(currentMetrics);
+  private void updateHistStats(HistoryStats persistedHistStats) {
+    Map<String, Long> newHistStats = statService.getAndClear();
 
-    metricsRepository.save(metrics);
+    for (Map.Entry<String, Long> newHistStat : newHistStats.entrySet()) {
+      if (newHistStat.getValue() > 0) {
+        updateHistStats(newHistStat, persistedHistStats);
+      }
+    }
+    removeRedundantDates(persistedHistStats.getStatsByDate(), STATS_TTL_DAYS);
+  }
+
+  private void updateHistStats(Map.Entry<String, Long> newHistStat, HistoryStats persistedHistStats) {
+    LocalDate localDate = LocalDate.now(ZoneOffset.UTC);
+    String currentDate = localDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+
+    DateStats dateStats = persistedHistStats.getStatsByDate().get(currentDate);
+    if (dateStats == null) {
+      dateStats = new DateStats();
+      persistedHistStats.getStatsByDate().put(currentDate, dateStats);
+    }
+
+    long totalByKey = dateStats.getStatsByKey().getOrDefault(newHistStat.getKey(), 0L);
+    totalByKey += newHistStat.getValue();
+    dateStats.getStatsByKey().put(newHistStat.getKey(), totalByKey);
   }
 
   private Metrics loadMetrics() {
+    // Keep all in one row because free DB has a limit of rows :)
     Metrics metrics = metricsRepository.findOne(METRICS_ID);
     if (metrics == null) {
       metrics = new Metrics();
-      metrics.setHistMetrics(new HistoryMetrics());
+      metrics.setHistPlayers(new HistoryPlayersMetrics());
+      metrics.setHistStats(new HistoryStats());
     }
     return metrics;
   }
@@ -126,15 +161,15 @@ public class ServerMetricsLogger {
     }
   }
 
-  private void removeRedundantDates(HistoryMetrics metricsStatistics) {
-    List<String> validDates = prepareValidDates();
-    metricsStatistics.getStatsByDate().entrySet()
+  private void removeRedundantDates(Map<String, ?> statsByDate, int storeMetricsDays) {
+    List<String> validDates = prepareValidDates(storeMetricsDays);
+    statsByDate.entrySet()
             .removeIf(entry -> !validDates.contains(entry.getKey()));
   }
 
-  private List<String> prepareValidDates() {
+  private List<String> prepareValidDates(int storeMetricsDays) {
     LocalDate localDate = LocalDate.now(ZoneOffset.UTC);
-    List<String> dates = new ArrayList<>(STORE_METRICS_DAYS);
+    List<String> dates = new ArrayList<>(storeMetricsDays);
     int counter = 0;
 
     do {
@@ -143,7 +178,7 @@ public class ServerMetricsLogger {
               .format(DateTimeFormatter.ISO_LOCAL_DATE);
       dates.add(tempDate);
       counter++;
-    } while (counter < STORE_METRICS_DAYS);
+    } while (counter < storeMetricsDays);
 
     return dates;
   }

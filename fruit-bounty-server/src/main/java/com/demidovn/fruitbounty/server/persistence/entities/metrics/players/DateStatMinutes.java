@@ -1,4 +1,4 @@
-package com.demidovn.fruitbounty.server.persistence.entities.metrics;
+package com.demidovn.fruitbounty.server.persistence.entities.metrics.players;
 
 import lombok.Data;
 

@@ -1,5 +1,6 @@
 package com.demidovn.fruitbounty.server.services.operations.handlers;
 
+import com.demidovn.fruitbounty.server.MetricsConsts;
 import com.demidovn.fruitbounty.server.dto.operations.request.OperationType;
 import com.demidovn.fruitbounty.server.dto.operations.request.RequestOperation;
 import com.demidovn.fruitbounty.server.dto.operations.response.ResponseOperation;
@@ -9,6 +10,7 @@ import com.demidovn.fruitbounty.server.persistence.entities.User;
 import com.demidovn.fruitbounty.server.services.ConnectionService;
 import com.demidovn.fruitbounty.server.services.UserService;
 import com.demidovn.fruitbounty.server.services.chat.ChatHub;
+import com.demidovn.fruitbounty.server.services.metrics.StatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
@@ -38,6 +40,9 @@ public class SendChatOperationHandler implements OperationHandler {
   @Autowired
   private ChatHub chatHub;
 
+  @Autowired
+  private StatService statService;
+
   @Override
   public OperationType getOperationType() {
     return OperationType.SendChat;
@@ -58,6 +63,7 @@ public class SendChatOperationHandler implements OperationHandler {
 
     chatHub.push(message);
     sendMessageToTopic(message);
+    statService.incCounter(MetricsConsts.OTHER.CHAT_SENT_STAT);
   }
 
   private String formatMessage(String message, User user) {

@@ -3,6 +3,7 @@ package com.demidovn.fruitbounty.server.services;
 import com.demidovn.fruitbounty.gameapi.model.Game;
 import com.demidovn.fruitbounty.server.AppConfigs;
 import com.demidovn.fruitbounty.server.AppConstants;
+import com.demidovn.fruitbounty.server.MetricsConsts;
 import com.demidovn.fruitbounty.server.persistence.entities.User;
 import com.demidovn.fruitbounty.server.services.game.GameNotifier;
 import com.demidovn.fruitbounty.server.services.game.UserGames;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.demidovn.fruitbounty.server.services.metrics.StatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,6 +37,9 @@ public class GameRequests {
 
   @Autowired
   private UserService userService;
+
+  @Autowired
+  private StatService statService;
 
   private final Random random = new Random();
   private final Map<Long, Integer> gameRequests = new ConcurrentHashMap<>();
@@ -65,6 +71,9 @@ public class GameRequests {
 
       Game game = userGames.startGame(players);
       gameNotifier.notifyThatGameStarted(game);
+
+      statService.incCounter(MetricsConsts.GAME.ALL_STAT);
+      statService.incCounter(MetricsConsts.GAME.BETWEEN_PLAYERS_STAT);
     }
 
     if (userIds.size() == 1) {
@@ -88,6 +97,9 @@ public class GameRequests {
 
         users.remove();
         gameRequests.remove(userId);
+
+        statService.incCounter(MetricsConsts.GAME.ALL_STAT);
+        statService.incCounter(MetricsConsts.GAME.TUTORIAL_STAT);
       }
     }
   }
@@ -117,6 +129,9 @@ public class GameRequests {
 
       Game game = userGames.startGameWithBot(remainingUserId);
       gameNotifier.notifyThatGameStarted(game);
+
+      statService.incCounter(MetricsConsts.GAME.ALL_STAT);
+      statService.incCounter(MetricsConsts.GAME.WITH_BOT_STAT);
     }
   }
 

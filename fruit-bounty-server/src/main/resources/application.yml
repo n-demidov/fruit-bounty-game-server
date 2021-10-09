@@ -160,7 +160,8 @@ game-server:
     metrics: ${METRICS_SCHEDULE_DELAY:60000}
     clear-not-actual-users: ${CLEAR_NOT_ACTUAL_USERS_SCHEDULE_DELAY:60000}
   metrics:
-    store-days:  ${STORE_STATISTICS_DAYS:7}
+    players-ttl-days:  ${PLAYER_METRICS_TTL_DAYS:15}
+    stats-ttl-days:  ${STATS_TTL_DAYS:29}
   facebook:
     application-id: ${FACEBOOK_APP_ID}
   vk:

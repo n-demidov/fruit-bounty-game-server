@@ -1,6 +1,8 @@
 package com.demidovn.fruitbounty.server.persistence.entities.metrics;
 
 import com.demidovn.fruitbounty.server.persistence.converters.attributes.TimestampConverter;
+import com.demidovn.fruitbounty.server.persistence.entities.metrics.players.HistoryPlayersMetrics;
+import com.demidovn.fruitbounty.server.persistence.entities.metrics.requests.HistoryStats;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.Data;
 import org.hibernate.annotations.Type;
@@ -36,8 +38,12 @@ public class Metrics {
     private String currentMetrics;
 
     @Type(type = "json")
-    @Column(name = "hist_metrics", columnDefinition = "json", nullable = false)
-    private HistoryMetrics histMetrics;
+    @Column(name = "hist_players", columnDefinition = "json", nullable = false)
+    private HistoryPlayersMetrics histPlayers;
+
+    @Type(type = "json")
+    @Column(name = "hist_stats", columnDefinition = "json", nullable = false)
+    private HistoryStats histStats;
 
     @PrePersist
     @PreUpdate
