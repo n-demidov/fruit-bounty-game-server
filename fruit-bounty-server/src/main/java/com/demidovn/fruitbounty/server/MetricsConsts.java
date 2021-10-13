@@ -18,6 +18,16 @@ public class MetricsConsts {
         public static final String WITH_BOT_STAT = "GAME.START.WITH_BOT";
     }
 
+    public static class AUTH {
+        public static final String SUCCESS_ALL_STAT = "AUTHED.SUCCESS.ALL";
+        public static final String SUCCESS_BY_TYPE_STAT = "AUTHED.SUCCESS.";
+        public static final String ERRORS_STAT = "AUTHED.ERRORS";
+    }
+
+    public static class SERVER {
+        public static final String UPTIME_MINUTES_STAT = "SERVER.UPTIME_MINUTES";
+    }
+
     public static class OTHER {
         public static final String CHAT_SENT_STAT = "CHAT.SENT";
     }

@@ -1,5 +1,6 @@
 package com.demidovn.fruitbounty.server.services.metrics;
 
+import com.demidovn.fruitbounty.server.MetricsConsts;
 import com.demidovn.fruitbounty.server.dto.operations.MetricsDto;
 import com.demidovn.fruitbounty.server.persistence.entities.metrics.players.DateStat;
 import com.demidovn.fruitbounty.server.persistence.entities.metrics.players.DateStatMinutes;
@@ -64,6 +65,7 @@ public class ServerMetricsLogger {
   }
 
   public void logMetrics() {
+    statService.incCounter(MetricsConsts.SERVER.UPTIME_MINUTES_STAT);
     Metrics metrics = loadMetrics();
 
     MetricsDto currentMetrics = getCurrentMetrics();

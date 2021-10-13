@@ -3,6 +3,7 @@ package com.demidovn.fruitbounty.server.services.auth;
 import com.demidovn.fruitbounty.game.services.game.bot.BotNameGenerator;
 import com.demidovn.fruitbounty.gameapi.model.Game;
 import com.demidovn.fruitbounty.server.AppConfigs;
+import com.demidovn.fruitbounty.server.MetricsConsts;
 import com.demidovn.fruitbounty.server.dto.operations.ThirdPartyAuthedUserInfo;
 import com.demidovn.fruitbounty.server.dto.operations.request.AuthOperation;
 import com.demidovn.fruitbounty.server.dto.operations.request.RequestOperation;
@@ -22,10 +23,13 @@ import com.demidovn.fruitbounty.server.services.UserService;
 import com.demidovn.fruitbounty.server.services.chat.ChatHub;
 import com.demidovn.fruitbounty.server.services.auth.authenticator.ThirdPartyUserAuthenticator;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import com.demidovn.fruitbounty.server.services.metrics.StatService;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +47,7 @@ import javax.annotation.Resource;
 public class AuthExecutor implements Runnable {
 
   private static final String UNKNOWN_PERSON_IMG = "https://graph.facebook.com/107543663779701/picture";
+  private static final Map<AuthType, String> authStatsByAuthType = new HashMap<>();
 
   @Autowired
   @Qualifier("serverConversionService")
@@ -78,8 +83,17 @@ public class AuthExecutor implements Runnable {
   @Autowired
   private BotNameGenerator nameGenerator;
 
+  @Autowired
+  private StatService statService;
+
   @Setter
   private RequestOperation operation;
+
+  static {
+    for (AuthType authType : AuthType.values()) {
+      authStatsByAuthType.put(authType, MetricsConsts.AUTH.SUCCESS_BY_TYPE_STAT + authType);
+    }
+  }
 
   public void run() {
     Connection connection = operation.getConnection();
@@ -89,8 +103,9 @@ public class AuthExecutor implements Runnable {
       authAttemptsValidator.valid(connection);
 
       AuthOperation authOperation = conversionService.convert(operation, AuthOperation.class);
+      AuthType authType = authOperation.getType();
       ThirdPartyUserAuthenticator thirdPartyUserAuthenticator =
-              thirdPartyUserAuthenticators.get(authOperation.getType());
+              thirdPartyUserAuthenticators.get(authType);
       ThirdPartyAuthedUserInfo thirdPartyAuthedUserInfo = thirdPartyUserAuthenticator.authenticate(authOperation);
       User authedUser = getOrCreateUser(thirdPartyAuthedUserInfo);
 
@@ -100,12 +115,16 @@ public class AuthExecutor implements Runnable {
       sendChatHistory(connection);
       sendCurrentGame(connection, authedUser);
       sendTopRated(connection);
+      statService.incCounter(MetricsConsts.AUTH.SUCCESS_ALL_STAT);
+      statService.incCounter(authStatsByAuthType.get(authType));
     } catch (AuthFailedException | AuthValidationException e) {
       log.warn("process: auth failed", e);
       connectionService.killConnection(connection);
+      statService.incCounter(MetricsConsts.AUTH.ERRORS_STAT);
     } catch (RuntimeException e) {
       log.error("process", e);
       connectionService.killConnection(connection);
+      statService.incCounter(MetricsConsts.AUTH.ERRORS_STAT);
     }
   }
 
