@@ -77,7 +77,7 @@ public class GameRequests {
     }
 
     if (userIds.size() == 1) {
-      processRemainingUser(userIds);
+      processRemainingUser(userIds.get(0));
     }
   }
 
@@ -118,11 +118,15 @@ public class GameRequests {
     return pulledUserId;
   }
 
-  private void processRemainingUser(List<Long> userIds) {
-    Long remainingUserId = userIds.get(0);
+  private void processRemainingUser(Long remainingUserId) {
     int iterationsCount = incrementPassedIterationsCount(remainingUserId);
 
-    int waitUntilBot = countWaitUntilBot();
+    User user = userService.get(remainingUserId);
+    if (user.getScore() >= AppConfigs.MIN_RATING_WITHOUT_BOT) {
+      return;
+    }
+
+    int waitUntilBot = getWaitUntilBot(user.getScore());
     if (iterationsCount > waitUntilBot) {
       log.debug("Creating game between user (id={}) and bot", remainingUserId);
       gameRequests.remove(remainingUserId);
@@ -142,7 +146,22 @@ public class GameRequests {
     return newIterationsCount;
   }
 
-  private int countWaitUntilBot() {
+  private int getWaitUntilBot(int userScore) {
+    int waitIterations = getWaitByOnlineUsers();
+
+    int delta = userScore - AppConfigs.INITIAL_USER_SCORE;
+    if (delta > 0) {
+      waitIterations++;
+    }
+
+    if (waitIterations > AppConfigs.MAX_GAME_REQUEST_ITERATIONS_BEFORE_BOT_PLAY) {
+      waitIterations = AppConfigs.MAX_GAME_REQUEST_ITERATIONS_BEFORE_BOT_PLAY;
+    }
+
+    return waitIterations;
+  }
+
+  private int getWaitByOnlineUsers() {
     int onlineUsers = connectionService.countOnlineUsers();
 
     if (onlineUsers <= 1) {
@@ -150,12 +169,7 @@ public class GameRequests {
     } else if (onlineUsers <= 10) {
       return 1;
     } else {
-      int wait = onlineUsers / 10;
-      if (wait > AppConfigs.GAME_REQUEST_ITERATIONS_BEFORE_BOT_PLAY) {
-        wait = AppConfigs.GAME_REQUEST_ITERATIONS_BEFORE_BOT_PLAY;
-      }
-
-      return wait;
+      return onlineUsers / 10;
     }
   }
 
