@@ -111,6 +111,18 @@
       <version>2.4.7</version>
       <scope>test</scope>
     </dependency>
+    <dependency> <!-- enables mocking of classes (in addition to interfaces) -->
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy</artifactId>
+      <version>1.10.22</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency> <!-- enables mocking of classes without default constructor (together with CGLIB) -->
+      <groupId>org.objenesis</groupId>
+      <artifactId>objenesis</artifactId>
+      <version>3.1</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>com.opentable.components</groupId>

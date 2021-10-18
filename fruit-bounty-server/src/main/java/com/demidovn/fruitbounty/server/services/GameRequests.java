@@ -1,7 +1,6 @@
 package com.demidovn.fruitbounty.server.services;
 
 import com.demidovn.fruitbounty.gameapi.model.Game;
-import com.demidovn.fruitbounty.server.AppConfigs;
 import com.demidovn.fruitbounty.server.AppConstants;
 import com.demidovn.fruitbounty.server.MetricsConsts;
 import com.demidovn.fruitbounty.server.persistence.entities.User;
@@ -37,6 +36,9 @@ public class GameRequests {
 
   @Autowired
   private UserService userService;
+
+  @Autowired
+  private GameRequestsWaitCalculator gameRequestsWaitCalculator;
 
   @Autowired
   private StatService statService;
@@ -119,14 +121,10 @@ public class GameRequests {
   }
 
   private void processRemainingUser(Long remainingUserId) {
+    User user = userService.get(remainingUserId);
     int iterationsCount = incrementPassedIterationsCount(remainingUserId);
 
-    User user = userService.get(remainingUserId);
-    if (user.getScore() >= AppConfigs.MIN_RATING_WITHOUT_BOT) {
-      return;
-    }
-
-    int waitUntilBot = getWaitUntilBot(user.getScore());
+    int waitUntilBot = gameRequestsWaitCalculator.getWaitUntilBot(user.getScore());
     if (iterationsCount > waitUntilBot) {
       log.debug("Creating game between user (id={}) and bot", remainingUserId);
       gameRequests.remove(remainingUserId);
@@ -144,33 +142,6 @@ public class GameRequests {
     gameRequests.put(remainingUserId, newIterationsCount);
 
     return newIterationsCount;
-  }
-
-  private int getWaitUntilBot(int userScore) {
-    int waitIterations = getWaitByOnlineUsers();
-
-    int delta = userScore - AppConfigs.INITIAL_USER_SCORE;
-    if (delta > 0) {
-      waitIterations++;
-    }
-
-    if (waitIterations > AppConfigs.MAX_GAME_REQUEST_ITERATIONS_BEFORE_BOT_PLAY) {
-      waitIterations = AppConfigs.MAX_GAME_REQUEST_ITERATIONS_BEFORE_BOT_PLAY;
-    }
-
-    return waitIterations;
-  }
-
-  private int getWaitByOnlineUsers() {
-    int onlineUsers = connectionService.countOnlineUsers();
-
-    if (onlineUsers <= 1) {
-      return 0;
-    } else if (onlineUsers <= 10) {
-      return 1;
-    } else {
-      return onlineUsers / 10;
-    }
   }
 
 }
