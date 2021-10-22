@@ -20,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,8 +91,7 @@ public class ServerMetricsLogger {
   }
 
   private void updateHistPlayers(int onlinePlayersNum, HistoryPlayersMetrics persistedHistPlayers) {
-    LocalDate localDate = LocalDate.now(ZoneOffset.UTC);
-    String currentDate = localDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+    String currentDate = getCurrentDate();
 
     DateStat dateStat = persistedHistPlayers.getStatsByDate().get(currentDate);
     if (dateStat == null) {
@@ -125,12 +125,12 @@ public class ServerMetricsLogger {
         updateHistStats(newHistStat, persistedHistStats);
       }
     }
+    sortCurrentHistStat(persistedHistStats);
     removeRedundantDates(persistedHistStats.getStatsByDate(), STATS_TTL_DAYS);
   }
 
   private void updateHistStats(Map.Entry<String, Long> newHistStat, HistoryStats persistedHistStats) {
-    LocalDate localDate = LocalDate.now(ZoneOffset.UTC);
-    String currentDate = localDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+    String currentDate = getCurrentDate();
 
     DateStats dateStats = persistedHistStats.getStatsByDate().get(currentDate);
     if (dateStats == null) {
@@ -141,6 +141,15 @@ public class ServerMetricsLogger {
     long totalByKey = dateStats.getStatsByKey().getOrDefault(newHistStat.getKey(), 0L);
     totalByKey += newHistStat.getValue();
     dateStats.getStatsByKey().put(newHistStat.getKey(), totalByKey);
+  }
+
+  private void sortCurrentHistStat(HistoryStats persistedHistStats) {
+    String currentDate = getCurrentDate();
+    DateStats dateStats = persistedHistStats.getStatsByDate().get(currentDate);
+
+    Map<String, Long> unsortedStatsByKey = dateStats.getStatsByKey();
+    Map<String, Long> sortedStatsByKey = new TreeMap<>(unsortedStatsByKey);
+    dateStats.setStatsByKey(sortedStatsByKey);
   }
 
   private Metrics loadMetrics() {
@@ -183,6 +192,11 @@ public class ServerMetricsLogger {
     } while (counter < storeMetricsDays);
 
     return dates;
+  }
+
+  private String getCurrentDate() {
+    LocalDate localDate = LocalDate.now(ZoneOffset.UTC);
+    return localDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
   }
 
 }
