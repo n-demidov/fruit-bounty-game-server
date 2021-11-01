@@ -78,7 +78,17 @@ public class AddedScoreCalculatorTest {
 
     int actual = addedScoreCalculator.findWinnerAddedScore(winner, looser);
 
-    assertThat(actual).isEqualTo(0);
+    assertThat(actual).isEqualTo(1);
+  }
+
+  @Test
+  public void whenWinnerTooBigger() {
+    Player winner = createPlayer(9000);
+    Player looser = createPlayer(1000);
+
+    int actual = addedScoreCalculator.findWinnerAddedScore(winner, looser);
+
+    assertThat(actual).isEqualTo(1);
   }
 
   private Player createPlayer(int score) {
