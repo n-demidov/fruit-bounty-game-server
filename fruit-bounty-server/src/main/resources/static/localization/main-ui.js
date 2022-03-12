@@ -111,6 +111,10 @@ function getLocalization() {
       en: "Defeat",
       ru: "Поражение"
     },
+    "captureFruit": {
+      en: "Capture the fruit",
+      ru: "Захватите фрукт"
+    },
     "fruitIsOccupied": {
       en: "Fruit is occupied by opponent",
       ru: "Фрукт занят оппонентом"
@@ -126,6 +130,10 @@ function getLocalization() {
     "chat": {
       en: "chat",
       ru: "чат"
+    },
+    "captureAllFruits": {
+      en: "Whoever grabs the most fruits wins",
+      ru: "Победит тот, кто захватит больше всего фруктов"
     },
 
     /*Game tutor */

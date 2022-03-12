@@ -20,15 +20,17 @@ public class GameCreator {
 
   public Game createNewGame(List<Player> players, boolean isTutorial) {
     Game game = new Game();
+    game.setTutorial(isTutorial);
 
-    randomlyMixPlayers(players);
+    if (!game.isTutorial()) {
+      randomlyMixPlayers(players);
+    }
     game.setPlayers(players);
     setRandomCurrentPlayer(game);
 
-    game.setTutorial(isTutorial);
-
     game.setBoard(createBoard(game));
     initPlayersCellsConfigurator.configureInitPlayersCells(game);
+    changeBoardIfTutorial(game);
 
     return game;
   }
@@ -65,6 +67,31 @@ public class GameCreator {
     }
 
     return new Board(cells);
+  }
+
+  private void changeBoardIfTutorial(Game game) {
+    if (!game.isTutorial()) {
+      return;
+    }
+
+    Cell[][] cells = game.getBoard().getCells();
+
+    int type = cells[1][0].getType();
+    cells[1][1].setType(type);
+
+    type = cells[2][1].getType();
+    cells[3][1].setType(type);
+    cells[2][2].setType(type);
+    cells[2][0].setType(type);
+
+    type = cells[3][2].getType();
+    cells[4][2].setType(type);
+    cells[5][2].setType(type);
+    cells[6][2].setType(type);
+
+    type = cells[3][3].getType();
+    cells[3][4].setType(type);
+    cells[3][5].setType(type);
   }
 
   private int getBoardWidth(Game game) {

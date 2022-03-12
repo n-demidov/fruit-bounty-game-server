@@ -9,16 +9,16 @@ import lombok.Data;
 
 @Data
 public class Game {
-
   private Board board;
+  private int turnsCount;
+  private boolean isTutorial;
   private List<Player> players;
   private Player currentPlayer;
-  private boolean isTutorial;
 
   private long timePerMoveMs;
   @JsonIgnore
   private long currentMoveStarted;
-  private long clientCurrentMoveTimeLeft;
+  private long clientCurrentMoveTimeLeft;  // Only for client
 
   private boolean isFinished;
   private Player winner;
@@ -29,6 +29,7 @@ public class Game {
   public void setCurrentPlayer(Player player) {
     this.currentPlayer = player;
     this.currentMoveStarted = Instant.now().toEpochMilli();
+    turnsCount++;
   }
 
   public Player findPlayer(long playerId) {
@@ -62,16 +63,15 @@ public class Game {
   public String toFullString() {
     return "Game{" +
             "board=" + board +
+            ", turnsCount=" + turnsCount +
+            ", isTutorial=" + isTutorial +
             ", players=" + players +
             ", currentPlayer=" + currentPlayer +
-            ", isTutorial=" + isTutorial +
             ", timePerMoveMs=" + timePerMoveMs +
             ", currentMoveStarted=" + currentMoveStarted +
             ", clientCurrentMoveTimeLeft=" + clientCurrentMoveTimeLeft +
             ", isFinished=" + isFinished +
             ", winner=" + winner +
-            ", gameActions=" + gameActions +
             '}';
   }
-
 }

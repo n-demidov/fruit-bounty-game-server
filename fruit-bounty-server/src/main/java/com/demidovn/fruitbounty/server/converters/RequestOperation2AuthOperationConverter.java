@@ -19,6 +19,7 @@ public class RequestOperation2AuthOperationConverter implements FruitServerConve
     authOperation.setUserId(Long.valueOf(data.get("userId")));
     authOperation.setAccessToken(data.get("accessToken"));
     authOperation.setAuthKey(data.get("authKey"));
+    authOperation.setDevice(data.get("device"));
 
     return authOperation;
   }

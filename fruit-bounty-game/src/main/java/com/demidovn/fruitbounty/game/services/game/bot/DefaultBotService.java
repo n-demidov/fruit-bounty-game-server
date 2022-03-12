@@ -1,5 +1,6 @@
 package com.demidovn.fruitbounty.game.services.game.bot;
 
+import com.demidovn.fruitbounty.game.GameOptions;
 import com.demidovn.fruitbounty.game.converters.bot.MoveActionConverter;
 import com.demidovn.fruitbounty.game.model.Pair;
 import com.demidovn.fruitbounty.gameapi.model.Game;
@@ -15,7 +16,6 @@ public class DefaultBotService implements BotService {
 
   private static final int BOT_ID = -2000;
   private static final int BOT_WAITING_MOVE_TIME = 1300;
-  private static final String UNKNOWN_PERSON_IMG = "https://graph.facebook.com/107543663779701/picture";
   private static final int MAX_BOT_WINS = 10;
   private static final int MIN_BOT_DEFEATS = 20;
   private static final int MAX_BOT_DEFEATS = 100;
@@ -55,7 +55,7 @@ public class DefaultBotService implements BotService {
     Player bot = new Player();
 
     bot.setId(BOT_ID);
-    bot.setImg(UNKNOWN_PERSON_IMG);
+    bot.setImg(GameOptions.UNKNOWN_PERSON_IMG);
 
     bot.setPublicName(botNameGenerator.getRandomName());
     bot.setScore(generateRandomScore());
@@ -69,6 +69,8 @@ public class DefaultBotService implements BotService {
   @Override
   public Player createTrainer() {
     Player bot = createNewBot();
+
+    bot.setImg(GameOptions.TRAINER_IMG);
 
     bot.setPublicName(TRAINER_NAME);
     bot.setScore(TRAINER_SCORE);

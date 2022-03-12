@@ -8,7 +8,9 @@ var VK_SDK_URL = "https://vk.com/js/api/xd_connection.js?2";
 var VK_MOBILE_SDK_URL = "https://vk.com/js/api/mobile_sdk.js";
 var VK_IFRAME_WINDOW_NAME = "fXD";
 
+var ARROW_HELPER_TIMER_INTERVAL = 40;
 var TIPS_TIMER_INTERVAL = 12500;
+
 var ENTER_KEY_CODE = 13;
 var C_KEY_CODE = 67;
 var TILDE_KEY_CODE = 192;
@@ -34,6 +36,12 @@ var stompClient = null;
 var userInfo;
 var isWaitingForOpponent = false;
 var tipsTimerId;
+
+var ARROW_HELPER_ANIMATION_MIN_Y = "286";
+var ARROW_HELPER_ANIMATION_MAX_Y = "298";
+var ARROW_HELPER_ANIMATION_INIT_X = "276";
+var arrowHelperTimerId;
+var arrowHelperDirect = 1;
 
 var imgLobbyScreen = new Image();
 
@@ -149,6 +157,7 @@ function connectToServer() {
     });
 
     var authPayload = getSocialNetworkPayload();
+    authPayload.device = getPlatform();
     sendAuth(authPayload);
   }, function(error) {
     postSysMsg("Connection error: " + error);
@@ -180,7 +189,14 @@ function processUserInfoOperation(data) {
   $("#userScore").text(localize('score') + ': ' + userInfo.score);
   $("#user-info-data").attr("data-original-title", concatGameStats(userInfo));
 
+  if (userInfo.wins < 5) {
+    $('#playContent').attr("data-original-title", localize("captureAllFruits"));
+  }
+
+  $('[data-toggle="tooltip"]').tooltip();
+
   showMainWindow();
+  showArrowHelper();
 }
 
 function processChatOperation(messages) {
@@ -269,7 +285,7 @@ function initUi() {
     e.preventDefault();
   });
   $("#reconnect").click(connectToServer);
-  $("#play").click(sendPlayRequest);
+  $("#playContent").click(sendPlayRequest);
   $("#send").click(sendChat);
 
   $("#tips").on('click', '#share', shareFbGame);
@@ -329,6 +345,34 @@ function postSysMsg(message) {
 function showMainWindow() {
   $("#main-container").show();
   $("#loading-window").hide();
+}
+
+function showArrowHelper() {
+  if (userInfo.wins === 0 && arrowHelperTimerId === undefined) {
+    $("#arrowHelper").css({top: ARROW_HELPER_ANIMATION_MIN_Y + 'px'});
+    $("#arrowHelper").css({left: ARROW_HELPER_ANIMATION_INIT_X + 'px'});
+
+    arrowHelperTimerId = setInterval(
+      function() {
+        animateArrowHelper();
+      },
+      ARROW_HELPER_TIMER_INTERVAL);
+
+    $("#arrowHelper").show();
+  }
+}
+
+function animateArrowHelper() {
+  var top = parseInt($('#arrowHelper').css('top'));
+  var left = parseInt($('#arrowHelper').css('left'));
+
+  top += arrowHelperDirect;
+  left += arrowHelperDirect * -1;
+  if (top < ARROW_HELPER_ANIMATION_MIN_Y || top > ARROW_HELPER_ANIMATION_MAX_Y) {
+    arrowHelperDirect *= -1;
+  }
+
+  $("#arrowHelper").css({top: top + 'px', left: left + 'px'});
 }
 
 function concatGameStats(user) {
@@ -579,6 +623,48 @@ function parseQueryString() {
  */
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function getPlatform() {
+  var result = getMobileOperatingSystem();
+  if (result !== "UNKNOWN") {
+    return result;
+  }
+
+  return getOs();
+}
+
+/**
+ * Determine the mobile operating system.
+ */
+function getMobileOperatingSystem() {
+  var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+  // Windows Phone must come first because its UA also contains "Android"
+  if (/windows phone/i.test(userAgent)) {
+    return "WINDOWS_PHONE";
+  }
+
+  if (/android/i.test(userAgent)) {
+    return "ANDROID";
+  }
+
+  // iOS detection from: http://stackoverflow.com/a/9039885/177710
+  if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+    return "I_OS";
+  }
+
+  return "UNKNOWN";
+}
+
+function getOs() {
+  var result = "UNKNOWN";
+  if (navigator.appVersion.indexOf("Win")!=-1) result="WINDOWS";
+  if (navigator.appVersion.indexOf("Mac")!=-1) result="MAC_OS";
+  if (navigator.appVersion.indexOf("X11")!=-1) result="UNIX";
+  if (navigator.appVersion.indexOf("Linux")!=-1) result="LINUX";
+
+  return result;
 }
 
 

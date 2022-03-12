@@ -10,5 +10,6 @@ public class AuthOperation {
   long userId;
   String accessToken;
   String authKey;
+  String device;
 
 }

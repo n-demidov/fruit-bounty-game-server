@@ -1,5 +1,6 @@
 package com.demidovn.fruitbounty.server.services.auth;
 
+import com.demidovn.fruitbounty.game.GameOptions;
 import com.demidovn.fruitbounty.game.services.game.bot.BotNameGenerator;
 import com.demidovn.fruitbounty.gameapi.model.Game;
 import com.demidovn.fruitbounty.server.AppConfigs;
@@ -46,7 +47,6 @@ import javax.annotation.Resource;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AuthExecutor implements Runnable {
 
-  private static final String UNKNOWN_PERSON_IMG = "https://graph.facebook.com/107543663779701/picture";
   private static final Map<AuthType, String> authStatsByAuthType = new HashMap<>();
 
   @Autowired
@@ -103,6 +103,9 @@ public class AuthExecutor implements Runnable {
       authAttemptsValidator.valid(connection);
 
       AuthOperation authOperation = conversionService.convert(operation, AuthOperation.class);
+      statService.incCounter(MetricsConsts.AUTH.ALL_TRIES_STAT);
+      statService.incCounter(MetricsConsts.AUTH.DEVICE_STAT + authOperation.getDevice());
+
       AuthType authType = authOperation.getType();
       ThirdPartyUserAuthenticator thirdPartyUserAuthenticator =
               thirdPartyUserAuthenticators.get(authType);
@@ -115,6 +118,7 @@ public class AuthExecutor implements Runnable {
       sendChatHistory(connection);
       sendCurrentGame(connection, authedUser);
       sendTopRated(connection);
+
       statService.incCounter(MetricsConsts.AUTH.SUCCESS_ALL_STAT);
       statService.incCounter(authStatsByAuthType.get(authType));
     } catch (AuthFailedException | AuthValidationException e) {
@@ -153,7 +157,7 @@ public class AuthExecutor implements Runnable {
 
   private void setRandomParamsIfNecessary(ThirdPartyAuthedUserInfo userInfo) {
     if (userInfo.getImg() == null) {
-      userInfo.setImg(UNKNOWN_PERSON_IMG);
+      userInfo.setImg(GameOptions.UNKNOWN_PERSON_IMG);
     }
     if (userInfo.getPublicName() == null) {
       userInfo.setPublicName(nameGenerator.getRandomName());

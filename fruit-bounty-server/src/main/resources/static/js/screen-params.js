@@ -18,11 +18,13 @@ canvasTipsMapper[TABLET_SCREEN].addingTipHeight = 50;
 canvasTipsMapper[TABLET_SCREEN].lineWidth = 7;
 
 function getScreenType() {
-  if (window.innerWidth >= TABLET_SCREEN_WIDTH) {
-    return TABLET_SCREEN;
-  } else {
-    return MOBILE_SCREEN;
-  }
+  return MOBILE_SCREEN;
+
+  // if (window.innerWidth >= TABLET_SCREEN_WIDTH) {
+  //   return TABLET_SCREEN;
+  // } else {
+  //   return MOBILE_SCREEN;
+  // }
 }
 
 function getCanvasTipsParams() {
