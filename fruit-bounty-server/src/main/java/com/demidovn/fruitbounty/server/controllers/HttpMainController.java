@@ -19,10 +19,12 @@ public class HttpMainController {
     private static final String VK_APP_URL = "/vk-app";
     private static final String VK_APP_MOBILE_URL = "/vk-app-m";
     private static final String YANDEX_APP_URL = "/ya-app";
+    private static final String SB_APP_URL = "/sb-app";
     private static final String MVC_REDIRECT = "redirect:/";
     private static final String APP_HTML_VIEW = "app";
     private static final String VK_SOCIAL_NETWORK_TYPE = "vk";
     private static final String YANDEX_SOCIAL_NETWORK_TYPE = "ya";
+    private static final String SB_SOCIAL_NETWORK_TYPE = "sb";
     private static final String SOCIAL_NETWORK_TYPE_PARAM = "socialNetworkType";
     private static final String SOCIAL_NETWORK_APP_ID_PARAM = "socialNetworkAppId";
 
@@ -65,6 +67,14 @@ public class HttpMainController {
         statService.incCounter(MetricsConsts.REQUEST.ALL_STAT);
         statService.incCounter(MetricsConsts.REQUEST.YANDEX_STAT);
         model.put(SOCIAL_NETWORK_TYPE_PARAM, YANDEX_SOCIAL_NETWORK_TYPE);
+        return APP_HTML_VIEW;
+    }
+
+    @RequestMapping(value = SB_APP_URL, method = RequestMethod.GET)
+    public String sbAppGet(Map<String, Object> model) {
+        statService.incCounter(MetricsConsts.REQUEST.ALL_STAT);
+        statService.incCounter(MetricsConsts.REQUEST.SB_STAT);
+        model.put(SOCIAL_NETWORK_TYPE_PARAM, SB_SOCIAL_NETWORK_TYPE);
         return APP_HTML_VIEW;
     }
 

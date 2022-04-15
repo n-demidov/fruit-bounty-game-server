@@ -15,7 +15,7 @@ var ENTER_KEY_CODE = 13;
 var C_KEY_CODE = 67;
 var TILDE_KEY_CODE = 192;
 
-var AUTH_OPERATION_TYPE = "Auth", FB_TYPE = "fb", VK_TYPE = "vk", YA_TYPE = "ya";
+var AUTH_OPERATION_TYPE = "Auth", FB_TYPE = "fb", VK_TYPE = "vk", YA_TYPE = "ya", SB_TYPE = "sb";
 var SEND_CHAT_OPERATION_TYPE = "SendChat";
 var SEND_PLAY_REQUEST_OPERATION_TYPE = "GameRequest";
 var SEND_GAME_ACTION = "GameAction", MOVE_GAME_ACTION = "Move", SURRENDER_GAME_ACTION = "Surrender";
@@ -403,6 +403,8 @@ function getState() {
     return VK_TYPE;
   } else if (socialNetworkType.text() === YA_TYPE) {
     return YA_TYPE;
+  } else if (socialNetworkType.text() === SB_TYPE) {
+    return SB_TYPE;
   } else {
     return FB_TYPE;
   }
@@ -415,6 +417,9 @@ function runApp() {
   } else if (getState() === YA_TYPE) {
     console.log('starting yandex SDK...');
     startYandexSdk();
+  } else if (getState() === SB_TYPE) {
+    console.log('starting sb...');
+    onSocialNetworkAuthed();
   } else {
     console.log('starting facebook SDK...');
     startFbSdk();
@@ -430,6 +435,9 @@ function getSocialNetworkPayload() {
     authPayload.userId = queryParams["viewer_id"];
   } else if (getState() === YA_TYPE) {
     authPayload.type = YA_TYPE;
+    authPayload.userId = storeUuid();
+  } else if (getState() === SB_TYPE) {
+    authPayload.type = SB_TYPE;
     authPayload.userId = storeUuid();
   } else {
     authPayload.type = FB_TYPE;

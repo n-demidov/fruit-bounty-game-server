@@ -4,11 +4,13 @@ public enum AuthType {
 
   FB(AuthType.FB_TYPE),
   VK(AuthType.VK_TYPE),
-  YANDEX(AuthType.YANDEX_TYPE);
+  YANDEX(AuthType.YANDEX_TYPE),
+  SB(AuthType.SB_TYPE);
 
   private static final String VK_TYPE = "vk";
   private static final String FB_TYPE = "fb";
   private static final String YANDEX_TYPE = "ya";
+  private static final String SB_TYPE = "sb";
 
   private String stringRepresentation;
 
@@ -21,13 +23,12 @@ public enum AuthType {
   }
 
   public static AuthType fromString(String stringAuthType) {
-    if (VK_TYPE.equals(stringAuthType)) {
-      return VK;
-    } else if (YANDEX_TYPE.equals(stringAuthType)) {
-      return YANDEX;
-    } else {
-      return FB;
+    for (AuthType authType : AuthType.values()) {
+      if (authType.stringRepresentation.equals(stringAuthType)) {
+        return authType;
+      }
     }
+    throw new IllegalStateException("Unknown AuthType=" + stringAuthType);
   }
 
 }

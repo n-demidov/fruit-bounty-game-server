@@ -7,6 +7,7 @@ public class MetricsConsts {
         public static final String VK_STAT = "REQUEST.PAGE.VK";
         public static final String VK_MOBILE_STAT = "REQUEST.PAGE.VK-MOBILE";
         public static final String YANDEX_STAT = "REQUEST.PAGE.YANDEX";
+        public static final String SB_STAT = "REQUEST.PAGE.SB";
         public static final String FACEBOOK_GET_STAT = "REQUEST.PAGE.FACEBOOK.GET";
         public static final String FACEBOOK_POST_STAT = "REQUEST.PAGE.FACEBOOK.POST";
     }
