@@ -84,6 +84,8 @@ var movesCounter;
 var maxTimerProgressWidth;
 var gameWindowMayBeClosed;
 
+var isDefeat = false;
+
 function initGameUi() {
   maxTimerProgressWidth = $('#time-progress').width();
   canvas = document.getElementById(CANVAS_ID);
@@ -220,6 +222,9 @@ function hideConfirmWindow() {
 }
 
 function onSubwindowClose(e) {
+  if (isDefeat) {
+    showAdds();
+  }
   $(".background").css("background-image", "url(" + imgLobbyScreen.src + ")");
   $("#game-window").hide();
   $("#lobby-window").show();
@@ -700,10 +705,13 @@ function paintWinner(game) {
   // Set background image
   if (gameResult === "win") {
     $('#subwindow-container').css("background-image", "url(" + imgVictory.src + ")");
+    isDefeat = false;
   } else if (gameResult === "defeat") {
     $('#subwindow-container').css("background-image", "url(" + imgDefeat.src + ")");
+    isDefeat = true;
   } else {
     $('#subwindow-container').css("background-image", "url(" + imgDraw.src + ")");
+    isDefeat = true;
   }
 
   $('#subwindow-background').show();

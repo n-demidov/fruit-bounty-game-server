@@ -464,6 +464,15 @@ function storeUuid() {
 }
 
 
+/* === Adds === */
+async function showAdds() {
+  if (getState() === VK_TYPE) {
+    window.vkBridge.send("VKWebAppCheckNativeAds", {"ad_format": "interstitial"});
+
+    window.vkBridge.send("VKWebAppShowNativeAds", {ad_format:"interstitial"});
+  }
+}
+
 /* === Facebook Methods === */
 function startFbSdk() {
   window.fbAsyncInit = fbAsyncInit;
@@ -547,6 +556,9 @@ function startVkSdk() {
     console.log('loading vk SDK...');
     loadScript(VK_SDK_URL, initVk);
   }
+
+  console.log('Loading vk bridge...');
+  window.vkBridge.send('VKWebAppInit');
 }
 
 function initVk() {
