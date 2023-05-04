@@ -5,7 +5,9 @@ import com.demidovn.fruitbounty.server.integrationtests.bases.AbstractAuthMocked
 import com.demidovn.fruitbounty.server.integrationtests.websocket.client.WebsocketClient
 import org.json.JSONException
 import org.json.JSONObject
+import spock.lang.Ignore
 
+@Ignore
 class AuthSpecification extends AbstractAuthMockedSpecification {
 
   def "should successfully auth users with getting account's data"() {

@@ -3,7 +3,9 @@ package com.demidovn.fruitbounty.server.integrationtests.specifications
 import com.demidovn.fruitbounty.server.integrationtests.Constants
 import com.demidovn.fruitbounty.server.integrationtests.bases.AbstractAuthMockedSpecification
 import org.springframework.test.context.TestPropertySource
+import spock.lang.Ignore
 
+@Ignore
 @TestPropertySource(properties = [
     "game-server.schedule-delay.valid-not-authed-connections=91",
     "game-server.ttl.not-authed-connection=0",

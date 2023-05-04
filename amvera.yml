@@ -1,0 +1,10 @@
+meta:
+  environment: jvm
+  toolchain:
+    name: maven
+    version: 8
+build:
+  artifacts:
+    fruit-bounty-server/target/*.jar: /
+run:
+  jarName: fruit-bounty-server-1.0.jar

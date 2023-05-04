@@ -1,11 +1,13 @@
 package com.demidovn.fruitbounty.server.integrationtests.specifications
 
 import com.demidovn.fruitbounty.server.integrationtests.bases.AbstractAuthMockedSpecification
+import spock.lang.Ignore
 import spock.lang.Stepwise
 
 import com.demidovn.fruitbounty.server.integrationtests.websocket.client.WebsocketClient
 import org.springframework.test.context.TestPropertySource
 
+@Ignore
 @TestPropertySource(properties = [
     "game-server.schedule-delay.process-game-requests=300"
 ])

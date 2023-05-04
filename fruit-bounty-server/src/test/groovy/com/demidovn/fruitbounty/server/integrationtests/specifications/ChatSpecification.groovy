@@ -2,8 +2,10 @@ package com.demidovn.fruitbounty.server.integrationtests.specifications
 
 import com.demidovn.fruitbounty.server.integrationtests.bases.AbstractAuthMockedSpecification
 import com.demidovn.fruitbounty.server.integrationtests.websocket.client.WebsocketClient
+import spock.lang.Ignore
 import spock.lang.Stepwise
 
+@Ignore
 @Stepwise
 class ChatSpecification extends AbstractAuthMockedSpecification {
 

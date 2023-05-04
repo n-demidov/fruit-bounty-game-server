@@ -1,5 +1,10 @@
 server:
-  port: ${PORT:5000}
+  port: ${PORT:80}
+#  ssl:
+#    enabled: true
+#    key-store-type: PKCS12
+#    key-store: classpath:ssl/territory-conquest-game.online.key.pem
+#    key-store-password: password
 
 spring:
   profiles:
@@ -12,10 +17,10 @@ spring:
     platform: POSTGRESQL
     validationQuery: SELECT 1
     tomcat:
-      initial-size: 16
-      max-active: 17
-      min-idle: 16
-      max-idle: 16
+      initial-size: 8
+      max-active: 8
+      min-idle: 8
+      max-idle: 8
       test-on-connect: true
       test-while-idle: true
       time-between-eviction-runs-millis: 15000

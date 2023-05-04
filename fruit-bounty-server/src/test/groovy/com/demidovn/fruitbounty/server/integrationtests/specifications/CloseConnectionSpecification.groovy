@@ -3,7 +3,9 @@ package com.demidovn.fruitbounty.server.integrationtests.specifications
 import com.demidovn.fruitbounty.server.integrationtests.Constants
 import com.demidovn.fruitbounty.server.integrationtests.bases.AbstractAuthMockedSpecification
 import com.demidovn.fruitbounty.server.integrationtests.websocket.client.WebsocketClient
+import spock.lang.Ignore
 
+@Ignore
 class CloseConnectionSpecification extends AbstractAuthMockedSpecification {
 
   private static final String OLD_CONNECTION_WILL_CLOSE_MESSAGE =

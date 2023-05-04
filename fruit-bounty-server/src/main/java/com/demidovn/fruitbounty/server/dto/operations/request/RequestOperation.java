@@ -5,9 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.LinkedHashMap;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class RequestOperation {
 
   private OperationType type;
