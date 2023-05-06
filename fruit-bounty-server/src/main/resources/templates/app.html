@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
 
-  <title>Fruit's Bounty</title>
+  <title>Захват территории - Territory conquest Game</title>
 
-  <link rel="stylesheet" type="text/css" href="/style/external/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="/style/style.css">
-  <link rel="preload" href="/fonts/Showcard_Gothic_Regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="preload" href="/fonts/Showcard_Gothic_Cyr.otf" as="font" type="font/otf" crossorigin>
+  <link rel="stylesheet" type="text/css" href="./style/external/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="./style/style.css">
+  <link rel="preload" href="./fonts/Showcard_Gothic_Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="./fonts/Showcard_Gothic_Cyr.otf" as="font" type="font/otf" crossorigin>
 </head>
 <body>
 <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable Javascript and reload this page!</h2></noscript>
@@ -24,7 +24,7 @@
       <div id="lobby-window" class="lobby-window background-left">
 
         <div>
-          <img class="main-user-info-container-img" src="/img/components/user_info.png">
+          <img class="main-user-info-container-img" src="./img/components/user_info.png">
         </div>
 
         <!-- User Info -->
@@ -62,7 +62,7 @@
         </div>
 
         <div id="arrowHelper" class="arrow-helper">
-          <img class="arrow-helper-img" src="../img/arrow_helper.png" alt="">
+          <img class="arrow-helper-img" src="./img/arrow_helper.png" alt="">
         </div>
       </div>
 
@@ -75,7 +75,7 @@
 
         <div class="players-container">
           <!-- Left player -->
-          <img class="left-pl-back-img" src="/img/components/player_left.png">
+          <img class="left-pl-back-img" src="./img/components/player_left.png">
           <div id="left-pl-info" class="side-game-info user-info side-game-info-left" data-toggle="tooltip" data-placement="bottom" title="">
             <img id="left-pl-img" class="img-rounded player-img" src="#">
             <div id = "left-pl-shadow" class="pl-shadow left-pl-shadow"></div>
@@ -87,7 +87,7 @@
           </div>
 
           <!-- Right player -->
-          <img class="right-pl-back-img" src="/img/components/player_right.png">
+          <img class="right-pl-back-img" src="./img/components/player_right.png">
           <div id="right-pl-info" class="side-game-info user-info side-game-info-right" data-toggle="tooltip" data-placement="bottom" title="">
             <div class="user-info-data" data-toggle="tooltip" data-placement="bottom" title="">
               <div id="right-pl-name" class="player-name"></div>
@@ -100,7 +100,7 @@
         </div>
 
         <div>
-          <img class="time-progress-img" src="/img/components/timer_progress.png">
+          <img class="time-progress-img" src="./img/components/timer_progress.png">
           <div id="time-progress" class="time-progress"></div>
         </div>
 
@@ -163,11 +163,11 @@
 
       <!-- Docs -->
       <div class="docs-content">
-        <a id="privacy-policy" target="_blank" href="/docs/privacy-policy.html">Privacy Policy</a>
+        <a id="privacy-policy" target="_blank" href="./docs/privacy-policy.html">Privacy Policy</a>
         <span class="blue-color"> </span>
-        <a id="terms-of-service" target="_blank" href="/docs/terms-of-service.html">Terms of Service</a>
+        <a id="terms-of-service" target="_blank" href="./docs/terms-of-service.html">Terms of Service</a>
         <span class="blue-color"> </span>
-        <a id="authors" target="_blank" href="/docs/authors.html">Authors & Feedback</a>
+        <a id="authors" target="_blank" href="./docs/authors.html">Authors & Feedback</a>
       </div>
 
     </div>
@@ -191,18 +191,19 @@
 
 <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 
-<script defer src="/js/external/sockjs-1.1.2.min.js"></script>
-<script defer src="/js/external/stomp-2.3.4.min.js"></script>
-<script defer src="/js/external/jquery-3.2.1.slim.min.js"></script>
-<script defer src="/js/external/bootstrap.min.js"></script>
-<script defer src="/js/external/l100n.js"></script>
+<script defer src="./js/external/sockjs-1.1.2.min.js"></script>
+<script defer src="./js/external/stomp-2.3.4.min.js"></script>
+<script defer src="./js/external/jquery-3.2.1.slim.min.js"></script>
+<script defer src="./js/external/bootstrap.min.js"></script>
+<script defer src="./js/external/l100n.js"></script>
 
-<script defer src="/localization/tips.js"></script>
-<script defer src="/localization/game-rules.js"></script>
-<script defer src="/localization/main-ui.js"></script>
-<script defer src="/js/l10n-wrapper.js"></script>
-<script defer src="/js/screen-params.js"></script>
-<script defer src="/js/game.js"></script>
-<script defer src="/js/app.js"></script>
+<script defer src="./env-params.js"></script>
+<script defer src="./localization/tips.js"></script>
+<script defer src="./localization/game-rules.js"></script>
+<script defer src="./localization/main-ui.js"></script>
+<script defer src="./js/l10n-wrapper.js"></script>
+<script defer src="./js/screen-params.js"></script>
+<script defer src="./js/game.js"></script>
+<script defer src="./js/app.js"></script>
 </body>
 </html>

@@ -34,6 +34,6 @@ public interface AppConfigs {
   int MAX_BOT_SCORE = RATING_TABLE_MIN_PLAYERS_RATING;
 
   // It is necessary because there is a limit of rows for my free DB account.
-  int DELETTING_USERS_COUNT_LIMIT_TO_CLEAR_DB = 8000;
+  int DELETTING_USERS_COUNT_LIMIT_TO_CLEAR_DB = 1_000_000;
 
 }

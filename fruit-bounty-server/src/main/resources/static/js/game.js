@@ -158,17 +158,17 @@ function resetGameInfo() {
 }
 
 function preloadGameSecondImages() {
-  fruitsImage.src = "../img/fruits.png";
-  handImage.src = "../img/hand.png";
-  arrowHelperImage.src = "../img/arrow_helper.png";
-  imgGameScreen.src = '../img/components/game-background.png';
-  imgWarning.src = '../img/components/window_warning.' + browserLocale + '.png';
-  imgDefeat.src = '../img/components/window_defeat.' + browserLocale + '.png';
-  imgVictory.src = '../img/components/window_victory.' + browserLocale + '.png';
-  imgDraw.src = '../img/components/window_draw.' + browserLocale + '.png';
-  imgBtnNext.src = '../img/components/button_next.' + browserLocale + '.png';
-  imgSurrender.src = '../img/components/surrender.' + browserLocale + '.png';
-  imgUnknownUser.src = '../img/components/unknown_user.png';
+  fruitsImage.src = IMG_PREFIX + "/img/fruits.png";
+  handImage.src = IMG_PREFIX + "/img/hand.png";
+  arrowHelperImage.src = IMG_PREFIX + "/img/arrow_helper.png";
+  imgGameScreen.src = IMG_PREFIX + '/img/components/game-background.png';
+  imgWarning.src = IMG_PREFIX + '/img/components/window_warning.' + browserLocale + '.png';
+  imgDefeat.src = IMG_PREFIX + '/img/components/window_defeat.' + browserLocale + '.png';
+  imgVictory.src = IMG_PREFIX + '/img/components/window_victory.' + browserLocale + '.png';
+  imgDraw.src = IMG_PREFIX + '/img/components/window_draw.' + browserLocale + '.png';
+  imgBtnNext.src = IMG_PREFIX + '/img/components/button_next.' + browserLocale + '.png';
+  imgSurrender.src = IMG_PREFIX + '/img/components/surrender.' + browserLocale + '.png';
+  imgUnknownUser.src = IMG_PREFIX + '/img/components/unknown_user.png';
 }
 
 function setImagesOnTags() {
@@ -503,13 +503,13 @@ function paintPlayers(game) {
 function paintPlayer(player, game, playerSide) {
   // Player's image
   var playerImage = $('#' + playerSide + '-pl-img');
-  if (playerImage.attr('src') != player.img) {
-    playerImage.attr('src', player.img);
+  if (playerImage.attr('src') !== prepareServerImg(player.img)) {
+    playerImage.attr('src', prepareServerImg(player.img));
   }
 
   // Player's name
   var playerName = $('#' + playerSide + '-pl-name');
-  if (playerName.text() != player.publicName) {
+  if (playerName.text() !== player.publicName) {
     playerName.text(player.publicName);
   }
 

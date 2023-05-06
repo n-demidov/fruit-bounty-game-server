@@ -2,7 +2,7 @@
 
 var LATER_SYMBOL = "&lt;";
 var GRATER_SYMBOL = "&gt;";
-var WEBSOCKET_ENTRY_URL = "/connect-app";
+var WEBSOCKET_ENTRY_URL = HOST + "/connect-app";
 var USER_QUEUE = "/app/from_client";
 var VK_SDK_URL = "https://vk.com/js/api/xd_connection.js?2";
 var VK_MOBILE_SDK_URL = "https://vk.com/js/api/mobile_sdk.js";
@@ -184,7 +184,7 @@ function processOperation(operation) {
 function processUserInfoOperation(data) {
   userInfo = data;
 
-  $("#userImg").attr("src", userInfo.img);
+  $("#userImg").attr("src", prepareServerImg(userInfo.img));
   $("#userName").text(userInfo.name);
   $("#userScore").text(localize('score') + ': ' + userInfo.score);
   $("#user-info-data").attr("data-original-title", concatGameStats(userInfo));
@@ -197,6 +197,13 @@ function processUserInfoOperation(data) {
 
   showMainWindow();
   showArrowHelper();
+}
+
+function prepareServerImg(img) {
+  if (img.startsWith("..")) {
+    return img.replace("..", IMG_PREFIX);
+  }
+  return img;
 }
 
 function processChatOperation(messages) {
@@ -240,7 +247,7 @@ function processRatingTableOperation(topRated) {
     topPlayers.append(
       "<div class='top-player " + placeColor + "' " + tooltipAttrs + ">" +
           wrapSpan(counter) +
-          '<img class="rating-table-player-img" src="' + user.img + '">' +
+          '<img class="rating-table-player-img" src="' + prepareServerImg(user.img) + '">' +
           "<div class='top-player-info'>" +
             "<div class='top-player-text'>" +
               "<span>" +
@@ -308,7 +315,7 @@ function initUi() {
 }
 
 function preloadFirstImages() {
-  imgLobbyScreen.src = '../img/components/lobby_background.png';
+  imgLobbyScreen.src = IMG_PREFIX + '/img/components/lobby_background.png';
 
   var imgTopPlayer = new Image();
   var imgTopPlayerGold = new Image();
@@ -316,12 +323,12 @@ function preloadFirstImages() {
   var imgTopPlayerSilver = new Image();
   var imgUserInfo = new Image();
   var imgRatingLabel = new Image();
-  imgTopPlayer.src = '../img/components/top_player.png';
-  imgTopPlayerGold.src = '../img/components/top_player_gold.png';
-  imgTopPlayerSilver.src = '../img/components/top_player_silver.png';
-  imgTopPlayerBronze.src = '../img/components/top_player_bronze.png';
-  imgUserInfo.src = '../img/components/user_info.png';
-  imgRatingLabel.src = '../img/components/rating_label.png';
+  imgTopPlayer.src = IMG_PREFIX + '/img/components/top_player.png';
+  imgTopPlayerGold.src = IMG_PREFIX + '/img/components/top_player_gold.png';
+  imgTopPlayerSilver.src = IMG_PREFIX + '/img/components/top_player_silver.png';
+  imgTopPlayerBronze.src = IMG_PREFIX + '/img/components/top_player_bronze.png';
+  imgUserInfo.src = IMG_PREFIX + '/img/components/user_info.png';
+  imgRatingLabel.src = IMG_PREFIX + '/img/components/rating_label.png';
 }
 
 function setConnected(connected) {
@@ -468,8 +475,20 @@ function storeUuid() {
 async function showAdds() {
   if (getState() === VK_TYPE) {
     window.vkBridge.send("VKWebAppCheckNativeAds", {"ad_format": "interstitial"});
-
     window.vkBridge.send("VKWebAppShowNativeAds", {ad_format:"interstitial"});
+  } else if (getState() === YA_TYPE) {
+    ysdk.adv.showFullscreenAdv({
+      callbacks: {
+        onClose: function(wasShown) {
+          console.log("+++++++++++++++ onClose ");
+          console.log(wasShown);
+        },
+        onError: function(error) {
+          console.log("+++++++++++++++ onError ");
+          console.log(error);
+        }
+      }
+    })
   }
 }
 
