@@ -610,6 +610,13 @@ body{
   height: 114px;
 }
 
+.warnwindow-input{
+  position: absolute;
+  top: 288px;
+  left: 74px;
+  width: 186px;
+}
+
 
 /* ===== Chat ===== */
 .chat-window{

@@ -34,6 +34,9 @@ public class MetricsConsts {
 
     public static class OTHER {
         public static final String CHAT_SENT_STAT = "CHAT.SENT";
+        public static final String PLAYER_RENAME_TRY_STAT = "PLAYER.RENAME.TRY";
+        public static final String PLAYER_RENAME_SUCCESS_STAT = "PLAYER.RENAME.SUCCESS";
+        public static final String PLAYER_RENAME_NOT_CHANGED_STAT = "PLAYER.RENAME.NOT_CHANGED";
     }
 
 }

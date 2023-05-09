@@ -208,11 +208,20 @@ function switchToGameWindow() {
   $("#game-window").show();
 }
 
-function showConfirmWindow(yesFunction, noFunction, text) {
+function showConfirmWindow(yesFunction, noFunction, text, showInput, initInputText) {
   $("#warnwindow-text").text(text);
 
   $("#warnwindow-yes").on("click", yesFunction);
   $("#warnwindow-no").on("click", noFunction);
+
+  if (showInput) {
+    $('#warnwindow-input').val(initInputText);
+    $('#warnwindow-text').css('top', '304px');
+    $("#warnwindow-input").show();
+  } else {
+    $('#warnwindow-text').css('top', '324px');
+    $("#warnwindow-input").hide();
+  }
 
   $("#warnwindow-background").show();
 }
@@ -231,7 +240,7 @@ function onSubwindowClose(e) {
 }
 
 function surrenderClicked() {
-  showConfirmWindow(onSurrender, hideConfirmWindow, localize('concede-confirmation'));
+  showConfirmWindow(onSurrender, hideConfirmWindow, localize('concede-confirmation'), false, null);
 }
 
 function onSurrender() {

@@ -18,6 +18,7 @@ var TILDE_KEY_CODE = 192;
 var AUTH_OPERATION_TYPE = "Auth", FB_TYPE = "fb", VK_TYPE = "vk", YA_TYPE = "ya", SB_TYPE = "sb";
 var SEND_CHAT_OPERATION_TYPE = "SendChat";
 var SEND_PLAY_REQUEST_OPERATION_TYPE = "GameRequest";
+var RENAME_OPERATION_TYPE = "Rename";
 var SEND_GAME_ACTION = "GameAction", MOVE_GAME_ACTION = "Move", SURRENDER_GAME_ACTION = "Surrender";
 var APPLY_GAME_REQUEST = "y";
 var CANCEL_GAME_REQUEST = "n";
@@ -73,6 +74,16 @@ function sendChat() {
   sendOperation(SEND_CHAT_OPERATION_TYPE, sendChatPayload);
 }
 
+function sendRename() {
+  var val = $('#warnwindow-input').val();
+  var payload = {
+    msg: val
+  };
+
+  sendOperation(RENAME_OPERATION_TYPE, payload);
+  hideConfirmWindow();
+}
+
 function sendPlayRequest() {
   var sendPlayPayload;
 
@@ -101,6 +112,10 @@ function resetGameRequestUi() {
   $("#play-text").text(localize("play"));
   $("#play-loader").hide();
   stopDisplayTips();
+}
+
+function showRenameWindow() {
+  showConfirmWindow(sendRename, hideConfirmWindow, localize('enter-name'), true, userInfo.name);
 }
 
 function startDisplayTips() {
@@ -294,8 +309,7 @@ function initUi() {
   $("#reconnect").click(connectToServer);
   $("#playContent").click(sendPlayRequest);
   $("#send").click(sendChat);
-
-  $("#tips").on('click', '#share', shareFbGame);
+  $("#userName").on("mouseup", showRenameWindow);
 
   $(chatMsg).on('keydown', function(e) {
     if (e.keyCode === ENTER_KEY_CODE) {
@@ -554,14 +568,6 @@ function fbStatusChanged(logStatus) {
 
   fbLoginStatus = logStatus;
   onSocialNetworkAuthed();
-}
-
-function shareFbGame() {
-  FB.ui(
-    {
-      method: 'share',
-      href: 'https://apps.facebook.com/fruit-bounty'
-    }, function(response){});
 }
 
 

@@ -135,6 +135,10 @@ function getLocalization() {
       en: "Whoever grabs the most fruits wins",
       ru: "Победит тот, кто захватит больше всего фруктов"
     },
+    "enter-name": {
+      en: "Enter a name (min: 4)",
+      ru: "Введите имя (мин: 4)"
+    },
 
     /*Game tutor */
     "tutor.1.1": {
