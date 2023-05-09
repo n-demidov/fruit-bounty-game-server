@@ -44,6 +44,8 @@ var ARROW_HELPER_ANIMATION_INIT_X = "276";
 var arrowHelperTimerId;
 var arrowHelperDirect = 1;
 
+var justCreatedAccount = false;
+
 var imgLobbyScreen = new Image();
 
 function sendOperation(operationType, data) {
@@ -198,6 +200,10 @@ function processOperation(operation) {
 
 function processUserInfoOperation(data) {
   userInfo = data;
+  if (justCreatedAccount) {
+    justCreatedAccount = false;
+    showRenameWindow();
+  }
 
   $("#userImg").attr("src", prepareServerImg(userInfo.img));
   $("#userName").text(userInfo.name);
@@ -475,6 +481,7 @@ function storeUuid() {
     if (uuid === null) {
       uuid = getRandomInt(1000000000, 1000000000000);
       localStorage.setItem('uuid', uuid);
+      justCreatedAccount = true;
     }
     return uuid;
   } catch (e) {
