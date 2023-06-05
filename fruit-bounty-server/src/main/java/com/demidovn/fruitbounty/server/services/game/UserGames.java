@@ -1,11 +1,14 @@
 package com.demidovn.fruitbounty.server.services.game;
 
 import com.demidovn.fruitbounty.game.GameOptions;
+import com.demidovn.fruitbounty.game.services.Randomizer;
 import com.demidovn.fruitbounty.gameapi.model.Game;
 import com.demidovn.fruitbounty.gameapi.model.GameAction;
 import com.demidovn.fruitbounty.gameapi.model.Player;
 import com.demidovn.fruitbounty.gameapi.services.BotService;
 import com.demidovn.fruitbounty.gameapi.services.GameFacade;
+import com.demidovn.fruitbounty.server.AppConfigs.Bot.L1;
+import com.demidovn.fruitbounty.server.AppConfigs.Bot.L2;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,6 +27,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserGames {
 
+  private static final int RANDOM_BOT_LEVEL_CHANCE = 10;
+
   @Autowired
   @Qualifier("serverConversionService")
   private ConversionService conversionService;
@@ -35,6 +40,7 @@ public class UserGames {
   private BotService botService;
 
   private final Map<Long, Game> userGames = new ConcurrentHashMap<>();
+  private final Randomizer randomizer = new Randomizer();
 
   public Game startGame(List<Long> userIds) {
     List<Player> players = convert2Players(userIds);
@@ -44,7 +50,7 @@ public class UserGames {
 
   public Game startGameWithBot(long userId) {
     Player userPlayer = conversionService.convert(userId, Player.class);
-    Player botPlayer = botService.createNewBot();
+    Player botPlayer = botService.createNewBot(getBotRating(userPlayer));
 
     List<Player> players = new ArrayList<>(Arrays.asList(userPlayer, botPlayer));
 
@@ -104,4 +110,17 @@ public class UserGames {
     userIds
       .forEach(userId -> userGames.put(userId, createdGame));
   }
+
+  private int getBotRating(Player userPlayer) {
+    if (RANDOM_BOT_LEVEL_CHANCE >= randomizer.generateFromRange(1, 100)) {
+      return randomizer.generateFromRange(L1.MIN_BOT_SCORE, L2.MAX_BOT_SCORE);
+    }
+
+    if (userPlayer.getScore() >= L2.MIN_USER_RATING) {
+      return randomizer.generateFromRange(L2.MIN_BOT_SCORE, L2.MAX_BOT_SCORE);
+    } else {
+      return randomizer.generateFromRange(L1.MIN_BOT_SCORE, L1.MAX_BOT_SCORE);
+    }
+  }
+
 }

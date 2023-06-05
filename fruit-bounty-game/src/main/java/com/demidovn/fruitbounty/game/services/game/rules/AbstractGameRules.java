@@ -58,25 +58,4 @@ public abstract class AbstractGameRules {
     return playersCellTypes;
   }
 
-  protected Player getNextPlayer(Game game, long playerId) {
-    List<Player> players = game.getPlayers();
-
-    validPlayersCount(game);
-
-    if (playerId == players.get(0).getId()) {
-      return players.get(1);
-    } else {
-      return players.get(0);
-    }
-  }
-
-  protected void validPlayersCount(Game game) {
-    if (game.getPlayers().size() > 2) {
-      String errMsg = String.format("There is supporting only of 2 players! game=%s", game);
-
-      log.error(errMsg);
-      throw new UnsupportedOperationException(errMsg);
-    }
-  }
-
 }

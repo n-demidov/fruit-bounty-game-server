@@ -13,7 +13,8 @@ public class CurrentPlayerSwitch extends AbstractGameRules {
 
   private final SkippedPlayerCellTypesFinder skippedPlayerCellTypesFinder =
     new SkippedPlayerCellTypesFinder();
-  private final MoveFeasibilityChecker moveFeasibilityChecker = new MoveFeasibilityChecker();
+  private static final MoveFeasibilityChecker moveFeasibilityChecker = new MoveFeasibilityChecker();
+  private static final PlayersFinder playersFinder = new PlayersFinder();
 
   public void switchCurrentPlayer(Game game) {
     if (game.isFinished()) {
@@ -25,7 +26,7 @@ public class CurrentPlayerSwitch extends AbstractGameRules {
     boolean isMoveFeasible;
 
     do {
-      player = getNextPlayer(game, player.getId());
+      player = playersFinder.getNextPlayer(game, player.getId());
 
       isMoveFeasible = moveFeasibilityChecker
         .isAnyMoveFeasible(game.getBoard().getCells(), player.getId());

@@ -5,11 +5,9 @@ import com.demidovn.fruitbounty.gameapi.model.Player;
 
 public interface BotService {
 
-  void setMinBotRating(int minBotScore);
+  void setLevel2BotScoreThreshold(int minBotScore);
 
-  void setMaxBotRating(int maxBotScore);
-
-  Player createNewBot();
+  Player createNewBot(int botRating);
 
   Player createTrainer();
 

@@ -11,21 +11,22 @@ public class GameRequestOperation2GameActionConverter implements FruitServerConv
 
   @Override
   public GameAction convert(GameRequestOperation operation) {
-    GameAction gameAction = new GameAction();
-
-    gameAction.setGame(operation.getGame());
-    gameAction.setActionedPlayerId(operation.getConnection().getUserId());
-    gameAction.setType(GameActionType.valueOf(
-      operation.getData().get(AppConstants.GAME_ACTION_TYPE)));
-
-    if (gameAction.getType() == GameActionType.Move) {
-      gameAction.setX(Integer.valueOf(
-        operation.getData().get(AppConstants.GAME_ACTION_MOVE_X_COORDINATE)));
-      gameAction.setY(Integer.valueOf(
-        operation.getData().get(AppConstants.GAME_ACTION_MOVE_Y_COORDINATE)));
+    GameActionType gameActionType = GameActionType.valueOf(
+        operation.getData().get(AppConstants.GAME_ACTION_TYPE));
+    int x = -1, y = -1;
+    if (gameActionType == GameActionType.Move) {
+      x = Integer.parseInt(
+          operation.getData().get(AppConstants.GAME_ACTION_MOVE_X_COORDINATE));
+      y = Integer.parseInt(
+          operation.getData().get(AppConstants.GAME_ACTION_MOVE_Y_COORDINATE));
     }
 
-    return gameAction;
+    return new GameAction(
+        operation.getGame(),
+        operation.getConnection().getUserId(),
+        gameActionType,
+        x,
+        y);
   }
 
 }

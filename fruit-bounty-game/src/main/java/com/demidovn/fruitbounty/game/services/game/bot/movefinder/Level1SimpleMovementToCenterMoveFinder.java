@@ -1,8 +1,10 @@
-package com.demidovn.fruitbounty.game.services.game.bot;
+package com.demidovn.fruitbounty.game.services.game.bot.movefinder;
 
 import com.demidovn.fruitbounty.game.converters.bot.MoveActionConverter;
 import com.demidovn.fruitbounty.game.model.Pair;
 import com.demidovn.fruitbounty.game.services.Randomizer;
+import com.demidovn.fruitbounty.game.services.game.bot.TypeStatistics;
+import com.demidovn.fruitbounty.game.services.game.bot.boardrate.MovementToCenterBoardRater;
 import com.demidovn.fruitbounty.game.services.game.rules.CellsFinder;
 import com.demidovn.fruitbounty.game.services.game.rules.MoveCorrectness;
 import com.demidovn.fruitbounty.gameapi.model.Cell;
@@ -17,21 +19,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Slf4j
-@Component
-public class BotMoveFinder {
+public class Level1SimpleMovementToCenterMoveFinder {
 
   private static final String CAN_NOT_FIND_ANY_MOVE_FOR_BOT_GAME = "Can't find any move for bot, game=%s";
 
-  @Autowired
-  private MoveActionConverter moveActionConverter;
-
-  private final MoveCorrectness moveCorrectness = new MoveCorrectness();
-  private final CellsFinder cellsFinder = new CellsFinder();
-  private final Randomizer randomizer = new Randomizer();
+  private static final MoveActionConverter moveActionConverter = new MoveActionConverter();
+  private static final MoveCorrectness moveCorrectness = new MoveCorrectness();
+  private static final CellsFinder cellsFinder = new CellsFinder();
+  private static final Randomizer randomizer = new Randomizer();
+  private static final MovementToCenterBoardRater movementToCenterBoardRater = new MovementToCenterBoardRater();
 
   public Pair<Integer, Integer> findMove(Game game) {
     Cell[][] cells = game.getBoard().getCells();
@@ -95,7 +93,7 @@ public class BotMoveFinder {
   }
 
   private void addSameCells(Cell cell, TypeStatistics typeStatistics, Cell[][] cells) {
-    typeStatistics.setCost(typeStatistics.getCost() + countCellCost(cell, cells));
+    typeStatistics.setCost(typeStatistics.getCost() + movementToCenterBoardRater.rateCell(cell, cells));
     typeStatistics.getCells().add(cell);
 
     List<Cell> neighborCells = cellsFinder.getNeighborCells(cells, cell.getX(), cell.getY());
@@ -107,23 +105,6 @@ public class BotMoveFinder {
         addSameCells(neighborCell, typeStatistics, cells);
       }
     }
-  }
-
-  private int countCellCost(Cell cell, Cell[][] cells) {
-    return countCoordinateCost(cell.getX(), cells.length - 1) +
-           countCoordinateCost(cell.getY(), cells[0].length - 1);
-  }
-
-  private int countCoordinateCost(int coord, int maxIndex) {
-    int maxIterationsCosts = maxIndex / 2;
-
-    for (int i = 0; i < maxIterationsCosts; i++) {
-      if (coord == i || coord == maxIndex - i) {
-        return i * i * maxIndex;
-      }
-    }
-
-    return maxIterationsCosts * maxIterationsCosts * maxIndex;
   }
 
 }

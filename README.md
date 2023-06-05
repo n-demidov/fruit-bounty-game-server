@@ -64,11 +64,9 @@ Other technologies: Spring WebSocket, Spring Boot Test, JPA, PostgreSQL; client 
 
 ## How to play online
 
-- On `Facebook`: [https://apps.facebook.com/fruit-bounty](https://apps.facebook.com/fruit-bounty) (desktop only)
 - On `vk.com`: [https://vk.com/app5154054](https://vk.com/app5154054) (mobile & desktop)
-- On `Yandex`: [https://yandex.ru/games/play/178103?draft=true](https://yandex.ru/games/play/178103?draft=true) (no auth necessary)
-
-Or you can search the game in `vk.com` app catalog by key-words like *Fruit's Bounty*.
+- On `Yandex`: [https://yandex.ru/games/app/229009](https://yandex.ru/games/app/229009) (no auth necessary)
+- On `Facebook`: [https://apps.facebook.com/fruit-bounty](https://apps.facebook.com/fruit-bounty) (desktop only)
 
 ## How to run locally
 

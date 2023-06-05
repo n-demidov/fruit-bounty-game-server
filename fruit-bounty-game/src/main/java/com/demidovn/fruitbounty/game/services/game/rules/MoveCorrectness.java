@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MoveCorrectness extends AbstractGameRules {
+  private static final CellsFinder cellsFinder = new CellsFinder();
 
   public boolean isMoveValid(GameAction gameAction) {
     return isCellUnoccupied(gameAction) &&
@@ -51,24 +52,8 @@ public class MoveCorrectness extends AbstractGameRules {
       .stream()
       .filter(player -> player.getId() != gameAction.getActionedPlayerId())
       .anyMatch(player ->
-        targetCell.getType() == getOwnedCell(gameAction, player.getId()).getType());
-  }
-
-  private Cell getOwnedCell(GameAction gameAction, long playerId) {
-    Cell[][] cells = gameAction.getGame().getBoard().getCells();
-
-    for (int x = 0; x < cells.length; x++) {
-      for (int y = 0; y < cells[0].length; y++) {
-        Cell cell = cells[x][y];
-        if (cell.getOwner() == playerId) {
-          return cell;
-        }
-      }
-    }
-
-    String errorMsg = String.format("Can't find owned cells for player %d", playerId);
-    log.error(errorMsg);
-    throw new IllegalArgumentException(errorMsg);
+        targetCell.getType() == cellsFinder.getOwnedCell(
+            player.getId(), gameAction.getGame().getBoard().getCells()).getType());
   }
 
 }

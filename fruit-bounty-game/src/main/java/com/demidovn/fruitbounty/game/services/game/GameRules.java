@@ -10,9 +10,7 @@ import com.demidovn.fruitbounty.gameapi.model.Cell;
 import com.demidovn.fruitbounty.gameapi.model.Game;
 import com.demidovn.fruitbounty.gameapi.model.GameAction;
 import java.util.List;
-import org.springframework.stereotype.Component;
 
-@Component
 public class GameRules {
 
   private final MoveCorrectness moveCorrectness = new MoveCorrectness();

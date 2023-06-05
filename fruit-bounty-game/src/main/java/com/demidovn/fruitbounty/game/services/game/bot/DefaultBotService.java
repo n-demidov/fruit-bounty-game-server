@@ -3,6 +3,8 @@ package com.demidovn.fruitbounty.game.services.game.bot;
 import com.demidovn.fruitbounty.game.GameOptions;
 import com.demidovn.fruitbounty.game.converters.bot.MoveActionConverter;
 import com.demidovn.fruitbounty.game.model.Pair;
+import com.demidovn.fruitbounty.game.services.game.bot.movefinder.Level2ThresholdDeepMoveFinder;
+import com.demidovn.fruitbounty.game.services.game.bot.movefinder.Level1SimpleMovementToCenterMoveFinder;
 import com.demidovn.fruitbounty.gameapi.model.Game;
 import com.demidovn.fruitbounty.gameapi.model.Player;
 import com.demidovn.fruitbounty.gameapi.services.BotService;
@@ -28,37 +30,30 @@ public class DefaultBotService implements BotService {
 
   private final Random rand = new Random();
 
-  @Autowired
-  private MoveActionConverter moveActionConverter;
+  private final MoveActionConverter moveActionConverter = new MoveActionConverter();
 
   @Autowired
   private BotNameGenerator botNameGenerator;
 
-  @Autowired
-  private BotMoveFinder botMoveFinder;
+  private static final Level1SimpleMovementToCenterMoveFinder l1MoveFinder = new Level1SimpleMovementToCenterMoveFinder();
+  private static final Level2ThresholdDeepMoveFinder l2MoveFinder = new Level2ThresholdDeepMoveFinder();
 
-  private Integer minBotScore;
-  private Integer maxBotScore;
+  private Integer level2BotScoreThreshold;
 
   @Override
-  public void setMinBotRating(int minBotScore) {
-    this.minBotScore = minBotScore;
+  public void setLevel2BotScoreThreshold(int minBotScore) {
+    this.level2BotScoreThreshold = minBotScore;
   }
 
   @Override
-  public void setMaxBotRating(int maxBotScore) {
-    this.maxBotScore = maxBotScore;
-  }
-
-  @Override
-  public Player createNewBot() {
+  public Player createNewBot(int botScore) {
     Player bot = new Player();
 
     bot.setId(BOT_ID);
     bot.setImg(GameOptions.UNKNOWN_PERSON_IMG);
 
     bot.setPublicName(botNameGenerator.getRandomName());
-    bot.setScore(generateRandomScore());
+    bot.setScore(botScore);
 
     bot.setWins(rand.nextInt(MAX_BOT_WINS));
     bot.setDefeats(rand.nextInt(MAX_BOT_DEFEATS - MIN_BOT_DEFEATS) + MIN_BOT_DEFEATS);
@@ -68,12 +63,11 @@ public class DefaultBotService implements BotService {
 
   @Override
   public Player createTrainer() {
-    Player bot = createNewBot();
+    Player bot = createNewBot(TRAINER_SCORE);
 
     bot.setImg(GameOptions.TRAINER_IMG);
 
     bot.setPublicName(TRAINER_NAME);
-    bot.setScore(TRAINER_SCORE);
 
     bot.setWins(TRAINER_WINS);
     bot.setDefeats(TRAINER_DEFEATS);
@@ -95,34 +89,28 @@ public class DefaultBotService implements BotService {
       return;
     }
 
-    Pair<Integer, Integer> generatedMove = botMoveFinder.findMove(game);
+    Pair<Integer, Integer> generatedMove;
+    int botScore = game.getCurrentPlayer().getScore();
+    if (botScore >= getLevel2BotScoreThreshold()) {
+      generatedMove = l2MoveFinder.findBestMove(game.getCurrentPlayer(), game);
+    } else {
+      generatedMove = l1MoveFinder.findMove(game);
+    }
 
     game.getGameActions().add(
       moveActionConverter.convert2MoveAction(game, generatedMove.getKey(), generatedMove.getValue()));
   }
 
-  private Integer getMinBotScore() {
-    if (minBotScore == null) {
-      throw new IllegalStateException("minBotScore should be initialized first");
+  private Integer getLevel2BotScoreThreshold() {
+    if (level2BotScoreThreshold == null) {
+      throw new IllegalStateException("getLevel2BotScoreThreshold should be initialized first");
     }
 
-    return minBotScore;
-  }
-
-  private Integer getMaxBotScore() {
-    if (maxBotScore == null) {
-      throw new IllegalStateException("maxBotScore should be initialized first");
-    }
-
-    return maxBotScore;
+    return level2BotScoreThreshold;
   }
 
   private boolean isWaitEnoughTime(Game game) {
     return Instant.now().toEpochMilli() - game.getCurrentMoveStarted() > BOT_WAITING_MOVE_TIME;
-  }
-
-  private int generateRandomScore() {
-    return rand.nextInt(getMaxBotScore() - getMinBotScore()) + getMinBotScore();
   }
 
 }

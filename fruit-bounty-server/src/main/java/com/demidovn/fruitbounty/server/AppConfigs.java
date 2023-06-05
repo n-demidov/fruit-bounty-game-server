@@ -30,10 +30,21 @@ public interface AppConfigs {
   int MIN_RATING_WITH_RARE_BOT = 850;
 
   int MAX_GAME_REQUEST_ITERATIONS_BEFORE_BOT_PLAY = 4;
-  int MIN_BOT_SCORE = MIN_USER_SCORE;
-  int MAX_BOT_SCORE = RATING_TABLE_MIN_PLAYERS_RATING;
+
+  interface Bot{
+    interface L1 {
+      int MIN_BOT_SCORE = MIN_USER_SCORE;
+      int MAX_BOT_SCORE = RATING_TABLE_MIN_PLAYERS_RATING;
+    }
+
+    interface L2 {
+      int MIN_USER_RATING = 800;
+      int MIN_BOT_SCORE = 800;
+      int MAX_BOT_SCORE = 950;
+    }
+  }
 
   // It is necessary because there is a limit of rows for my free DB account.
-  int DELETTING_USERS_COUNT_LIMIT_TO_CLEAR_DB = 1_000_000;
+  int DELETTING_USERS_COUNT_LIMIT_TO_CLEAR_DB = 200_000;
 
 }

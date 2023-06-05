@@ -1,16 +1,26 @@
 package com.demidovn.fruitbounty.gameapi.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor  // todo: remove it later
 @Data
 public class GameAction {
 
+  private long createdTime = System.currentTimeMillis();
   private Game game;
   private long actionedPlayerId;
-  private long createdTime;
 
   private GameActionType type;
   private int x, y;
+
+  public GameAction(Game game, long actionedPlayerId, GameActionType type, int x, int y) {
+    this.game = game;
+    this.actionedPlayerId = actionedPlayerId;
+    this.type = type;
+    this.x = x;
+    this.y = y;
+  }
 
   public Player findActionedPlayer() {
     return game.getPlayers()

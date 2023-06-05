@@ -11,9 +11,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class SkippedPlayerCellTypesFinder extends AbstractGameRules {
+  private static final PlayersFinder playersFinder = new PlayersFinder();
 
   public List<Integer> findPossibleCellTypes(Game game, long playerId) {
-    validPlayersCount(game);
+    playersFinder.validPlayersCount(game);
 
     List<Integer> possibleCellTypes = new ArrayList<>(GameOptions.ALL_CELL_TYPES);
     removePlayersCellTypes(game, possibleCellTypes);
@@ -32,7 +33,7 @@ public class SkippedPlayerCellTypesFinder extends AbstractGameRules {
   }
 
   private Set<Integer> getOpponentPossibleConquerTypes(Game game, long playerId) {
-    Player opponent = getNextPlayer(game, playerId);
+    Player opponent = playersFinder.getNextPlayer(game, playerId);
     Cell[][] cells = game.getBoard().getCells();
     Set<Integer> opponentPossibleConquerTypes = new HashSet<>();
 

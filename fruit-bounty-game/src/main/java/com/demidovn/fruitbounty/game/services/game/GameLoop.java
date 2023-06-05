@@ -4,6 +4,7 @@ import com.demidovn.fruitbounty.game.GameOptions;
 import com.demidovn.fruitbounty.game.model.GameProcessingContext;
 import com.demidovn.fruitbounty.game.services.DefaultGameEventsSubscriptions;
 import com.demidovn.fruitbounty.game.services.FruitBountyGameFacade;
+import com.demidovn.fruitbounty.game.services.game.rules.FreeCellsCollapser;
 import com.demidovn.fruitbounty.gameapi.model.Cell;
 import com.demidovn.fruitbounty.gameapi.model.Game;
 import com.demidovn.fruitbounty.gameapi.model.GameAction;
@@ -31,10 +32,10 @@ public class GameLoop {
   private DefaultGameEventsSubscriptions gameEventsSubscriptions;
 
   @Autowired
-  private GameRules gameRules;
-
-  @Autowired
   private BotService botService;
+
+  private static final GameRules gameRules = new GameRules();
+  private static final FreeCellsCollapser freeCellsCollapser = new FreeCellsCollapser();
 
   @Scheduled(fixedDelayString = GameOptions.GAME_LOOP_SCHEDULE_DELAY)
   public void gameLoop() {
@@ -49,6 +50,21 @@ public class GameLoop {
     }
 
     gameFacade.gamesFinished(finishedGames);
+  }
+
+  public void processGameAction(GameAction gameAction, GameProcessingContext context) {
+    if (gameAction.getGame().isFinished()) {
+      return;
+    }
+
+    if (gameAction.getType() == GameActionType.Move) {
+      processMoveAction(gameAction, context);
+    } else if (gameAction.getType() == GameActionType.Surrender) {
+      processSurrenderAction(gameAction, context);
+    } else {
+      throw new IllegalArgumentException(String.format(
+          "Unknown gameActionType=%s", gameAction.getType()));
+    }
   }
 
   private void processGame(Game game) {
@@ -69,32 +85,17 @@ public class GameLoop {
 
       i++;
       if (i == MIN_GAME_ACTIONS_IN_QUEUE_TO_WARNING) {
-        log.warn("%d iteration of processing game-actions, game=%s", i, game);
+        log.warn("{} iteration of processing game-actions, game={}", i, game);
       }
     }
 
     if (i > MIN_GAME_ACTIONS_IN_QUEUE_TO_WARNING) {
-      log.warn("%d game-actions have been processed, game=%s", i, game);
+      log.warn("{} game-actions have been processed, game={}", i, game);
     }
 
     checkForCurrentMoveExpiration(game, processContext);
     notifyIfGameChanged(game, processContext);
     botService.actionIfBot(game);
-  }
-
-  private void processGameAction(GameAction gameAction, GameProcessingContext context) {
-    if (gameAction.getGame().isFinished()) {
-      return;
-    }
-
-    if (gameAction.getType() == GameActionType.Move) {
-      processMoveAction(gameAction, context);
-    } else if (gameAction.getType() == GameActionType.Surrender) {
-      processSurrenderAction(gameAction, context);
-    } else {
-      throw new IllegalArgumentException(String.format(
-        "Unknown gameActionType=%s", gameAction.getType()));
-    }
   }
 
   private void processMoveAction(GameAction gameAction, GameProcessingContext context) {
@@ -104,6 +105,11 @@ public class GameLoop {
       List<Cell> capturableCells = gameRules.findCapturableCells(gameAction);
 
       gameRules.captureCells(capturableCells, gameAction);
+      if (context.isCollapseBoard()) {
+        freeCellsCollapser.collapseBoard(
+            gameAction.getGame().getBoard().getCells(),
+            freeCellsCollapser.getCollapsedFigures(gameAction.getGame().getBoard().getCells()));
+      }
       gameRules.checkGameEndingByMoving(gameAction.getGame());
       gameRules.switchCurrentPlayer(gameAction.getGame());
 
