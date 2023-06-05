@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CurrentPlayerSwitch extends AbstractGameRules {
 
   private static final String THERE_IS_DEAD_LOOP_ERR = "There is a dead loop in switchCurrentPlayer";
+  private static final int ITERATIONS_MULTIPLIER = 20;
 
   private final SkippedPlayerCellTypesFinder skippedPlayerCellTypesFinder =
     new SkippedPlayerCellTypesFinder();
@@ -34,8 +35,8 @@ public class CurrentPlayerSwitch extends AbstractGameRules {
       }
 
       iterations++;
-      if (iterations > game.getPlayers().size()) {
-        throw new IllegalStateException(THERE_IS_DEAD_LOOP_ERR);
+      if (isDeadLoop(game, iterations)) {
+        throw new IllegalStateException(THERE_IS_DEAD_LOOP_ERR + "; game=" + game);
       }
     } while (!isMoveFeasible);
 
@@ -55,6 +56,10 @@ public class CurrentPlayerSwitch extends AbstractGameRules {
 
     getOwnedCells(game.getBoard().getCells(), playerId)
       .forEach(cell -> cell.setType(randomType));
+  }
+
+  private boolean isDeadLoop(Game game, int iterations) {
+    return iterations > game.getPlayers().size() * ITERATIONS_MULTIPLIER;
   }
 
 }
