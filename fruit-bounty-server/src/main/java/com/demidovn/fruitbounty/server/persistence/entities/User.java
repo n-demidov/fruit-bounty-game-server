@@ -49,6 +49,9 @@ public class User {
   private int score;
   private int wins, defeats, draws;
 
+  @Column(name = "is_admin", nullable = false)
+  private boolean admin;
+
   @Setter(AccessLevel.NONE)
   @Convert(converter = TimestampConverter.class)
   @Column(name = "created_on", columnDefinition = "TIMESTAMPTZ", nullable = false, updatable = false)

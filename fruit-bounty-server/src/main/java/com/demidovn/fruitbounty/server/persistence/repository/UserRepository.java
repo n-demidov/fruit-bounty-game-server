@@ -15,8 +15,8 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
   List<User> findByThirdPartyIdAndThirdPartyType(String thirdPartyId, String thirdPartyType);
 
-  @Query("select u from User u where u.score >= :minRating")
-  List<User> getTopRatedUsers(@Param("minRating") int minRating, Pageable pageable);
+  @Query("select u from User u where u.admin = false")
+  List<User> getTopRatedUsers(Pageable pageable);
 
   @Transactional
   @Modifying(clearAutomatically = true)

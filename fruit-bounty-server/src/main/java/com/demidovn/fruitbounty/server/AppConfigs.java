@@ -25,8 +25,7 @@ public interface AppConfigs {
 
   int INITIAL_USER_SCORE = 700;
   int MIN_USER_SCORE = 500;
-  int RATING_TABLE_PLAYERS_COUNT = 100;
-  int RATING_TABLE_MIN_PLAYERS_RATING = 600;
+  int RATING_TABLE_PLAYERS_COUNT = 200;
   int MIN_RATING_WITH_RARE_BOT = 850;
 
   int MAX_GAME_REQUEST_ITERATIONS_BEFORE_BOT_PLAY = 4;
@@ -34,7 +33,7 @@ public interface AppConfigs {
   interface Bot{
     interface L1 {
       int MIN_BOT_SCORE = MIN_USER_SCORE;
-      int MAX_BOT_SCORE = RATING_TABLE_MIN_PLAYERS_RATING;
+      int MAX_BOT_SCORE = 600;
     }
 
     interface L2 {

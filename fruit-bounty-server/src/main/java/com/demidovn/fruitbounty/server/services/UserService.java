@@ -49,9 +49,7 @@ public class UserService {
   }
 
   public List<User> getTopRated() {
-    return userRepository.getTopRatedUsers(
-      AppConfigs.RATING_TABLE_MIN_PLAYERS_RATING,
-      ratingTablePage);
+    return userRepository.getTopRatedUsers(ratingTablePage);
   }
 
   public long getCount() {
