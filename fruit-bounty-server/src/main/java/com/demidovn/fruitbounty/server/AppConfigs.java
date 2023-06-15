@@ -23,25 +23,14 @@ public interface AppConfigs {
   int MAX_AUTH_ATTEMPTS = 1;
   int CHAT_HUB_LIMIT = 50;
 
-  int INITIAL_USER_SCORE = 700;
-  int MIN_USER_SCORE = 500;
-  int RATING_TABLE_PLAYERS_COUNT = 200;
-  int MIN_RATING_WITH_RARE_BOT = 850;
+  int INITIAL_USER_SCORE = 0;
+  int MIN_USER_SCORE = INITIAL_USER_SCORE;
+  int RATING_TABLE_PLAYERS_COUNT = 100;
+  int MIN_RATING_WITH_RARE_BOT = 500;
 
   int MAX_GAME_REQUEST_ITERATIONS_BEFORE_BOT_PLAY = 4;
 
-  interface Bot{
-    interface L1 {
-      int MIN_BOT_SCORE = MIN_USER_SCORE;
-      int MAX_BOT_SCORE = 600;
-    }
-
-    interface L2 {
-      int MIN_USER_RATING = 800;
-      int MIN_BOT_SCORE = 800;
-      int MAX_BOT_SCORE = 950;
-    }
-  }
+  int MIN_BOT_SCORE = 800;
 
   // It is necessary because there is a limit of rows for my free DB account.
   int DELETTING_USERS_COUNT_LIMIT_TO_CLEAR_DB = 200_000;

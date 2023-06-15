@@ -3,6 +3,7 @@ body{
   background-color: #57992C;
   font-family: "Showcard Gothic", "Showcard gothic cyrillic";
   cursor: default;
+  line-height: 1;
 
   /* 360px */
   font-size: 14px;
@@ -142,6 +143,10 @@ body{
   width: 124px;
 }
 
+.userScore{
+  margin-top: 6px;
+}
+
 .info-margin-left{
   margin-left: 6px;
 }
@@ -190,12 +195,12 @@ body{
   color: white;
   height: 22px;
   width: 100px;
-  top: 340px;
+  top: 342px;
   left: 218px;
 }
 
 .play-loader{
-  height:18px;
+  height:14px;
   display:none;
 }
 
@@ -215,7 +220,7 @@ body{
   /* 360px */
   width: 168px;
   height: 36px;
-  padding-top: 10px;
+  padding-top: 12px;
   padding-left: 28px;
 }
 
@@ -278,7 +283,11 @@ body{
 .top-player-info{
   position: absolute;
   left: 79px;
-  top: 5px;
+  top: 8px;
+}
+
+.top-player-text-2{
+  margin-top: 2px;
 }
 
 .top-player-text{
@@ -393,6 +402,7 @@ body{
   font-size: 12px;
   max-height: 12px;
   width: 96px;
+  margin-top: 4px;
 }
 
 .player-score{
@@ -544,7 +554,7 @@ body{
 
   /* 360px */
   left: 50%;
-  top: 74%;
+  top: 73%;
 }
 
 .subwindow-btn-next{

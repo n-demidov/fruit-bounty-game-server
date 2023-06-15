@@ -5,18 +5,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.demidovn.fruitbounty.gameapi.model.Player;
 import org.junit.Test;
 
-public class AddedScoreCalculatorTest {
+public class ChessLikeAddedScoreCalculatorTest {
 
   private static final int MIN_MODIFIER = 5;
 
-  private final AddedScoreCalculator addedScoreCalculator = new AddedScoreCalculator();
+  private final ChessLikeAddedScoreCalculator chessLikeAddedScoreCalculator = new ChessLikeAddedScoreCalculator();
 
   @Test
   public void whenScoreEquals() {
     Player winner = createPlayer(1000);
     Player looser = createPlayer(1000);
 
-    int actual = addedScoreCalculator.findWinnerAddedScore(winner, looser);
+    int actual = chessLikeAddedScoreCalculator.findWinnerAddedScore(winner, looser);
 
     assertThat(actual).isEqualTo(MIN_MODIFIER);
   }
@@ -26,7 +26,7 @@ public class AddedScoreCalculatorTest {
     Player winner = createPlayer(1000);
     Player looser = createPlayer(1074);
 
-    int actual = addedScoreCalculator.findWinnerAddedScore(winner, looser);
+    int actual = chessLikeAddedScoreCalculator.findWinnerAddedScore(winner, looser);
 
     assertThat(actual).isEqualTo(MIN_MODIFIER);
   }
@@ -36,7 +36,7 @@ public class AddedScoreCalculatorTest {
     Player winner = createPlayer(1000);
     Player looser = createPlayer(1075);
 
-    int actual = addedScoreCalculator.findWinnerAddedScore(winner, looser);
+    int actual = chessLikeAddedScoreCalculator.findWinnerAddedScore(winner, looser);
 
     assertThat(actual).isEqualTo(MIN_MODIFIER + 1);
   }
@@ -46,7 +46,7 @@ public class AddedScoreCalculatorTest {
     Player winner = createPlayer(1000);
     Player looser = createPlayer(1920);
 
-    int actual = addedScoreCalculator.findWinnerAddedScore(winner, looser);
+    int actual = chessLikeAddedScoreCalculator.findWinnerAddedScore(winner, looser);
 
     assertThat(actual).isEqualTo(MIN_MODIFIER + 12);
   }
@@ -56,7 +56,7 @@ public class AddedScoreCalculatorTest {
     Player winner = createPlayer(1099);
     Player looser = createPlayer(1000);
 
-    int actual = addedScoreCalculator.findWinnerAddedScore(winner, looser);
+    int actual = chessLikeAddedScoreCalculator.findWinnerAddedScore(winner, looser);
 
     assertThat(actual).isEqualTo(MIN_MODIFIER);
   }
@@ -66,7 +66,7 @@ public class AddedScoreCalculatorTest {
     Player winner = createPlayer(1100);
     Player looser = createPlayer(1000);
 
-    int actual = addedScoreCalculator.findWinnerAddedScore(winner, looser);
+    int actual = chessLikeAddedScoreCalculator.findWinnerAddedScore(winner, looser);
 
     assertThat(actual).isEqualTo(MIN_MODIFIER - 1);
   }
@@ -76,7 +76,7 @@ public class AddedScoreCalculatorTest {
     Player winner = createPlayer(1799);
     Player looser = createPlayer(1000);
 
-    int actual = addedScoreCalculator.findWinnerAddedScore(winner, looser);
+    int actual = chessLikeAddedScoreCalculator.findWinnerAddedScore(winner, looser);
 
     assertThat(actual).isEqualTo(1);
   }
@@ -86,7 +86,7 @@ public class AddedScoreCalculatorTest {
     Player winner = createPlayer(9000);
     Player looser = createPlayer(1000);
 
-    int actual = addedScoreCalculator.findWinnerAddedScore(winner, looser);
+    int actual = chessLikeAddedScoreCalculator.findWinnerAddedScore(winner, looser);
 
     assertThat(actual).isEqualTo(1);
   }

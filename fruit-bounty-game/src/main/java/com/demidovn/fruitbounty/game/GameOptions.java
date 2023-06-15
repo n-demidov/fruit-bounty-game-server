@@ -8,6 +8,7 @@ public class GameOptions {
 
   public static final String UNKNOWN_PERSON_IMG = "../img/components/unknown_user.png";
   public static final String TRAINER_IMG = "../img/components/trainer.png";
+  public static final int SCORE_FOR_WIN_TUTORIAL_GAME = 1;
 
   public static final String CONFIG_PROPERTIES = "config.properties";
   public static final int BOARD_WIDTH = 12;

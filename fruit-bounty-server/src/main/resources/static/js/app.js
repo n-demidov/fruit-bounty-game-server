@@ -275,9 +275,9 @@ function processRatingTableOperation(topRated) {
                 user.name +
               "</span>" +
             "</div>" +
-            "<span class='bold'>" +
+            "<div class='bold top-player-text-2'>" +
               user.score +
-            "</span>" +
+            "</div>" +
           "</div>" +
       "</div>");
   });
@@ -493,7 +493,11 @@ function storeUuid() {
 
 
 /* === Adds === */
-async function showAdds() {
+async function showAdds(chancePercent) {
+  if (!isPercentFired(chancePercent)) {
+    return;
+  }
+
   if (getState() === VK_TYPE) {
     window.vkBridge.send("VKWebAppCheckNativeAds", {"ad_format": "interstitial"});
     window.vkBridge.send("VKWebAppShowNativeAds", {ad_format:"interstitial"});
@@ -501,16 +505,26 @@ async function showAdds() {
     ysdk.adv.showFullscreenAdv({
       callbacks: {
         onClose: function(wasShown) {
-          console.log("+++++++++++++++ onClose ");
           console.log(wasShown);
         },
         onError: function(error) {
-          console.log("+++++++++++++++ onError ");
           console.log(error);
         }
       }
     })
   }
+}
+
+function isPercentFired(chancePercent) {
+  if (!chancePercent) {
+    return true;
+  }
+
+  if (chancePercent >= getRandomInt(1, 100)) {
+    return true;
+  }
+
+  return false;
 }
 
 /* === Facebook Methods === */

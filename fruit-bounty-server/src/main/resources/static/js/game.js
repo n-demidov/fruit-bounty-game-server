@@ -37,6 +37,8 @@ var CAPTURING_CELL_ANIMATION_DELTA = 0.2;
 var CAPTURING_CELL_ANIMATION_MIN = CAPTURING_CELL_ANIMATION_DELTA;
 var CAPTURING_CELL_ANIMATION_MAX = 0.6;
 
+var CHANCE_TO_SHOW_ADDS_PERCENT = 25;
+
 var fontsByLocale = {
   "en": '"Showcard Gothic"',
   "ru": '"Showcard gothic cyrillic"'
@@ -233,7 +235,10 @@ function hideConfirmWindow() {
 function onSubwindowClose(e) {
   if (isDefeat) {
     showAdds();
+  } else {
+    showAdds(CHANCE_TO_SHOW_ADDS_PERCENT);
   }
+
   $(".background").css("background-image", "url(" + imgLobbyScreen.src + ")");
   $("#game-window").hide();
   $("#lobby-window").show();

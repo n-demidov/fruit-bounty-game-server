@@ -2,7 +2,7 @@ package com.demidovn.fruitbounty.game.services.game.rules.ending;
 
 import com.demidovn.fruitbounty.gameapi.model.Player;
 
-public class AddedScoreCalculator {
+public class ChessLikeAddedScoreCalculator {
 
   private static final int DEFAULT_MODIFIER = 5;
   private static final int WINNER_GREATER_SCORE_MODIFIER = 100;

@@ -1,12 +1,13 @@
 package com.demidovn.fruitbounty.game.services.game.rules.ending;
 
+import com.demidovn.fruitbounty.game.GameOptions;
 import com.demidovn.fruitbounty.gameapi.model.Game;
 import com.demidovn.fruitbounty.gameapi.model.Player;
 import java.util.List;
 
 public abstract class GameEnding {
 
-  private final AddedScoreCalculator addedScoreCalculator = new AddedScoreCalculator();
+  private final GrindingAddedScoreCalculator addedScoreCalculator = new GrindingAddedScoreCalculator();
 
   protected void finishGame(Game game, Player winner) {
     List<Player> players = game.getPlayers();
@@ -23,13 +24,13 @@ public abstract class GameEnding {
 
       int winnerAddedScore;
       if (game.isTutorial()) {
-        winnerAddedScore = 0;
+        winnerAddedScore = GameOptions.SCORE_FOR_WIN_TUTORIAL_GAME;
       } else {
         winnerAddedScore = addedScoreCalculator.findWinnerAddedScore(winner, looser);
       }
 
       winner.setAddedScore(winnerAddedScore);
-      looser.setAddedScore(-winnerAddedScore);
+      looser.setAddedScore(0);
     }
   }
 

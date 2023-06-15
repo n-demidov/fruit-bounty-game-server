@@ -44,13 +44,13 @@ class GameRequestsWaitCalculatorTest extends Specification {
         onlineUsers  | score  | expected
         1            | 700    | 0
         1            | 701    | 0
-        2            | 700    | 1
-        2            | 701    | 2
+        2            | 499    | 1
+        2            | 500    | 2
 
         1            | 849    | 0
         1            | 850    | 0
         2            | 849    | 2
-        2            | 850    | 4
+        2            | 850    | 2
 
         200          | 850    | 4
         2000         | 9999   | 4

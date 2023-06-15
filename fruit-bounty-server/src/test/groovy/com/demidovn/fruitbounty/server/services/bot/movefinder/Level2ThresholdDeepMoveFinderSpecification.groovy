@@ -13,6 +13,7 @@ class Level2ThresholdDeepMoveFinderSpecification extends Specification {
 
     int EM = 0, OP = 1, ME = 2
     int TIME_PER_MOVE = 1000 * 60 * 60 * 24
+    int MAX_DEEP_MOVE = 6
 
     @Subject
     Level2ThresholdDeepMoveFinder bestMoveFinder = new Level2ThresholdDeepMoveFinder()
@@ -38,7 +39,7 @@ class Level2ThresholdDeepMoveFinderSpecification extends Specification {
         )
 
         when:
-        Pair<Integer, Integer> actual = bestMoveFinder.findBestMove(currentPlayer, game)
+        Pair<Integer, Integer> actual = bestMoveFinder.findBestMove(currentPlayer, game, MAX_DEEP_MOVE)
 
         then:
         actual == new Pair(0, 1)
@@ -65,7 +66,7 @@ class Level2ThresholdDeepMoveFinderSpecification extends Specification {
         )
 
         when:
-        Pair<Integer, Integer> actual = bestMoveFinder.findBestMove(currentPlayer, game)
+        Pair<Integer, Integer> actual = bestMoveFinder.findBestMove(currentPlayer, game, MAX_DEEP_MOVE)
 
         then:
         actual == new Pair(1, 2)
@@ -92,7 +93,7 @@ class Level2ThresholdDeepMoveFinderSpecification extends Specification {
         )
 
         when:
-        Pair<Integer, Integer> actual = bestMoveFinder.findBestMove(currentPlayer, game)
+        Pair<Integer, Integer> actual = bestMoveFinder.findBestMove(currentPlayer, game, MAX_DEEP_MOVE)
 
         then:
         actual == new Pair(3, 6)
@@ -119,7 +120,7 @@ class Level2ThresholdDeepMoveFinderSpecification extends Specification {
         )
 
         when:
-        Pair<Integer, Integer> actual = bestMoveFinder.findBestMove(currentPlayer, game)
+        Pair<Integer, Integer> actual = bestMoveFinder.findBestMove(currentPlayer, game, MAX_DEEP_MOVE)
 
         then:
         println(actual)
@@ -147,7 +148,7 @@ class Level2ThresholdDeepMoveFinderSpecification extends Specification {
         )
 
         when:
-        Pair<Integer, Integer> actual = bestMoveFinder.findBestMove(currentPlayer, game)
+        Pair<Integer, Integer> actual = bestMoveFinder.findBestMove(currentPlayer, game, MAX_DEEP_MOVE)
 
         then:
         println(actual)
@@ -175,7 +176,7 @@ class Level2ThresholdDeepMoveFinderSpecification extends Specification {
         )
 
         when:
-        Pair<Integer, Integer> actual = bestMoveFinder.findBestMove(currentPlayer, game)
+        Pair<Integer, Integer> actual = bestMoveFinder.findBestMove(currentPlayer, game, MAX_DEEP_MOVE)
 
         then:
         println(actual)

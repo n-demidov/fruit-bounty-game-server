@@ -25,7 +25,6 @@ public class Level2ThresholdDeepMoveFinder {
 
   private static final int FULL_DEEP_SEARCH_THRESHOLD = 14;
   private static final double SECOND_ALG_MULTIPLIER_THRESHOLD = 1.75;
-  private static final int MAX_DEEP_LIMIT = 4;  // 0: 1 move; 2: 1 move; 4: 2 moves; 6: 3 moves
 
   private static final GameRules gameRules = new GameRules();
   private static final GameLoop gameLoop = new GameLoop();
@@ -34,7 +33,10 @@ public class Level2ThresholdDeepMoveFinder {
   private static final MovementToCenterBoardRater movementToCenterBoardRater = new MovementToCenterBoardRater();
   private static final UniformMovementBoardRater uniformMovementBoardRater = new UniformMovementBoardRater();
 
-  public Pair<Integer, Integer> findBestMove(Player movingPlayer, Game game) {
+  /**
+   * @param maxDeepLimit: 0: 0 move (in deep); 2: 1 move (in deep); 4: 2 moves (in deep); 6: 3 moves (in deep)
+   */
+  public Pair<Integer, Integer> findBestMove(Player movingPlayer, Game game, int maxDeepLimit) {
     boolean timeToSecondAlgo;
     BoardRater boardRater;
 
@@ -50,12 +52,13 @@ public class Level2ThresholdDeepMoveFinder {
       boardRater = movementToCenterBoardRater;
     }
 
-    BestMoveResult bestBoard = findBestBoard(movingPlayer, game, 1, timeToSecondAlgo, boardRater);
+    BestMoveResult bestBoard = findBestBoard(movingPlayer, game, 1, timeToSecondAlgo, boardRater, maxDeepLimit);
 
     return new Pair<>(bestBoard.getMove().getX(), bestBoard.getMove().getY());
   }
 
-  private BestMoveResult findBestBoard(Player movingPlayer, Game game, int deep, boolean timeToSecondAlgo, BoardRater boardRater) {
+  private BestMoveResult findBestBoard(Player movingPlayer, Game game, int deep,
+      boolean timeToSecondAlgo, BoardRater boardRater, int maxDeepLimit) {
     if (game.isFinished()) {
       throw new IllegalStateException("Game finished, game=" + game);
     }
@@ -75,9 +78,9 @@ public class Level2ThresholdDeepMoveFinder {
           ? new GameProcessingContext(true) : new GameProcessingContext();
       gameLoop.processGameAction(gameAction, gameContext);  // O(n * several times)
 
-      if (!newGame.isFinished() && deep <= MAX_DEEP_LIMIT) {
+      if (!newGame.isFinished() && deep <= maxDeepLimit) {
         Player nextPlayer = newGame.getCurrentPlayer();
-        BestMoveResult bestBoard = findBestBoard(nextPlayer, newGame, deep + 1, timeToSecondAlgo, boardRater);
+        BestMoveResult bestBoard = findBestBoard(nextPlayer, newGame, deep + 1, timeToSecondAlgo, boardRater, maxDeepLimit);
         bestBoard.setMove(cell);
         results.add(bestBoard);
       } else {

@@ -13,13 +13,8 @@ public class GameRequestsWaitCalculator {
     public int getWaitUntilBot(int userScore) {
         int waitIterations = getWaitByOnlineUsers();
 
-        int delta = userScore - AppConfigs.INITIAL_USER_SCORE;
-        if (delta > 0 && waitIterations > 0) {
-            waitIterations++;
-        }
-
         if (userScore >= AppConfigs.MIN_RATING_WITH_RARE_BOT && waitIterations > 0) {
-            waitIterations = AppConfigs.MAX_GAME_REQUEST_ITERATIONS_BEFORE_BOT_PLAY;
+            waitIterations++;
         }
 
         if (waitIterations > AppConfigs.MAX_GAME_REQUEST_ITERATIONS_BEFORE_BOT_PLAY) {

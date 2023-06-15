@@ -3,20 +3,24 @@ package com.demidovn.fruitbounty.game.services.game.bot;
 import com.demidovn.fruitbounty.game.GameOptions;
 import com.demidovn.fruitbounty.game.converters.bot.MoveActionConverter;
 import com.demidovn.fruitbounty.game.model.Pair;
-import com.demidovn.fruitbounty.game.services.game.bot.movefinder.Level2ThresholdDeepMoveFinder;
-import com.demidovn.fruitbounty.game.services.game.bot.movefinder.Level1SimpleMovementToCenterMoveFinder;
+import com.demidovn.fruitbounty.game.services.Randomizer;
+import com.demidovn.fruitbounty.game.services.game.bot.level.BotMover;
+import com.demidovn.fruitbounty.game.services.game.bot.level.L1BotMover;
+import com.demidovn.fruitbounty.game.services.game.bot.level.L2BotMover;
 import com.demidovn.fruitbounty.gameapi.model.Game;
 import com.demidovn.fruitbounty.gameapi.model.Player;
 import com.demidovn.fruitbounty.gameapi.services.BotService;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DefaultBotService implements BotService {
 
-  private static final int BOT_ID = -2000;
   private static final int BOT_WAITING_MOVE_TIME = 1300;
   private static final int MAX_BOT_WINS = 10;
   private static final int MIN_BOT_DEFEATS = 20;
@@ -29,16 +33,28 @@ public class DefaultBotService implements BotService {
   private static final int TRAINER_DRAWS = 100;
 
   private final Random rand = new Random();
-
   private final MoveActionConverter moveActionConverter = new MoveActionConverter();
+  private final Randomizer randomizer = new Randomizer();
 
   @Autowired
   private BotNameGenerator botNameGenerator;
 
-  private static final Level1SimpleMovementToCenterMoveFinder l1MoveFinder = new Level1SimpleMovementToCenterMoveFinder();
-  private static final Level2ThresholdDeepMoveFinder l2MoveFinder = new Level2ThresholdDeepMoveFinder();
-
   private Integer level2BotScoreThreshold;
+  private final Map<Long, BotMover> botMoversById = new HashMap<>();
+  private final Map<Long, Pair<Integer, Integer>> botScoreById = new HashMap<>();
+
+  @PostConstruct
+  public void init() {
+    botMoversById.put(-1L, new L1BotMover());
+    botMoversById.put(-2L, new L2BotMover(0));
+    botMoversById.put(-3L, new L2BotMover(2));
+    botMoversById.put(-4L, new L2BotMover(4));
+
+    botScoreById.put(-1L, new Pair<>(1, 99));
+    botScoreById.put(-2L, new Pair<>(100, 199));
+    botScoreById.put(-3L, new Pair<>(200, 499));
+    botScoreById.put(-4L, new Pair<>(600, 899));
+  }
 
   @Override
   public void setLevel2BotScoreThreshold(int minBotScore) {
@@ -46,14 +62,17 @@ public class DefaultBotService implements BotService {
   }
 
   @Override
-  public Player createNewBot(int botScore) {
+  public Player createNewBot(int playerScore) {
     Player bot = new Player();
 
-    bot.setId(BOT_ID);
-    bot.setImg(GameOptions.UNKNOWN_PERSON_IMG);
+    long botId = getBotId(playerScore);
+    bot.setId(botId);
 
-    bot.setPublicName(botNameGenerator.getRandomName());
+    int botScore = randomizer.generateFromRange(botScoreById.get(botId).getKey(), botScoreById.get(botId).getValue());
     bot.setScore(botScore);
+
+    bot.setImg(GameOptions.UNKNOWN_PERSON_IMG);
+    bot.setPublicName(botNameGenerator.getRandomName());
 
     bot.setWins(rand.nextInt(MAX_BOT_WINS));
     bot.setDefeats(rand.nextInt(MAX_BOT_DEFEATS - MIN_BOT_DEFEATS) + MIN_BOT_DEFEATS);
@@ -63,7 +82,7 @@ public class DefaultBotService implements BotService {
 
   @Override
   public Player createTrainer() {
-    Player bot = createNewBot(TRAINER_SCORE);
+    Player bot = createNewBot(0);
 
     bot.setImg(GameOptions.TRAINER_IMG);
 
@@ -78,24 +97,21 @@ public class DefaultBotService implements BotService {
 
   @Override
   public boolean isPlayerBot(Player player) {
-    return player.getId() == BOT_ID;
+    return player.getId() < 0;
   }
 
   @Override
   public void actionIfBot(Game game) {
+    Player currentPlayer = game.getCurrentPlayer();
     if (game.isFinished() ||
-      !isPlayerBot(game.getCurrentPlayer()) ||
+      !isPlayerBot(currentPlayer) ||
       !isWaitEnoughTime(game)) {
       return;
     }
 
-    Pair<Integer, Integer> generatedMove;
-    int botScore = game.getCurrentPlayer().getScore();
-    if (botScore >= getLevel2BotScoreThreshold()) {
-      generatedMove = l2MoveFinder.findBestMove(game.getCurrentPlayer(), game);
-    } else {
-      generatedMove = l1MoveFinder.findMove(game);
-    }
+    long id = currentPlayer.getId();
+    BotMover botMover = botMoversById.get(id);
+    Pair<Integer, Integer> generatedMove = botMover.findMove(game);
 
     game.getGameActions().add(
       moveActionConverter.convert2MoveAction(game, generatedMove.getKey(), generatedMove.getValue()));
@@ -111,6 +127,18 @@ public class DefaultBotService implements BotService {
 
   private boolean isWaitEnoughTime(Game game) {
     return Instant.now().toEpochMilli() - game.getCurrentMoveStarted() > BOT_WAITING_MOVE_TIME;
+  }
+
+  private long getBotId(int playerScore) {
+    if (playerScore <= 10) {
+      return -1;
+    } else if (playerScore <= 40) {
+      return randomizer.generateFromRange(1, 2) * -1;
+    } else if (playerScore <= 100) {
+      return randomizer.generateFromRange(1, 3) * -1;
+    } else {
+      return randomizer.generateFromRange(1, 4) * -1;
+    }
   }
 
 }
