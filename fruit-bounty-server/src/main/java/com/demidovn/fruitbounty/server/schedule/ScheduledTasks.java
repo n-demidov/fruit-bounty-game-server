@@ -8,9 +8,6 @@ import com.demidovn.fruitbounty.server.services.metrics.ServerMetricsLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Map;
 
 @Component
 public class ScheduledTasks {
@@ -56,25 +53,9 @@ public class ScheduledTasks {
     serverMetricsLogger.logMetrics();
   }
 
-  @Scheduled(fixedDelayString = "${game-server.schedule-delay.clear-not-actual-users}")
+//  @Scheduled(fixedDelayString = "${game-server.schedule-delay.clear-not-actual-users}")
   public void clearNotActual() {
     userService.clearNotActual();
-  }
-
-  @Scheduled(fixedDelayString = "300000")
-//  @Scheduled(fixedDelayString = "10000")
-  public void pingThirdServer() {
-//    ping("https://logic-edu.herokuapp.com/");
-//    ping("https://probab-theory.herokuapp.com/");
-  }
-
-  private void ping(String URL) {
-    final RestTemplate restTemplate = new RestTemplate();
-    try {
-      restTemplate.getForObject(URL, Map.class);
-    } catch (Exception e) {
-      //NOOP
-    }
   }
 
 }

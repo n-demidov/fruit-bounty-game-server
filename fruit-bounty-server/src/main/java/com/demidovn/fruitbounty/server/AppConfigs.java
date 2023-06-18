@@ -33,6 +33,6 @@ public interface AppConfigs {
   int MIN_BOT_SCORE = 800;
 
   // It is necessary because there is a limit of rows for my free DB account.
-  int DELETTING_USERS_COUNT_LIMIT_TO_CLEAR_DB = 200_000;
+  int DELETING_USERS_COUNT_LIMIT_TO_CLEAR_DB = 200_000; // disabled
 
 }

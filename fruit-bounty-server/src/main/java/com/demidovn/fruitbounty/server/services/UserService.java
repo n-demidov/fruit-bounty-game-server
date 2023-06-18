@@ -67,7 +67,7 @@ public class UserService {
 
       if (areTooManyUsers()) {
         log.info("There are too much users in DB. Starting of clear users from DB...");
-        long limit = SECOND_TRIE_LIMIT + userRepository.count() - AppConfigs.DELETTING_USERS_COUNT_LIMIT_TO_CLEAR_DB;
+        long limit = SECOND_TRIE_LIMIT + userRepository.count() - AppConfigs.DELETING_USERS_COUNT_LIMIT_TO_CLEAR_DB;
         deletedUsersCount = userRepository.deleteByHours(SECOND_TRIE_HOURS_THRESHOLD, limit);
         log.debug("Deleted {} users from DB", deletedUsersCount);
       }
@@ -75,7 +75,7 @@ public class UserService {
   }
 
   private boolean areTooManyUsers() {
-    return userRepository.count() >= AppConfigs.DELETTING_USERS_COUNT_LIMIT_TO_CLEAR_DB;
+    return userRepository.count() >= AppConfigs.DELETING_USERS_COUNT_LIMIT_TO_CLEAR_DB;
   }
 
 }
