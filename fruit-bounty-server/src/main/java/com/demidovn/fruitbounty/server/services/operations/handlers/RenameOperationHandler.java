@@ -42,7 +42,7 @@ public class RenameOperationHandler implements OperationHandler {
     statService.incCounter(MetricsConsts.OTHER.PLAYER_RENAME_TRY_STAT);
 
     String newName = conversionService.convert(requestOperation, String.class);
-    newName = HtmlUtils.htmlEscape(newName);
+    newName = HtmlUtils.htmlEscape(newName).trim();
 
     if (isNameNotValid(newName)) {
       return;
