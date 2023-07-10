@@ -18,7 +18,7 @@
   <span id="social-network-type" th:text="${socialNetworkType}" class="always-hidden"></span>
   <span id="social-network-app-id" th:text="${socialNetworkAppId}" class="always-hidden"></span>
 
-  <div class="background-container">
+  <div class="background-container noselect">
     <div class="background">
       <!-- Lobby window -->
       <div id="lobby-window" class="lobby-window background-left">
@@ -105,7 +105,7 @@
         </div>
 
         <div class="game-margin-top">
-          <canvas id="game-canvas" class="game-canvas noselect">This text is displayed if your browser does not support HTML5 Canvas.</canvas>
+          <canvas id="game-canvas" class="game-canvas">This text is displayed if your browser does not support HTML5 Canvas.</canvas>
         </div>
 
         <!-- Game sub-window -->
