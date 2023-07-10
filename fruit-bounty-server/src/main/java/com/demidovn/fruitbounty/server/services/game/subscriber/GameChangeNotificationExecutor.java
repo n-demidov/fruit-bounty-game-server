@@ -11,6 +11,7 @@ import com.demidovn.fruitbounty.server.services.ClientNotifier;
 import com.demidovn.fruitbounty.server.services.UserService;
 import com.demidovn.fruitbounty.server.services.game.GameNotifier;
 import com.demidovn.fruitbounty.server.services.game.UserGames;
+import com.demidovn.fruitbounty.server.services.promotion.ScorePromoter;
 import java.time.Instant;
 
 import com.demidovn.fruitbounty.server.services.metrics.StatService;
@@ -43,6 +44,9 @@ public class GameChangeNotificationExecutor implements Runnable {
 
   @Autowired
   private StatService statService;
+
+  @Autowired
+  private ScorePromoter scorePromoter;
 
   @Setter
   private Game game;
@@ -84,6 +88,7 @@ public class GameChangeNotificationExecutor implements Runnable {
       user.setDraws(user.getDraws() + 1);
     } else if (game.getWinner().getId() == player.getId()) {
       user.setWins(user.getWins() + 1);
+      scorePromoter.notifyAboutScore(user);
     } else if (game.getWinner().getId() != player.getId()) {
       user.setDefeats(user.getDefeats() + 1);
     }
