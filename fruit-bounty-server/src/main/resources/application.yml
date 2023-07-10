@@ -17,10 +17,10 @@ spring:
     platform: POSTGRESQL
     validationQuery: SELECT 1
     tomcat:
-      initial-size: 8
-      max-active: 8
-      min-idle: 8
-      max-idle: 8
+      initial-size: 7
+      max-active: 7
+      min-idle: 7
+      max-idle: 7
       test-on-connect: true
       test-while-idle: true
       time-between-eviction-runs-millis: 15000
