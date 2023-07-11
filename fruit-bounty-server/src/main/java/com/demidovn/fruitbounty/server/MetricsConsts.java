@@ -2,6 +2,12 @@ package com.demidovn.fruitbounty.server;
 
 public class MetricsConsts {
 
+    public static class MATCH3 {
+        public static class REQUEST {
+            public static final String ALL_STAT = "MATCH3.REQUEST.PAGE.ALL";
+        }
+    }
+
     public static class REQUEST {
         public static final String ALL_STAT = "REQUEST.PAGE.ALL";
         public static final String VK_STAT = "REQUEST.PAGE.VK";

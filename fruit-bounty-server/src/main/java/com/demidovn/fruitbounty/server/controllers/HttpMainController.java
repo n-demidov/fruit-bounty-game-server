@@ -15,6 +15,7 @@ import java.util.Map;
 @Controller
 public class HttpMainController {
 
+    private static final String MATCH3_URL = "/match3";
     private static final String FB_APP_URL = "/fb-app";
     private static final String VK_APP_URL = "/vk-app";
     private static final String VK_APP_MOBILE_URL = "/vk-app-m";
@@ -76,6 +77,12 @@ public class HttpMainController {
         statService.incCounter(MetricsConsts.REQUEST.SB_STAT);
         model.put(SOCIAL_NETWORK_TYPE_PARAM, SB_SOCIAL_NETWORK_TYPE);
         return APP_HTML_VIEW;
+    }
+
+    @RequestMapping(value = MATCH3_URL, method = RequestMethod.GET)
+    public String yandexAppGet() {
+        statService.incCounter(MetricsConsts.MATCH3.REQUEST.ALL_STAT);
+        return "match3";
     }
 
     private String getFacebookApp(Map<String, Object> model) {
