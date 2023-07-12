@@ -8,6 +8,7 @@ import org.junit.Test;
 public class GrindingAddedScoreCalculatorTest {
 
   private static final int MIN_MODIFIER = 1;
+  private static final int MAX_SCORE = 16;
 
   private final GrindingAddedScoreCalculator grindingAddedScoreCalculator = new GrindingAddedScoreCalculator();
 
@@ -68,7 +69,7 @@ public class GrindingAddedScoreCalculatorTest {
 
     int actual = grindingAddedScoreCalculator.findWinnerAddedScore(winner, looser);
 
-    assertThat(actual).isEqualTo(18);
+    assertThat(actual).isEqualTo(MAX_SCORE);
   }
 
   @Test
@@ -78,7 +79,7 @@ public class GrindingAddedScoreCalculatorTest {
 
     int actual = grindingAddedScoreCalculator.findWinnerAddedScore(winner, looser);
 
-    assertThat(actual).isEqualTo(19);
+    assertThat(actual).isEqualTo(MAX_SCORE);
   }
 
   @Test
@@ -88,7 +89,7 @@ public class GrindingAddedScoreCalculatorTest {
 
     int actual = grindingAddedScoreCalculator.findWinnerAddedScore(winner, looser);
 
-    assertThat(actual).isEqualTo(91);
+    assertThat(actual).isEqualTo(MAX_SCORE);
   }
 
   private Player createPlayer(int score) {
