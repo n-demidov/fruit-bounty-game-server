@@ -21,7 +21,7 @@
 // The function gets called when the window is fully loaded
 window.onload = function() {
     // Get the canvas and context
-    var canvas = document.getElementById("viewport");
+    var canvas = document.getElementById("canvas");
     var context = canvas.getContext("2d");
     
     // Timing and frames per second
@@ -32,15 +32,18 @@ window.onload = function() {
     
     // Mouse dragging
     var drag = false;
+
+    var initX = 30;
+    var initY = 90;
     
     // Level object
     var level = {
-        x: 250,         // X position
-        y: 113,         // Y position
+        x: initX,         // X position
+        y: initY + 73,    // Y position
         columns: 8,     // Number of tile columns
         rows: 8,        // Number of tile rows
-        tilewidth: 40,  // Visual width of a tile
-        tileheight: 40, // Visual height of a tile
+        tilewidth: 50,  // Visual width of a tile
+        tileheight: 50, // Visual height of a tile
         tiles: [],      // The two-dimensional tile array
         selectedtile: { selected: false, column: 0, row: 0 }
     };
@@ -83,7 +86,8 @@ window.onload = function() {
     var gameover = false;
     
     // Gui buttons
-    var buttons = [ { x: 30, y: 240, width: 150, height: 50, text: "Новая игра"}
+    var btnHeight = 50;
+    var buttons = [ { x: initX + 215, y: initY - (btnHeight / 2.5), width: 150, height: btnHeight, text: "Новая игра"}
                     // ,
                     // { x: 30, y: 300, width: 150, height: 50, text: "Show Moves"},
                     // { x: 30, y: 360, width: 150, height: 50, text: "Enable AI Bot"}
@@ -274,8 +278,8 @@ window.onload = function() {
         // Draw score
         context.fillStyle = "#000000";
         context.font = "24px Verdana";
-        drawCenterText("Очки:", 30, level.y+40, 150);
-        drawCenterText(score, 30, level.y+70, 150);
+        drawCenterText("Очки:", initX, initY, 150);
+        drawCenterText(score, initX, initY+30, 150);
         
         // Draw buttons
         drawButtons();
@@ -311,23 +315,23 @@ window.onload = function() {
     // Draw a frame with a border
     function drawFrame() {
         // Draw background and a border
-        context.fillStyle = "#d0d0d0";
+        context.fillStyle = "#fff";
         context.fillRect(0, 0, canvas.width, canvas.height);
-        context.fillStyle = "#e8eaec";
+        context.fillStyle = "#fff";
         context.fillRect(1, 1, canvas.width-2, canvas.height-2);
         
         // Draw header
-        context.fillStyle = "#303030";
-        context.fillRect(0, 0, canvas.width, 65);
+        // context.fillStyle = "#303030";
+        // context.fillRect(0, 0, canvas.width, 65);
         
         // Draw title
-        context.fillStyle = "#ffffff";
-        context.font = "24px Verdana";
-        context.fillText("Три в ряд: Бесконечность", 10, 30);
+        // context.fillStyle = "#ffffff";
+        // context.font = "24px Verdana";
+        // context.fillText("Три в ряд: Бесконечность", 10, 30);
         
         // Display fps
-        context.fillStyle = "#ffffff";
-        context.font = "12px Verdana";
+        // context.fillStyle = "#ffffff";
+        // context.font = "12px Verdana";
         // context.fillText("Fps: " + fps, 13, 50);
     }
     
