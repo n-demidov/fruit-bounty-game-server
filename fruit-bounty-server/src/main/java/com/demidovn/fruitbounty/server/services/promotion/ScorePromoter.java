@@ -36,7 +36,7 @@ public class ScorePromoter {
           user.getScore()
       );
 
-      log.debug("notifyAboutScore done, vkResponse={}", vkResponse);
+      log.debug("notifyAboutScore done, vkResponse={}, userId={}", vkResponse, user.getId());
     } catch (Exception e) {
       log.error("error in notifyAboutScore, user={}", user, e);
     }
