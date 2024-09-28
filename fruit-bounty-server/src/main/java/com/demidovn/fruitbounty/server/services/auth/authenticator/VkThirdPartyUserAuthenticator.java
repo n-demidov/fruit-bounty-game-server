@@ -23,7 +23,7 @@ public class VkThirdPartyUserAuthenticator implements ThirdPartyUserAuthenticato
 
   private static final String VK_ACCESS_TOKEN_TEMPLATE = "%s_%s_%s";
   private static final String VK_QUERY_URL =
-          "https://api.vk.com/method/users.get?user_id={user_id}&access_token={access_token}&v=5.131&fields=id,first_name,last_name,photo_48";
+          "https://api.vk.com/method/users.get?user_id={user_id}&access_token={access_token}&v=5.131&fields=id,first_name,last_name,photo_50";
 
   private static final RestTemplate restTemplate = new RestTemplate();
 

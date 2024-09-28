@@ -45,6 +45,7 @@ public class User {
   @Column(name = "public_name", length = 40, nullable = false)
   private String publicName;
 
+  @Column(name = "img", columnDefinition = "varchar(1024)")
   private String img;
   private int score;
   private int wins, defeats, draws;
