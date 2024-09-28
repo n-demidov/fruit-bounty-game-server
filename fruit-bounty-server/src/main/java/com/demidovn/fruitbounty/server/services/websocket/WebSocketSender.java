@@ -7,6 +7,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MimeType;
 
 @Component
 public class WebSocketSender {
@@ -30,6 +31,7 @@ public class WebSocketSender {
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
         headerAccessor.setSessionId(sessionId);
         headerAccessor.setLeaveMutable(true);
+        headerAccessor.setContentType(MimeType.valueOf("application/json;charset=UTF-16"));
         return headerAccessor.getMessageHeaders();
     }
 

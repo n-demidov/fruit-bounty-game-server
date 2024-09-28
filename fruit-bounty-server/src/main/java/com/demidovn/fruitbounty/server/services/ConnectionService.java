@@ -113,7 +113,7 @@ public class ConnectionService {
   }
 
   public void sendWithConversion(Connection targetConnection, Object payload) {
-    send(targetConnection, convert2Json(payload));
+    send(targetConnection, payload);
   }
 
   public void send(long userId, Object payload) {
@@ -125,7 +125,7 @@ public class ConnectionService {
   }
 
   public void sendWithConversion(long userId, Object payload) {
-    send(userId, convert2Json(payload));
+    send(userId, payload);
   }
 
   public void sendToAll(Object payload) {
