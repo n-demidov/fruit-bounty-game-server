@@ -23,7 +23,7 @@ public class VkThirdPartyUserAuthenticator implements ThirdPartyUserAuthenticato
 
   private static final String VK_ACCESS_TOKEN_TEMPLATE = "%s_%s_%s";
   private static final String VK_QUERY_URL =
-          "https://api.vk.com/method/users.get?user_id={user_id}&access_token={access_token}&v=5.131&fields=id,first_name,last_name,photo_50";
+          "https://api.vk.com/method/users.get?user_id={user_id}&access_token={access_token}&v=5.131&fields=id,first_name,last_name,photo_48";
 
   private static final RestTemplate restTemplate = new RestTemplate();
 
@@ -40,6 +40,9 @@ public class VkThirdPartyUserAuthenticator implements ThirdPartyUserAuthenticato
   @Value("${game-server.vk.secret-key}")
   private String VK_APP_SECRET_KEY;
 
+  @Value("${game-server.vk.valid:false}")
+  private boolean VALID_VK;
+
   @Override
   public AuthType getAuthType() {
     return AuthType.VK;
@@ -55,7 +58,7 @@ public class VkThirdPartyUserAuthenticator implements ThirdPartyUserAuthenticato
 
     log.trace("vkResponse={}", vkResponse);
 
-    if (!isValidAuthKey(authOperation.getAuthKey(), authOperation.getUserId())) {
+    if (VALID_VK && !isValidAuthKey(authOperation.getAuthKey(), authOperation.getUserId())) {
       log.debug("client's authKey not valid, authOperation={}", authOperation);
       throw new AuthFailedException();
     }
