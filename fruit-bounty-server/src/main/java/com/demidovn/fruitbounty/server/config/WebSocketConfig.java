@@ -24,7 +24,7 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @EnableWebSocketMessageBroker
 public class WebSocketConfig extends WebSocketMessageBrokerConfigurationSupport implements WebSocketMessageBrokerConfigurer {
 
-  private static final int MESSAGE_SIZE_LIMIT = 512;
+  private static final int MESSAGE_SIZE_LIMIT = 10240;
 
   @Bean
   public WebSocketHandler subProtocolWebSocketHandler() {
