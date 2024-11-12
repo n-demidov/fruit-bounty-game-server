@@ -76,6 +76,21 @@ public class Game {
     ));
   }
 
+  public int findPlayerCellsNum(long playerId) {
+    int result = 0;
+
+    for (int i = 0; i < board.getCells().length; i++) {
+      Cell[] row = board.getCells()[i];
+      for (int j = 0; j < row.length; j++) {
+        if (row[j].getOwner() == playerId) {
+          result++;
+        }
+      }
+    }
+
+    return result;
+  }
+
   @Override
   public String toString() {
     return "Game{" +
