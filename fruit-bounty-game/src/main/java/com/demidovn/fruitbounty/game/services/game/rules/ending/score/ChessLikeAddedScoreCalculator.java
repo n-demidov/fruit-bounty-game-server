@@ -1,4 +1,4 @@
-package com.demidovn.fruitbounty.game.services.game.rules.ending;
+package com.demidovn.fruitbounty.game.services.game.rules.ending.score;
 
 import com.demidovn.fruitbounty.gameapi.model.Player;
 

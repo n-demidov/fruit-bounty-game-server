@@ -2,6 +2,7 @@ package com.demidovn.fruitbounty.game.services.game.rules.ending;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.demidovn.fruitbounty.game.services.game.rules.ending.score.GrindingAddedScoreCalculator;
 import com.demidovn.fruitbounty.gameapi.model.Player;
 import org.junit.Test;
 

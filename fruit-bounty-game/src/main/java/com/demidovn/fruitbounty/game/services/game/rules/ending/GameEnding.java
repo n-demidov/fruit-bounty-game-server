@@ -1,6 +1,7 @@
 package com.demidovn.fruitbounty.game.services.game.rules.ending;
 
 import com.demidovn.fruitbounty.game.GameOptions;
+import com.demidovn.fruitbounty.game.services.game.rules.ending.score.GrindingAddedScoreCalculator;
 import com.demidovn.fruitbounty.gameapi.model.Game;
 import com.demidovn.fruitbounty.gameapi.model.Player;
 import java.util.List;
