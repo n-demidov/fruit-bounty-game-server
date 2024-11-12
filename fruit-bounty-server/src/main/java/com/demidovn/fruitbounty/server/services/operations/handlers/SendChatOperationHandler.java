@@ -9,6 +9,7 @@ import com.demidovn.fruitbounty.server.entities.Connection;
 import com.demidovn.fruitbounty.server.persistence.entities.User;
 import com.demidovn.fruitbounty.server.services.ConnectionService;
 import com.demidovn.fruitbounty.server.services.UserService;
+import com.demidovn.fruitbounty.server.services.chat.ChatHistoryService;
 import com.demidovn.fruitbounty.server.services.chat.ChatHub;
 import com.demidovn.fruitbounty.server.services.metrics.StatService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,9 @@ public class SendChatOperationHandler implements OperationHandler {
   @Autowired
   private StatService statService;
 
+  @Autowired
+  private ChatHistoryService chatHistoryService;
+
   @Override
   public OperationType getOperationType() {
     return OperationType.SendChat;
@@ -54,6 +58,8 @@ public class SendChatOperationHandler implements OperationHandler {
     chatMessage = HtmlUtils.htmlEscape(chatMessage);
 
     sendToAll(chatMessage, requestOperation.getConnection());
+
+    chatHistoryService.save(chatMessage, requestOperation.getConnection().getUserId());
   }
 
   private void sendToAll(String chatMessage, Connection connection) {
